@@ -1,4 +1,4 @@
-package cafeteria.pfplataformalogistica;
+package PFPlataformaLogistica.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
