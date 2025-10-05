@@ -1,20 +1,23 @@
+package PFPlataformaLogistica.model;
+import java.util.LinkedList;
+
 public class Usuario extends Persona{
 
     private String correo;
     private String telefono;
     private String direccion;
-    private Linkedlist<String> listaDirecciones;
+    private LinkedList<String> listaDirecciones;
     private Producto producto   ;
 
-    public Usuario(String correo, String telefono, String direccion,Producto producto) {
-        super(nonbre,id );
+    public Usuario(String nombre, String id, String correo, String telefono, String direccion, LinkedList<String> listaDirecciones, Producto producto) {
+        super(nombre, id);
         this.correo = correo;
         this.telefono = telefono;
         this.direccion = direccion;
-        this.listaDirecciones = new LinkedList<>();
+        this.listaDirecciones = listaDirecciones;
         this.producto = producto;
-
     }
+
     public String getCorreo() {
         return correo;
     }
@@ -39,11 +42,11 @@ public class Usuario extends Persona{
         this.direccion = direccion;
     }
 
-    public Linkedlist<String> getListaDirecciones() {
+    public LinkedList<String> getListaDirecciones() {
         return listaDirecciones;
     }
 
-    public void setListaDirecciones(Linkedlist<String> listaDirecciones) {
+    public void setListaDirecciones(LinkedList<String> listaDirecciones) {
         this.listaDirecciones = listaDirecciones;
     }
 

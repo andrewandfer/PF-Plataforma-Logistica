@@ -1,5 +1,7 @@
+package PFPlataformaLogistica.model;
+
 public class Producto{
-    private String id:
+    private String id;
     private String nombre;
     private int peso;
 
