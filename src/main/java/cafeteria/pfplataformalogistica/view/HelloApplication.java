@@ -1,4 +1,4 @@
-package cafeteria.pfplataformalogistica;
+package cafeteria.pfplataformalogistica.view;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
