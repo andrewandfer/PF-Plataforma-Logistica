@@ -1,11 +1,17 @@
+package PFPlataformaLogistica.model;
+
 public class Repartidor extends Persona{
     private String telefono;
     private boolean disponibilidad;
     private String zonaCobertura;
     private String localidad;
 
-    public Repartidor(String telefono,String id,String zonaCobertura,String localidad) {
-        super(nombre,id);
+    public Repartidor(String nombre, String id, String telefono, boolean disponibilidad, String zonaCobertura, String localidad) {
+        super(nombre, id);
+        this.telefono = telefono;
+        this.disponibilidad = disponibilidad;
+        this.zonaCobertura = zonaCobertura;
+        this.localidad = localidad;
     }
 
     public String getTelefono() {

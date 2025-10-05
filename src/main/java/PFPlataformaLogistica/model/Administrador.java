@@ -1,3 +1,5 @@
+package PFPlataformaLogistica.model;
+
 public class   Administrador extends Persona{
     private int sueldo ;
 
