@@ -1,4 +1,4 @@
-package pfplataformalogistica.view;
+package PFPlataformaLogistica.view;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

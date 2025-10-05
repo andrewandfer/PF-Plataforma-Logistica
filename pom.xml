@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                cafeteria.pfplataformalogistica/pfplataformalogistica.view.HelloApplication
+                                cafeteria.PFPlataformaLogistica/PFPlataformaLogistica.view.HelloApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

@@ -1,12 +1,12 @@
-module cafeteria.pfplataformalogistica {
+module cafeteria.PFPlataformaLogistica {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens pfplataformalogistica to javafx.fxml;
-    exports pfplataformalogistica;
-    exports pfplataformalogistica.view;
-    opens pfplataformalogistica.view to javafx.fxml;
-    exports pfplataformalogistica.controller;
-    opens pfplataformalogistica.controller to javafx.fxml;
+    opens PFPlataformaLogistica to javafx.fxml;
+    exports PFPlataformaLogistica;
+    exports PFPlataformaLogistica.view;
+    opens PFPlataformaLogistica.view to javafx.fxml;
+    exports PFPlataformaLogistica.controller;
+    opens PFPlataformaLogistica.controller to javafx.fxml;
 }
