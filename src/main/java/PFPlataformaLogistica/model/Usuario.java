@@ -8,8 +8,9 @@ public class Usuario extends Persona{
     private String direccion;
     private LinkedList<String> listaDirecciones;
     private Producto producto   ;
+    private LinkedList<Envio> EnviosPropios;
 
-    public Usuario(String nombre, String id, String correo, String telefono, String direccion, LinkedList<String> listaDirecciones, Producto producto) {
+    public Usuario(String nombre, String id, String correo, String telefono, String direccion, LinkedList<String> listaDirecciones, Producto producto, LinkedList<Envio> enviosPropios) {
         super(nombre, id);
         this.correo = correo;
         this.telefono = telefono;
@@ -56,5 +57,11 @@ public class Usuario extends Persona{
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+    public LinkedList<Envio> getEnviosPropios() {
+        return EnviosPropios;
+    }
+    public void setEnviosPropios(LinkedList<Envio> enviosPropios) {
+        EnviosPropios = enviosPropios;
     }
 }

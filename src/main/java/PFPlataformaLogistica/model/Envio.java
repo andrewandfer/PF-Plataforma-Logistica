@@ -12,8 +12,9 @@ public class Envio {
     private int pesoEnvio;
     private TipoEnvio tipoEnvio;
     private EstadoEnvio estadoEnvio;
+    private Tarifa tarifa;
 
-    public Envio(Producto producto, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, List listaDirecciones) {
+    public Envio(Producto producto, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, List listaDirecciones,Tarifa tarifa) {
         this.producto = producto;
         this.fechaCreacion = fechaCreacion;
         this.fechaEstimada = fechaEstimada;
@@ -22,6 +23,7 @@ public class Envio {
         this.tipoEnvio = tipoEnvio;
         this.estadoEnvio = estadoEnvio;
         this.listaDirecciones = listaDirecciones;
+        this.tarifa=tarifa;
     }
 
     public Producto getProducto() {
@@ -86,6 +88,12 @@ public class Envio {
 
     public void setEstadoEnvio(EstadoEnvio estadoEnvio) {
         this.estadoEnvio = estadoEnvio;
+    }
+    public Tarifa getTarifa() {
+        return tarifa;
+    }
+    public void setTarifa(Tarifa tarifa) {
+        this.tarifa = tarifa;
     }
 
     @Override

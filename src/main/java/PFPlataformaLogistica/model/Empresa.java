@@ -3,6 +3,7 @@ package PFPlataformaLogistica.model;
 public final class Empresa {
     private String nombre;
     private static Empresa instancia;
+
     private Empresa() {
         this.nombre = "MiEmpresa";
     }
@@ -20,6 +21,11 @@ public final class Empresa {
             instancia = new Empresa();
         }
         return instancia;
+    }
+
+    public static void crearRepartidor()
+    {
+
     }
 }
 

@@ -4,7 +4,7 @@ module cafeteria.PFPlataformaLogistica {
 
 
     opens PFPlataformaLogistica to javafx.fxml;
-    exports PFPlataformaLogistica;
+    //exports PFPlataformaLogistica;
     exports PFPlataformaLogistica.view;
     opens PFPlataformaLogistica.view to javafx.fxml;
     exports PFPlataformaLogistica.controller;

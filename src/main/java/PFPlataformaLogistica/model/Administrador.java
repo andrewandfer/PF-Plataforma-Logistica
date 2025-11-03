@@ -3,8 +3,8 @@ package PFPlataformaLogistica.model;
 public class   Administrador extends Persona{
     private int sueldo ;
 
-    public Administrador(int sueldo) {
-        super(nombre,id);
+    public Administrador(String nombre, String id, int sueldo, String) {
+        super(PersonaBuilder); 
         this.sueldo = sueldo;
     }
 
