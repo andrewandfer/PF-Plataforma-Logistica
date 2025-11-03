@@ -29,7 +29,7 @@ public class Persona {
         }
 
         public T contrasena(String contrasena) {
-            this.edad = edad;
+            this.contrasena = contrasena;
             return self();
         }
 

@@ -2,54 +2,101 @@ package PFPlataformaLogistica.model;
 
 import java.util.List;
 
-public class Repartidor extends Persona{
+public class Repartidor extends Persona {
     private String telefono;
     private boolean disponibilidad;
     private String zonaCobertura;
     private String localidad;
-    private List<Envio>EnviosAsignados;
+    private List<Envio> enviosAsignados;
 
-    public Repartidor(Builder builder) {
-        super(PersonaBuilder);
+    // Constructor protegido para que solo el Builder lo use
+    protected Repartidor(RepartidorBuilder builder) {
+        super(builder);
         this.telefono = builder.telefono;
         this.disponibilidad = builder.disponibilidad;
         this.zonaCobertura = builder.zonaCobertura;
         this.localidad = builder.localidad;
-        EnviosAsignados = builder.EnviosAsignados;
+        this.enviosAsignados = builder.enviosAsignados;
     }
 
-    public static class Builder {
+    // Getters y setters
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public boolean isDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public String getZonaCobertura() {
+        return zonaCobertura;
+    }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public List<Envio> getEnviosAsignados() {
+        return enviosAsignados;
+    }
+
+    // Clase Builder que extiende de PersonaBuilder
+    public static class RepartidorBuilder extends Persona.PersonaBuilder<RepartidorBuilder> {
         private String telefono;
         private boolean disponibilidad;
         private String zonaCobertura;
         private String localidad;
-        private List<Envio>EnviosAsignados;
-        public Builder telefono(String telefono) {
+        private List<Envio> enviosAsignados;
+
+        public RepartidorBuilder telefono(String telefono) {
             this.telefono = telefono;
-            return this;
+            return self();
         }
-        public Builder disponibilidad(boolean disponibilidad) {
+
+        public RepartidorBuilder disponibilidad(boolean disponibilidad) {
             this.disponibilidad = disponibilidad;
-            return this;
+            return self();
         }
-        public Builder zonaCobertura(String zonaCobertura) {
+
+        public RepartidorBuilder zonaCobertura(String zonaCobertura) {
             this.zonaCobertura = zonaCobertura;
-            return this;
+            return self();
         }
-        public Builder localidad(String localidad) {
+
+        public RepartidorBuilder localidad(String localidad) {
             this.localidad = localidad;
+            return self();
+        }
+
+        public RepartidorBuilder enviosAsignados(List<Envio> enviosAsignados) {
+            this.enviosAsignados = enviosAsignados;
+            return self();
+        }
+
+        @Override
+        protected RepartidorBuilder self() {
             return this;
         }
-        public Builder enviosAsignados(List<Envio> enviosAsignados) {
-            this.EnviosAsignados = enviosAsignados;
-            return this;
-        }
+
+        @Override
         public Repartidor build() {
             return new Repartidor(this);
         }
+    }
 
+    @Override
+    public String toString() {
+        return "Repartidor{" +
+                "nombre='" + nombre + '\'' +
+                ", edad=" + edad +
+                ", telefono='" + telefono + '\'' +
+                ", disponibilidad=" + disponibilidad +
+                ", zonaCobertura='" + zonaCobertura + '\'' +
+                ", localidad='" + localidad + '\'' +
+                '}';
     }
 }
+
 
 
 

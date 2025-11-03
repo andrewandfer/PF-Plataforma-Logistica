@@ -1,11 +1,12 @@
 package PFPlataformaLogistica.model;
 
-public class   Administrador extends Persona{
-    private int sueldo ;
+public class Administrador extends Persona {
+    private int sueldo;
 
-    public Administrador(String nombre, String id, int sueldo, String) {
-        super(PersonaBuilder); 
-        this.sueldo = sueldo;
+    // Constructor protegido: recibe el Builder
+    protected Administrador(AdministradorBuilder builder) {
+        super(builder);
+        this.sueldo = builder.sueldo;
     }
 
     public int getSueldo() {
@@ -14,5 +15,25 @@ public class   Administrador extends Persona{
 
     public void setSueldo(int sueldo) {
         this.sueldo = sueldo;
+    }
+
+    // Builder específico para Administrador
+    public static class AdministradorBuilder extends Persona.PersonaBuilder<AdministradorBuilder> {
+        private int sueldo;
+
+        public AdministradorBuilder sueldo(int sueldo) {
+            this.sueldo = sueldo;
+            return self();
+        }
+
+        @Override
+        protected AdministradorBuilder self() {
+            return this;
+        }
+
+        @Override
+        public Administrador build() {
+            return new Administrador(this);
+        }
     }
 }
