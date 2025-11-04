@@ -84,6 +84,26 @@ public class Repartidor extends Persona {
         }
     }
 
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setDisponibilidad(boolean disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public void setZonaCobertura(String zonaCobertura) {
+        this.zonaCobertura = zonaCobertura;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public void setEnviosAsignados(List<Envio> enviosAsignados) {
+        this.enviosAsignados = enviosAsignados;
+    }
+
     @Override
     public String toString() {
         return "Repartidor{" +

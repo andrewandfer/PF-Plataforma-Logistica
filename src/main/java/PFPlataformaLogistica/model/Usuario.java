@@ -61,7 +61,7 @@ public class Usuario extends Persona {
         private String telefono;
         private String direccion;
         private LinkedList<String> listaDirecciones;
-        private Producto producto;
+        private LinkedList<Producto> listaProductos;
         private LinkedList<Envio> enviosPropios;
 
         public UsuarioBuilder correo(String correo) {
@@ -114,5 +114,17 @@ public class Usuario extends Persona {
                 ", telefono='" + telefono + '\'' +
                 ", direccion='" + direccion + '\'' +
                 '}';
+    }
+
+    public LinkedList<Envio> getEnviosPropios() {
+        return enviosPropios;
+    }
+
+    public LinkedList<Producto> getListaProductos() {
+        return listaProductos;
+    }
+
+    public void setListaProductos(LinkedList<Producto> listaProductos) {
+        this.listaProductos = listaProductos;
     }
 }
