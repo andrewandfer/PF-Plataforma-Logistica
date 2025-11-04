@@ -1,5 +1,11 @@
 package PFPlataformaLogistica.model;
 
+import PFPlataformaLogistica.dto.RepartidorDTO;
+import PFPlataformaLogistica.dto.UsuarioDTO;
+
+import java.util.LinkedList;
+import java.util.List;
+
 public final class Empresa {
     private String nombre;
     private static Empresa instancia;
@@ -112,6 +118,11 @@ public final class Empresa {
                 .enviosAsignados(dto.getEnviosAsignados())
                 .build();
 
+        if (listaRepartidores == null) {
+            listaRepartidores = new LinkedList<>();
+        }
+
+        listaRepartidores.add(nuevo);
     }
 
     public void eliminarRepartidor(String id) {

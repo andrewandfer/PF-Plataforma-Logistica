@@ -7,7 +7,7 @@ public class Usuario extends Persona {
     private String telefono;
     private String direccion;
     private LinkedList<String> listaDirecciones;
-    private Producto producto;
+    private LinkedList<Producto> listaProductos;
     private LinkedList<Envio> enviosPropios;
 
     // Constructor protegido: solo accesible por el builder
@@ -17,7 +17,7 @@ public class Usuario extends Persona {
         this.telefono = builder.telefono;
         this.direccion = builder.direccion;
         this.listaDirecciones = builder.listaDirecciones;
-        this.producto = builder.producto;
+        this.listaProductos = builder.listaProductos;
         this.enviosPropios = builder.enviosPropios;
     }
 
@@ -38,12 +38,7 @@ public class Usuario extends Persona {
         return listaDirecciones;
     }
 
-    public Producto getProducto() {
-        return producto;
-    }
-    public LinkedList<Envio> getEnviosPropios() {
-        return enviosPropios;
-    }
+
 
     public void setCorreo(String correo) {
         this.correo = correo;
@@ -52,7 +47,6 @@ public class Usuario extends Persona {
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
     public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
-    public void setProducto(Producto producto) { this.producto = producto; }
     public void setEnviosPropios(LinkedList<Envio> enviosPropios) { this.enviosPropios = enviosPropios; }
 
     // Builder interno
@@ -84,8 +78,8 @@ public class Usuario extends Persona {
             return self();
         }
 
-        public UsuarioBuilder producto(Producto producto) {
-            this.producto = producto;
+        public UsuarioBuilder listaProductos(LinkedList<Producto> listaProductos) {
+            this.listaProductos = listaProductos;
             return self();
         }
 
