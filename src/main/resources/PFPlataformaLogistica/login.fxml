@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.miempresa.logistica.ui.LoginController">
+<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.loginController">
 
     <children>
         <BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);                            -fx-padding: 0;">
@@ -35,8 +35,8 @@
 
                         <HBox spacing="10">
                             <children>
-                                <Button style="-fx-background-color: transparent;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-cursor: hand;" text="Ayuda" />
-                                <Button style="-fx-background-color: transparent;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-cursor: hand;" text="Contacto" />
+                                <Button fx:id="btnAyuda" onAction="#onAyuda" style="-fx-background-color: transparent;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-cursor: hand;" text="Ayuda" />
+                                <Button fx:id="btnContacto" onAction="#onContacto" style="-fx-background-color: transparent;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-cursor: hand;" text="Contacto" />
                             </children>
                         </HBox>
                     </children>
@@ -82,12 +82,12 @@
                                         </children>
                                     </HBox>
 
-                                    <Button fx:id="btnLogin" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                                                    -fx-text-fill: #FFFFFF;                                                    -fx-font-weight: bold;                                                    -fx-font-size: 15px;                                                    -fx-background-radius: 8;                                                    -fx-pref-width: 220;                                                    -fx-pref-height: 40;                                                    -fx-cursor: hand;                                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);" text="Iniciar sesión" />
+                                    <Button fx:id="btnLogin" onAction="#onIniciarSesion" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                                                    -fx-text-fill: #FFFFFF;                                                    -fx-font-weight: bold;                                                    -fx-font-size: 15px;                                                    -fx-background-radius: 8;                                                    -fx-pref-width: 220;                                                    -fx-pref-height: 40;                                                    -fx-cursor: hand;                                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);" text="Iniciar sesión" />
 
                                     <HBox alignment="CENTER" spacing="8">
                                         <children>
                                             <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="¿No tienes cuenta?" />
-                                            <Button style="-fx-background-color: #2196F3;                                                            -fx-text-fill: white;                                                            -fx-font-size: 13px;                                                            -fx-background-radius: 8;                                                            -fx-pref-height: 30;                                                            -fx-cursor: hand;" text="Crear cuenta" />
+                                            <Button fx:id="btnCrearCuenta" onAction="#onCrearCuenta" style="-fx-background-color: #2196F3;                                                            -fx-text-fill: white;                                                            -fx-font-size: 13px;                                                            -fx-background-radius: 8;                                                            -fx-pref-height: 30;                                                            -fx-cursor: hand;" text="Crear cuenta" />
                                         </children>
                                     </HBox>
                                 </children>

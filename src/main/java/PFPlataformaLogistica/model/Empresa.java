@@ -410,6 +410,16 @@ public final class Empresa {
 
     }
 
+                //inicializar datos
+
+    Usuario usuario1= new Usuario.UsuarioBuilder()
+            .telefono("314572026")
+            .nombre("juan")
+            .direccion("puerto espejo,mz 11,casa18")
+            .contrasena("fuanfokkusu")
+            .id("21534689")
+            .correo("juanfokkusu@gmail.com")
+            .build();
 
 }
 
