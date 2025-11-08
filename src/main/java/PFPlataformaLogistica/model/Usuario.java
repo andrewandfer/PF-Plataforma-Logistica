@@ -1,60 +1,124 @@
 package PFPlataformaLogistica.model;
+
 import java.util.LinkedList;
 
-public class Usuario extends Persona{
-
+public class Usuario extends Persona {
     private String correo;
     private String telefono;
     private String direccion;
     private LinkedList<String> listaDirecciones;
-    private Producto producto   ;
+    private LinkedList<Producto> listaProductos;
+    private LinkedList<Envio> enviosPropios;
 
-    public Usuario(String nombre, String id, String correo, String telefono, String direccion, LinkedList<String> listaDirecciones, Producto producto) {
-        super(nombre, id);
-        this.correo = correo;
-        this.telefono = telefono;
-        this.direccion = direccion;
-        this.listaDirecciones = listaDirecciones;
-        this.producto = producto;
+    // Constructor protegido: solo accesible por el builder
+    protected Usuario(UsuarioBuilder builder) {
+        super(builder);
+        this.correo = builder.correo;
+        this.telefono = builder.telefono;
+        this.direccion = builder.direccion;
+        this.listaDirecciones = builder.listaDirecciones;
+        this.listaProductos = builder.listaProductos;
+        this.enviosPropios = builder.enviosPropios;
     }
 
+    // Getters y setters
     public String getCorreo() {
         return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
     }
 
     public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
     public String getDireccion() {
         return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
     }
 
     public LinkedList<String> getListaDirecciones() {
         return listaDirecciones;
     }
 
-    public void setListaDirecciones(LinkedList<String> listaDirecciones) {
-        this.listaDirecciones = listaDirecciones;
+
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
+    public void setEnviosPropios(LinkedList<Envio> enviosPropios) { this.enviosPropios = enviosPropios; }
+
+    // Builder interno
+    public static class UsuarioBuilder extends Persona.PersonaBuilder<UsuarioBuilder> {
+        private String correo;
+        private String telefono;
+        private String direccion;
+        private LinkedList<String> listaDirecciones;
+        private LinkedList<Producto> listaProductos;
+        private LinkedList<Envio> enviosPropios;
+
+        public UsuarioBuilder correo(String correo) {
+            this.correo = correo;
+            return self();
+        }
+
+        public UsuarioBuilder telefono(String telefono) {
+            this.telefono = telefono;
+            return self();
+        }
+
+        public UsuarioBuilder direccion(String direccion) {
+            this.direccion = direccion;
+            return self();
+        }
+
+        public UsuarioBuilder listaDirecciones(LinkedList<String> listaDirecciones) {
+            this.listaDirecciones = listaDirecciones;
+            return self();
+        }
+
+        public UsuarioBuilder listaProductos(LinkedList<Producto> listaProductos) {
+            this.listaProductos = listaProductos;
+            return self();
+        }
+
+        public UsuarioBuilder enviosPropios(LinkedList<Envio> enviosPropios) {
+            this.enviosPropios = enviosPropios;
+            return self();
+        }
+
+        @Override
+        protected UsuarioBuilder self() {
+            return this;
+        }
+
+        @Override
+        public Usuario build() {
+            return new Usuario(this);
+        }
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "nombre='" + nombre + '\'' +
+                ", edad=" + edad +
+                ", correo='" + correo + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", direccion='" + direccion + '\'' +
+                '}';
+    }
+
+    public LinkedList<Envio> getEnviosPropios() {
+        return enviosPropios;
+    }
+
+    public LinkedList<Producto> getListaProductos() {
+        return listaProductos;
+    }
+
+    public void setListaProductos(LinkedList<Producto> listaProductos) {
+        this.listaProductos = listaProductos;
     }
 }
