@@ -2,11 +2,83 @@ package PFPlataformaLogistica.model;
 
 public class Persona {
     protected String nombre;
+    protected int edad;
+    protected String contrasena;
     protected String id;
+    protected String email;
 
-    public Persona(String nombre,String id ) {
+    // Constructor protegido para que solo el builder pueda usarlo
+    protected Persona(PersonaBuilder<?> builder) {
+        this.nombre = builder.nombre;
+        this.edad = builder.edad;
+        this.contrasena = builder.contrasena;
+        this.id= builder.id;
+        this.email=builder.email;
+    }
+
+    // Builder genérico (usa self-type para herencia fluida)
+    public static class PersonaBuilder<T extends PersonaBuilder<T>> {
+        private String nombre;
+        private int edad;
+        private String contrasena;
+        private String id;
+        private String email;
+
+        public T nombre(String nombre) {
+            this.nombre = nombre;
+            return self();
+        }
+
+        public T edad(int edad) {
+            this.edad = edad;
+            return self();
+        }
+
+        public T contrasena(String contrasena) {
+            this.contrasena = contrasena;
+            return self();
+        }
+        public T id(String id) {
+            this.id = id;
+            return self();
+        }
+        public T email(String email) {
+            this.email = email;
+            return self();
+        }
+
+        //método protegido para devolver el tipo correcto
+        protected T self() {
+            return (T) this;
+        }
+
+        public Persona build() {
+            return new Persona(this);
+        }
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
         this.nombre = nombre;
-        this.id = id;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public String getId() {
@@ -17,11 +89,11 @@ public class Persona {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getEmail() {
+        return email;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
