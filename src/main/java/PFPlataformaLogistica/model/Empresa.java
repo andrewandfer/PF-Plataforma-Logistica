@@ -10,23 +10,25 @@ public final class Empresa {
     private String nombre;
     private static Empresa instancia;
     private LinkedList<Repartidor> listaRepartidores;
-    private LinkedList<Administrador> listareAdministradores;
+    private LinkedList<Administrador> listaAdministradores;
     private LinkedList<Usuario> listaUsuarios;
     private LinkedList<Paquete> listaPaquetes;
     private LinkedList<Pago> listaPagos;
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
+    private LinkedList<Persona>listaPersonas;
 
 
     public Empresa() {
         this.nombre = "EnviosExpress";
         this.listaRepartidores = new LinkedList<>();
-        this.listareAdministradores = new LinkedList<>();
+        this.listaAdministradores = new LinkedList<>();
         this.listaUsuarios = new LinkedList<>();
         this.listaPaquetes = new LinkedList<>();
         this.listaPagos = new LinkedList<>();
         this.listaDirecciones = new LinkedList<>();
         this.listaEnvios = new LinkedList<>();
+        this.listaPersonas = new LinkedList<>();
     }
 
     public static Empresa getInstancia() {
@@ -45,12 +47,12 @@ public final class Empresa {
         this.listaRepartidores = listaRepartidores;
     }
 
-    public LinkedList<Administrador> getListareAdministradores() {
-        return listareAdministradores;
+    public LinkedList<Administrador> getListaAdministradores() {
+        return listaAdministradores;
     }
 
-    public void setListareAdministradores(LinkedList<Administrador> listareAdministradores) {
-        this.listareAdministradores = listareAdministradores;
+    public void setListaAdministradores(LinkedList<Administrador> listaAdministradores) {
+        this.listaAdministradores = listaAdministradores;
     }
 
     public LinkedList<Usuario> getListaUsuarios() {
@@ -106,6 +108,14 @@ public final class Empresa {
 
     public void setListaEnvios(LinkedList<Envio> listaEnvios) {
         this.listaEnvios = listaEnvios;
+    }
+
+    public LinkedList<Persona> getListaPersonas() {
+        return listaPersonas;
+    }
+
+    public void setListaPersonas(LinkedList<Persona> listaPersonas) {
+        this.listaPersonas = listaPersonas;
     }
 
     // Metodos Repartidor
@@ -224,7 +234,6 @@ public final class Empresa {
     public void crearUsuario(UsuarioDTO dto) {
         Usuario nuevo = new Usuario.UsuarioBuilder()
                 .telefono(dto.getTelefono())
-                .correo(dto.getCorreo())
                 .direccion(dto.getDireccion())
                 .listaDirecciones(dto.getListaDirecciones())
                 .listaProductos(dto.getListaProductos())
@@ -263,7 +272,7 @@ public final class Empresa {
             return;
         }
         for (Usuario usuario : listaUsuarios) {
-            if (usuario.getCorreo().equalsIgnoreCase(dto.getCorreo())) {
+            if (usuario.getEmail().equalsIgnoreCase(dto.getEmail())) {
                 usuario.setTelefono(dto.getTelefono());
                 usuario.setDireccion(dto.getDireccion());
                 usuario.setListaDirecciones(dto.getListaDirecciones());
@@ -272,11 +281,11 @@ public final class Empresa {
                 usuario.setNombre(dto.getNombre());
                 usuario.setEdad(dto.getEdad());
 
-                System.out.println("Usuario actualizado correctamente: " + dto.getCorreo());
+                System.out.println("Usuario actualizado correctamente: " + dto.getEmail());
                 return;
 
             }
-            System.out.println("No se encontró ningún usuario con el correo: " + dto.getCorreo());
+            System.out.println("No se encontró ningún usuario con el correo: " + dto.getEmail());
         }
     }
 
@@ -409,18 +418,6 @@ public final class Empresa {
         }
 
     }
-
-                //inicializar datos
-
-    Usuario usuario1= new Usuario.UsuarioBuilder()
-            .telefono("314572026")
-            .nombre("juan")
-            .direccion("puerto espejo,mz 11,casa18")
-            .contrasena("fuanfokkusu")
-            .id("21534689")
-            .correo("juanfokkusu@gmail.com")
-            .build();
-
 }
 
 

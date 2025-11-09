@@ -5,6 +5,7 @@ public class Persona {
     protected int edad;
     protected String contrasena;
     protected String id;
+    protected String email;
 
     // Constructor protegido para que solo el builder pueda usarlo
     protected Persona(PersonaBuilder<?> builder) {
@@ -12,6 +13,7 @@ public class Persona {
         this.edad = builder.edad;
         this.contrasena = builder.contrasena;
         this.id= builder.id;
+        this.email=builder.email;
     }
 
     // Builder genérico (usa self-type para herencia fluida)
@@ -20,6 +22,7 @@ public class Persona {
         private int edad;
         private String contrasena;
         private String id;
+        private String email;
 
         public T nombre(String nombre) {
             this.nombre = nombre;
@@ -37,6 +40,10 @@ public class Persona {
         }
         public T id(String id) {
             this.id = id;
+            return self();
+        }
+        public T email(String email) {
+            this.email = email;
             return self();
         }
 
@@ -80,5 +87,13 @@ public class Persona {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
