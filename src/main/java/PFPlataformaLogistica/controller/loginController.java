@@ -1,5 +1,6 @@
 package PFPlataformaLogistica.controller;
 
+import PFPlataformaLogistica.Utils.SceneManager;
 import PFPlataformaLogistica.model.*;
 import PFPlataformaLogistica.model.Usuario;
 import PFPlataformaLogistica.App;
@@ -49,7 +50,6 @@ public class loginController {
                 .email("calixto@gmail.com")
                 .build();
         Empresa.getInstance().getListaPersonas().add(usuario4);
-        System.out.println(empresa.getListaPersonas());
     }
 
 
@@ -67,8 +67,8 @@ public class loginController {
 
     @FXML
     void onCrearCuenta(ActionEvent event) {
-
-
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage,"registro.fxml");
     }
 
     @FXML

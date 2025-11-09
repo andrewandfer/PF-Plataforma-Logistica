@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="600" prefWidth="900"
-           style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
-           xmlns="http://javafx.com/javafx/23.0.1"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="PFPlataformaLogistica.controller.CrearCuentaController">
+<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.registroController">
 
     <children>
-        <BorderPane prefHeight="600" prefWidth="900"
-                    style="-fx-background-color: #FFFFFF;
-                           -fx-background-radius: 20;
-                           -fx-border-radius: 20;
-                           -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);">
+        <BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);">
 
             <!-- HEADER -->
             <top>
-                <HBox alignment="CENTER_LEFT" spacing="20"
-                      style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);
-                             -fx-background-radius: 20 20 0 0;
-                             -fx-padding: 15 30;">
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                              -fx-background-radius: 20 20 0 0;                              -fx-padding: 15 30;">
                     <children>
                         <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
                             <image>
-                                <Image url="@Imagenes/Logo.png"/>
+                                <Image url="@Imagenes/Logo.png" />
                             </image>
                         </ImageView>
-                        <Label style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;"
-                               text="Crear Cuenta"/>
-                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;" text="Crear Cuenta" />
+                        <Region HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </top>
@@ -40,71 +36,35 @@
             <center>
                 <StackPane style="-fx-padding: 40;">
                     <children>
-                        <VBox alignment="CENTER" spacing="18"
-                              style="-fx-background-color: #FFFFFF;
-                                     -fx-background-radius: 15;
-                                     -fx-padding: 40;
-                                     -fx-border-color: #EBEBEB;
-                                     -fx-border-radius: 15;
-                                     -fx-border-width: 1;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14, 0, 0, 8);">
+                        <VBox alignment="CENTER" spacing="18" style="-fx-background-color: #FFFFFF;                                      -fx-background-radius: 15;                                      -fx-padding: 40;                                      -fx-border-color: #EBEBEB;                                      -fx-border-radius: 15;                                      -fx-border-width: 1;                                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14, 0, 0, 8);">
 
-                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                   text="Regístrate"/>
+                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Regístrate" />
 
                             <!-- Campo Nombre -->
-                            <VBox spacing="4" alignment="CENTER_LEFT">
-                                <TextField fx:id="txtNombre" promptText="Nombre completo"
-                                           style="-fx-pref-width: 300; -fx-pref-height: 40;
-                                                  -fx-background-radius: 8; -fx-border-radius: 8;
-                                                  -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;
-                                                  -fx-font-size: 14px; -fx-text-fill: #333;"
-                                           onKeyReleased="#validarCampos"/>
-                                <Label fx:id="errorNombre" textFill="red" style="-fx-font-size: 11px;"/>
+                            <VBox alignment="CENTER_LEFT" spacing="4">
+                                <TextField fx:id="txtNombre" onKeyReleased="#validarCampos" promptText="Nombre completo" style="-fx-pref-width: 300; -fx-pref-height: 40;                                                   -fx-background-radius: 8; -fx-border-radius: 8;                                                   -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;                                                   -fx-font-size: 14px; -fx-text-fill: #333;" />
+                                <Label fx:id="errorNombre" style="-fx-font-size: 11px;" textFill="red" />
                             </VBox>
 
                             <!-- Campo Correo -->
-                            <VBox spacing="4" alignment="CENTER_LEFT">
-                                <TextField fx:id="txtCorreo" promptText="Correo electrónico"
-                                           style="-fx-pref-width: 300; -fx-pref-height: 40;
-                                                  -fx-background-radius: 8; -fx-border-radius: 8;
-                                                  -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;
-                                                  -fx-font-size: 14px; -fx-text-fill: #333;"
-                                           onKeyReleased="#validarCampos"/>
-                                <Label fx:id="errorCorreo" textFill="red" style="-fx-font-size: 11px;"/>
+                            <VBox alignment="CENTER_LEFT" spacing="4">
+                                <TextField fx:id="txtEmail" onKeyReleased="#validarCampos" promptText="Correo electrónico" style="-fx-pref-width: 300; -fx-pref-height: 40;                                                   -fx-background-radius: 8; -fx-border-radius: 8;                                                   -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;                                                   -fx-font-size: 14px; -fx-text-fill: #333;" />
+                                <Label fx:id="errorCorreo" style="-fx-font-size: 11px;" textFill="red" />
                             </VBox>
 
                             <!-- Campo Contraseña -->
-                            <VBox spacing="4" alignment="CENTER_LEFT">
-                                <PasswordField fx:id="txtContrasena" promptText="Contraseña"
-                                               style="-fx-pref-width: 300; -fx-pref-height: 40;
-                                                      -fx-background-radius: 8; -fx-border-radius: 8;
-                                                      -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;
-                                                      -fx-font-size: 14px; -fx-text-fill: #333;"
-                                               onKeyReleased="#validarCampos"/>
-                                <Label fx:id="errorContrasena" textFill="red" style="-fx-font-size: 11px;"/>
+                            <VBox alignment="CENTER_LEFT" spacing="4">
+                                <PasswordField fx:id="txtContrasena" onKeyReleased="#validarCampos" promptText="Contraseña" style="-fx-pref-width: 300; -fx-pref-height: 40;                                                       -fx-background-radius: 8; -fx-border-radius: 8;                                                       -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;                                                       -fx-font-size: 14px; -fx-text-fill: #333;" />
+                                <Label fx:id="errorContrasena" style="-fx-font-size: 11px;" textFill="red" />
                             </VBox>
 
                             <!-- Campo Edad -->
-                            <VBox spacing="4" alignment="CENTER_LEFT">
-                                <TextField fx:id="txtEdad" promptText="Edad"
-                                           style="-fx-pref-width: 300; -fx-pref-height: 40;
-                                                  -fx-background-radius: 8; -fx-border-radius: 8;
-                                                  -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;
-                                                  -fx-font-size: 14px; -fx-text-fill: #333;"
-                                           onKeyReleased="#validarCampos"/>
-                                <Label fx:id="errorEdad" textFill="red" style="-fx-font-size: 11px;"/>
+                            <VBox alignment="CENTER_LEFT" spacing="4">
+                                <TextField fx:id="txtEdad" onKeyReleased="#validarCampos" promptText="Edad" style="-fx-pref-width: 300; -fx-pref-height: 40;                                                   -fx-background-radius: 8; -fx-border-radius: 8;                                                   -fx-background-color: #F5F5F5; -fx-border-color: #EBEBEB;                                                   -fx-font-size: 14px; -fx-text-fill: #333;" />
+                                <Label fx:id="errorEdad" style="-fx-font-size: 11px;" textFill="red" />
                             </VBox>
 
-                            <Button fx:id="btnCrearCuenta" text="Crear cuenta"
-                                    style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);
-                                           -fx-text-fill: #FFFFFF;
-                                           -fx-font-weight: bold;
-                                           -fx-font-size: 15px;
-                                           -fx-background-radius: 8;
-                                           -fx-pref-width: 220;
-                                           -fx-pref-height: 40;
-                                           -fx-cursor: hand;"/>
+                            <Button fx:id="btnCrearCuenta" onAction="#OnCrearCuenta" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                                            -fx-text-fill: #FFFFFF;                                            -fx-font-weight: bold;                                            -fx-font-size: 15px;                                            -fx-background-radius: 8;                                            -fx-pref-width: 220;                                            -fx-pref-height: 40;                                            -fx-cursor: hand;" text="Crear cuenta" />
                         </VBox>
                     </children>
                 </StackPane>
@@ -112,22 +72,14 @@
 
             <!-- FOOTER -->
             <bottom>
-                <HBox alignment="CENTER_LEFT" spacing="20"
-                      style="-fx-padding: 12 30;
-                             -fx-background-color: #FFFFFF;
-                             -fx-border-color: #EBEBEB;
-                             -fx-border-width: 1 0 0 0;
-                             -fx-background-radius: 0 0 20 20;">
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 12 30;                              -fx-background-color: #FFFFFF;                              -fx-border-color: #EBEBEB;                              -fx-border-width: 1 0 0 0;                              -fx-background-radius: 0 0 20 20;">
                     <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;"
-                               text="© 2025 Envío Rápido"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;"
-                               text="Términos y Privacidad"/>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="btnTerminoYCondiciones" style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Términos y Privacidad" />
                     </children>
                 </HBox>
             </bottom>
         </BorderPane>
     </children>
 </StackPane>
-
