@@ -3,9 +3,8 @@ package PFPlataformaLogistica.model;
 import java.util.LinkedList;
 
 public class Usuario extends Persona {
-    private String correo;
     private String telefono;
-    private String direccion;
+    private Direccion direccion;
     private LinkedList<String> listaDirecciones;
     private LinkedList<Producto> listaProductos;
     private LinkedList<Envio> enviosPropios;
@@ -13,7 +12,6 @@ public class Usuario extends Persona {
     // Constructor protegido: solo accesible por el builder
     protected Usuario(UsuarioBuilder builder) {
         super(builder);
-        this.correo = builder.correo;
         this.telefono = builder.telefono;
         this.direccion = builder.direccion;
         this.listaDirecciones = builder.listaDirecciones;
@@ -22,15 +20,12 @@ public class Usuario extends Persona {
     }
 
     // Getters y setters
-    public String getCorreo() {
-        return correo;
-    }
 
     public String getTelefono() {
         return telefono;
     }
 
-    public String getDireccion() {
+    public Direccion getDireccion() {
         return direccion;
     }
 
@@ -38,37 +33,25 @@ public class Usuario extends Persona {
         return listaDirecciones;
     }
 
-
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
     public void setTelefono(String telefono) { this.telefono = telefono; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public void setDireccion(Direccion direccion) { this.direccion = direccion; }
     public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
     public void setEnviosPropios(LinkedList<Envio> enviosPropios) { this.enviosPropios = enviosPropios; }
 
     // Builder interno
     public static class UsuarioBuilder extends Persona.PersonaBuilder<UsuarioBuilder> {
-        private String correo;
         private String telefono;
-        private String direccion;
+        private Direccion direccion;
         private LinkedList<String> listaDirecciones;
         private LinkedList<Producto> listaProductos;
         private LinkedList<Envio> enviosPropios;
-
-        public UsuarioBuilder correo(String correo) {
-            this.correo = correo;
-            return self();
-        }
 
         public UsuarioBuilder telefono(String telefono) {
             this.telefono = telefono;
             return self();
         }
 
-        public UsuarioBuilder direccion(String direccion) {
+        public UsuarioBuilder direccion(Direccion direccion) {
             this.direccion = direccion;
             return self();
         }
@@ -104,7 +87,6 @@ public class Usuario extends Persona {
         return "Usuario{" +
                 "nombre='" + nombre + '\'' +
                 ", edad=" + edad +
-                ", correo='" + correo + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", direccion='" + direccion + '\'' +
                 '}';

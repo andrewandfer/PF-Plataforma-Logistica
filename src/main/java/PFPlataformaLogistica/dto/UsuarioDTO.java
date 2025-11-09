@@ -1,5 +1,6 @@
 package PFPlataformaLogistica.dto;
 
+import PFPlataformaLogistica.model.Direccion;
 import PFPlataformaLogistica.model.Producto;
 import PFPlataformaLogistica.model.Envio;
 
@@ -11,9 +12,9 @@ public class UsuarioDTO implements Serializable {
     private String nombre;
     private int edad;
     private String contrasena;
-    private String correo;
     private String telefono;
-    private String direccion;
+    private String email;
+    private Direccion direccion;
     private LinkedList<String> listaDirecciones;
     private LinkedList <Producto> listaProductos  ;
     private LinkedList<Envio> enviosPropios;
@@ -23,15 +24,15 @@ public class UsuarioDTO implements Serializable {
     }
 
     // Constructor con parámetros
-    public UsuarioDTO(String nombre, int edad, String contrasena, String correo,
-                      String telefono, String direccion,
+    public UsuarioDTO(String nombre, int edad, String contrasena,
+                      String telefono,String email, Direccion direccion,
                       LinkedList<String> listaDirecciones, LinkedList <Producto>listaProductos,
                       LinkedList<Envio> enviosPropios) {
         this.nombre = nombre;
         this.edad = edad;
         this.contrasena = contrasena;
-        this.correo = correo;
         this.telefono = telefono;
+        this.email = email;
         this.direccion = direccion;
         this.listaDirecciones = new LinkedList<>(listaDirecciones);
         this.listaProductos = new LinkedList<>();
@@ -63,14 +64,6 @@ public class UsuarioDTO implements Serializable {
         this.contrasena = contrasena;
     }
 
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
     public String getTelefono() {
         return telefono;
     }
@@ -79,11 +72,11 @@ public class UsuarioDTO implements Serializable {
         this.telefono = telefono;
     }
 
-    public String getDireccion() {
+    public Direccion getDireccion() {
         return direccion;
     }
 
-    public void setDireccion(String direccion) {
+    public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
     }
 
@@ -111,6 +104,13 @@ public class UsuarioDTO implements Serializable {
         this.enviosPropios = enviosPropios;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
 
 

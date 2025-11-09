@@ -52,12 +52,12 @@ public class Administrador extends Persona {
 
         public void crearUsuario(Usuario usuario) {
             listaUsuarios.add(usuario);
-            System.out.println("Usuario agregado correctamente: " + usuario.getCorreo());
+            System.out.println("Usuario agregado correctamente: " + usuario.getEmail());
         }
 
         public void actualizarUsuario(String correo, Usuario nuevoUsuario) {
             for (Usuario usuario : listaUsuarios) {
-                if (usuario.getCorreo().equalsIgnoreCase(correo)) {
+                if (usuario.getEmail().equalsIgnoreCase(correo)) {
                     int index = listaUsuarios.indexOf(usuario);
                     listaUsuarios.set(index, nuevoUsuario);
                     System.out.println("Usuario actualizado correctamente: " + correo);
@@ -70,7 +70,7 @@ public class Administrador extends Persona {
         public void eliminarUsuario(String correo) {
             Usuario usuarioAEliminar = null;
             for (Usuario usuario : listaUsuarios) {
-                if (usuario.getCorreo().equalsIgnoreCase(correo)) {
+                if (usuario.getEmail().equalsIgnoreCase(correo)) {
                     usuarioAEliminar = usuario;
                     break;
                 }
