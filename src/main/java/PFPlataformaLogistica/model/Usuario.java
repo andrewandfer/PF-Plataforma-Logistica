@@ -86,9 +86,9 @@ public class Usuario extends Persona {
     public String toString() {
         return "Usuario{" +
                 "nombre='" + nombre + '\'' +
-                ", edad=" + edad +
+                ", email='" + email + '\'' +
+                ", contrasena='" + contrasena + '\'' +
                 ", telefono='" + telefono + '\'' +
-                ", direccion='" + direccion + '\'' +
                 '}';
     }
 

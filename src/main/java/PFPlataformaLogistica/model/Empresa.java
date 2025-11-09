@@ -418,12 +418,6 @@ public final class Empresa {
         }
 
     }
-
-                //inicializar datos
-
-
-
-
 }
 
 

@@ -96,4 +96,14 @@ public class Administrador extends Persona {
 
         }
     }
+
+    @Override
+    public String toString() {
+        return "Administrador{" +
+                "nombre='" + nombre + '\'' +
+                ", contrasena='" + contrasena + '\'' +
+                ", id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
