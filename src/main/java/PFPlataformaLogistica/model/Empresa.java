@@ -3,6 +3,7 @@ package PFPlataformaLogistica.model;
 import PFPlataformaLogistica.dto.RepartidorDTO;
 import PFPlataformaLogistica.dto.UsuarioDTO;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -118,11 +119,21 @@ public final class Empresa {
         this.listaPersonas = listaPersonas;
     }
 
-    // Metodos Repartidor
+    //======================= Metodos Repartidor====================================
+
+
+    // RF-019: Registrar un nuevo repartidor
+    public void registrarRepartidor(Repartidor repartidor) {
+        if (listaRepartidores == null) listaRepartidores = new LinkedList<>();
+
+        listaRepartidores.add(repartidor);
+        System.out.println("Repartidor registrado correctamente: " + repartidor.getNombre());
+    }
+
     public void crearRepartidor(RepartidorDTO dto) {
         Repartidor nuevo = new Repartidor.RepartidorBuilder()
                 .telefono(dto.getTelefono())
-                .disponibilidad(dto.isDisponibilidad())
+                .disponibilidad(dto.getDisponibilidad())
                 .zonaCobertura(dto.getZonaCobertura())
                 .localidad(dto.getLocalidad())
                 .enviosAsignados(dto.getEnviosAsignados())
@@ -134,6 +145,8 @@ public final class Empresa {
 
         listaRepartidores.add(nuevo);
     }
+
+    // RF-019: Eliminar repartidor
 
     public void eliminarRepartidor(String id) {
         Repartidor repartidorAEliminar = null;
@@ -159,7 +172,7 @@ public final class Empresa {
         }
         for (Repartidor repartidor : listaRepartidores) {
             if (repartidor.getId().equalsIgnoreCase(dto.getId())) {
-                repartidor.setDisponibilidad(dto.isDisponibilidad());
+                repartidor.setDisponibilidad(dto.getDisponibilidad());
                 repartidor.setZonaCobertura(dto.getZonaCobertura());
                 repartidor.setLocalidad(dto.getLocalidad());
                 repartidor.setEnviosAsignados(dto.getEnviosAsignados());
@@ -179,7 +192,7 @@ public final class Empresa {
     }
 
 
-    public Repartidor actualizarEstadoRepartidor(String Id, boolean nuevaDisponibilidad) {
+    public Repartidor actualizarEstadoRepartidor(String Id, EstadoRepartidor nuevaDisponibilidad) {
         if (listaRepartidores == null || listaRepartidores.isEmpty()) {
             System.out.println("No hay repartidores registrados.");
             return null;
@@ -196,6 +209,30 @@ public final class Empresa {
         System.out.println("No se encontró un repartidor con el teléfono: " + Id);
         return null;
     }
+
+    // RF-019: Consultar un repartidor por su documento
+    public Repartidor buscarRepartidor(String documento) {
+        if (listaRepartidores != null) {
+            for (Repartidor r : listaRepartidores) {
+                if (r.getId().equals(documento)) {
+                    return r;
+                }
+            }
+        }
+        return null;
+    }
+
+    // RF-019: Listar todos los repartidores registrados
+    public void listarRepartidores() {
+        System.out.println(" Lista de repartidores registrados:");
+        if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            System.out.println("No hay repartidores registrados.");
+        } else {
+            listaRepartidores.forEach(r -> System.out.println(" - " + r));
+        }
+    }
+
+
 
 
     //Metodos Administrador

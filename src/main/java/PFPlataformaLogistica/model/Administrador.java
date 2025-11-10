@@ -19,12 +19,10 @@ public class Administrador extends Persona {
         this.listaRepartidores = new LinkedList<>();
     }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
     /**
      * Obtiene el sueldo del administrador.
      * @return el sueldo del administrador.
      */
-/* <<<<<<<<<<  7eef90a7-9c76-4b39-ace2-51e682df0dff  >>>>>>>>>>> */
     public int getSueldo() {
         return sueldo;
     }
@@ -51,49 +49,17 @@ public class Administrador extends Persona {
      */
     public void crearUsuario(Usuario usuario) {
         listaUsuarios.add(usuario);
-        System.out.println("Usuario agregado correctamente: " + usuario.getCorreo());
+        System.out.println("Usuario agregado correctamente: " + usuario.getId());
     }
 
 /* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
-    /**
-     * Actualiza un usuario en la lista de usuarios registrados en la empresa.
-     * @param correo El correo del usuario a actualizar.
-     * @param nuevoUsuario El nuevo usuario a agregar en la lista.
-     */
+
 /* <<<<<<<<<<  7961ec38-ad89-4861-ac5c-5d7f2eb5b329  >>>>>>>>>>> */
-    public void actualizarUsuario(String correo, Usuario nuevoUsuario) {
-        for (Usuario usuario : listaUsuarios) {
-            if (usuario.getid().equalsIgnoreCase(correo)) {
-                int index = listaUsuarios.indexOf(usuario);
-                listaUsuarios.set(index, nuevoUsuario);
-                System.out.println("Usuario actualizado correctamente: " + correo);
-                return;
-            }
-        }
-        System.out.println(" Usuario no encontrado: " + correo);
-    }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
-    /**
-     * Elimina un usuario de la lista de usuarios registrados en la empresa.
-     * Si el usuario no existe, se muestra un mensaje indicando esto.
-     * @param correo correo del usuario a eliminar
-     */
+
 /* <<<<<<<<<<  6729f8ad-560f-470a-a312-a05f72ec263a  >>>>>>>>>>> */
-    public void eliminarUsuario(String correo) {
-        Usuario usuarioAEliminar = null;
-        for (Usuario usuario : listaUsuarios) {
-            if (usuario.getCorreo().equalsIgnoreCase(correo)) {
-                usuarioAEliminar = usuario;
-                break;
-            }
-        }
-        if (usuarioAEliminar != null) {
-            listaUsuarios.remove(usuarioAEliminar);
-            System.out.println("Usuario eliminado: " + correo);
-        } else {
-            System.out.println("Usuario no encontrado: " + correo);
-        }
+    public void eliminarUsuario(String id) {
+
     }
 
 /* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
