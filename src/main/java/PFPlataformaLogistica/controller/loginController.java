@@ -1,8 +1,8 @@
 package PFPlataformaLogistica.controller;
 
+import PFPlataformaLogistica.Utils.SceneManager;
+import PFPlataformaLogistica.Utils.SesionManager;
 import PFPlataformaLogistica.model.*;
-import PFPlataformaLogistica.model.Usuario;
-import PFPlataformaLogistica.App;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,24 +14,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import javax.swing.*;
 import java.io.IOException;
 
 public class loginController {
     Empresa empresa;
 
     @FXML
-    private Button btnAyuda;
-
-    @FXML
-    private Button btnContacto;
-
-    @FXML
-    private Button btnCrearCuenta;
-
-    @FXML
-    private Button btnLogin;
+    private Button btnAyuda, btnContacto, btnCrearCuenta, btnLogin;
 
     @FXML
     private PasswordField txtContrasena;
@@ -42,33 +31,23 @@ public class loginController {
     @FXML
     private void initialize() {
         empresa = Empresa.getInstance();
-        Usuario usuario4= new Usuario.UsuarioBuilder()
+
+        Usuario usuario4 = new Usuario.UsuarioBuilder()
                 .telefono("3148676404")
                 .nombre("carlos")
                 .contrasena("carlitos")
                 .email("calixto@gmail.com")
                 .build();
-        Empresa.getInstance().getListaPersonas().add(usuario4);
-        System.out.println(empresa.getListaPersonas());
-    }
 
-
-        @FXML
-    void onAyuda(ActionEvent event) {
-
-
-
-    }
-
-    @FXML
-    void onContacto(ActionEvent event) {
-
+        if (empresa.getListaPersonas().stream().noneMatch(p -> p.getEmail().equals("calixto@gmail.com"))) {
+            empresa.getListaPersonas().add(usuario4);
+        }
     }
 
     @FXML
     void onCrearCuenta(ActionEvent event) {
-
-
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "registro.fxml");
     }
 
     @FXML
@@ -76,57 +55,40 @@ public class loginController {
         String correo = txtCorreo.getText();
         String contrasena = txtContrasena.getText();
 
-        if (correo.isEmpty() && contrasena.isEmpty()) {
+        if (correo.isEmpty() || contrasena.isEmpty()) {
             mostrarAlerta("Advertencia", "Debe llenar todos los campos.");
             return;
         }
 
-        if (correo.isEmpty()) {
-            mostrarAlerta("Advertencia", "El campo correo está vacío.");
-            return;
-        }
+        for (Persona persona : empresa.getListaPersonas()) {
+            if (persona.getEmail() != null && persona.getContrasena() != null &&
+                    persona.getEmail().equals(correo) && persona.getContrasena().equals(contrasena)) {
 
-        if (contrasena.isEmpty()) {
-            mostrarAlerta("Advertencia", "El campo contraseña está vacío.");
-            return;
-        }
-        for (Persona persona: empresa.getListaPersonas()) {
-            if (persona.getEmail() != null && persona.getContrasena() != null) {
-                if (persona.getEmail().equals(correo) && persona.getContrasena().equals(contrasena)) {
-                    if (persona instanceof Administrador) {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/PFPlataformaLogistica/prueba.fxml"
-                        ));
-                        Parent root = loader.load();
-                        // Obtener la ventana actual (Stage) y reemplazar la escena
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                        return;
+                SesionManager.iniciarSesion(persona);
 
-                    }
-                    if (persona instanceof Usuario) {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/PFPlataformaLogistica/prueba.fxml"));
-                        Parent root = loader.load();
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                        return;
-                    }
-                    if (persona instanceof Repartidor) {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/PFPlataformaLogistica/prueba.fxml"));
-                        Parent root = loader.load();
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                        return;
-                    }
+                String vistaDestino = null;
+
+                if (persona instanceof Administrador) {
+                    vistaDestino = "/PFPlataformaLogistica/prueba.fxml";
+                } else if (persona instanceof Usuario) {
+                    vistaDestino = "/PFPlataformaLogistica/UsuarioView.fxml";
+                } else if (persona instanceof Repartidor) {
+                    vistaDestino = "/PFPlataformaLogistica/prueba.fxml";
                 }
+
+                if (vistaDestino != null) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource(vistaDestino));
+                    Parent root = loader.load();
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.show();
+                }
+                return;
             }
         }
 
-
+        mostrarAlerta("Error", "Correo o contraseña incorrectos, amor.");
     }
-
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -136,8 +98,10 @@ public class loginController {
         alert.showAndWait();
     }
 
+    public void onAyuda(ActionEvent event) {
+    }
 
+    public void onContacto(ActionEvent event) {
+
+    }
 }
-
-
-

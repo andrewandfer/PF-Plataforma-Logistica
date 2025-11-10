@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.PerfilController">
+
+    <children>
+        <BorderPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);">
+
+            <!-- HEADER -->
+            <top>
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7); -fx-background-radius: 20 20 0 0; -fx-padding: 15 30;">
+                    <children>
+                        <ImageView fitHeight="50" fitWidth="50" preserveRatio="true">
+                            <image>
+                                <Image url="@Imagenes/Logo.png" />
+                            </image>
+                        </ImageView>
+                        <Label style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;" text="Gestión de Perfil" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnCerrarSesion" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Cerrar sesión" />
+                    </children>
+                </HBox>
+            </top>
+
+            <!-- CENTRO -->
+            <center>
+                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 40;">
+                    <Label style="-fx-font-size: 18px; -fx-text-fill: #1976D2; -fx-font-weight: bold;" text="Editar información del usuario" />
+
+                    <TextField fx:id="txtNombre" promptText="Nombre completo" style="-fx-pref-width: 300; -fx-background-color: #F5F5F5; -fx-background-radius: 8; -fx-border-color: #EBEBEB;" />
+
+                    <TextField fx:id="txtEmail" promptText="Correo electrónico" style="-fx-pref-width: 300; -fx-background-color: #F5F5F5; -fx-background-radius: 8; -fx-border-color: #EBEBEB;" />
+
+                    <TextField fx:id="txtTelefono" promptText="Teléfono" style="-fx-pref-width: 300; -fx-background-color: #F5F5F5; -fx-background-radius: 8; -fx-border-color: #EBEBEB;" />
+
+                    <TextField fx:id="txtEdad" promptText="Edad" style="-fx-pref-width: 300; -fx-background-color: #F5F5F5; -fx-background-radius: 8; -fx-border-color: #EBEBEB;" />
+
+                    <HBox alignment="CENTER" spacing="10" />
+
+                    <Button fx:id="btnActualizar" onAction="#OnActualizarUsuario" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-width: 250; -fx-pref-height: 40;" text="Guardar cambios" />
+                </VBox>
+            </center>
+
+            <!-- FOOTER -->
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 12 30; -fx-background-color: #FFFFFF; -fx-border-color: #EBEBEB; -fx-border-width: 1 0 0 0;">
+                    <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Términos y Privacidad" />
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </children>
+</StackPane>

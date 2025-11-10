@@ -312,11 +312,9 @@ public final class Empresa {
             if (usuario.getEmail().equalsIgnoreCase(dto.getEmail())) {
                 usuario.setTelefono(dto.getTelefono());
                 usuario.setDireccion(dto.getDireccion());
-                usuario.setListaDirecciones(dto.getListaDirecciones());
-                usuario.setListaProductos(dto.getListaProductos());
-                usuario.setEnviosPropios(dto.getEnviosPropios());
                 usuario.setNombre(dto.getNombre());
                 usuario.setEdad(dto.getEdad());
+                usuario.setEmail(dto.getEmail());
 
                 System.out.println("Usuario actualizado correctamente: " + dto.getEmail());
                 return;
