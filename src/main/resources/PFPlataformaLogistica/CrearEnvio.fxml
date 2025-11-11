@@ -3,10 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <StackPane prefHeight="750" prefWidth="1000" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
-           xmlns="http://javafx.com/javafx"
+           xmlns="http://javafx.com/javafx/20.0.2"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="PFPlataformaLogistica.controller.CrearEnvioController">
 
@@ -29,7 +28,7 @@
                     <children>
                         <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
                             <image>
-                                <Image url="@/PFPlataformaLogistica/Imagenes/Logo.png" />
+                                <Image url="@Imagenes/Logo.png" />
                             </image>
                         </ImageView>
 
@@ -124,118 +123,116 @@
                         <!-- FORMULARIO -->
                         <ScrollPane fitToWidth="true"
                                     style="-fx-background-color: transparent; -fx-background: transparent;">
-                            <content>
-                                <VBox prefWidth="720" spacing="20"
-                                      style="-fx-background-color: #FFFFFF; -fx-padding: 30;">
-                                    <children>
+                            <VBox prefWidth="720" spacing="20"
+                                  style="-fx-background-color: #FFFFFF; -fx-padding: 30;">
+                                <children>
 
-                                        <!-- Información del Paquete -->
-                                        <VBox spacing="15"
-                                              style="-fx-background-color: #FAFAFA;
+                                    <!-- Información del Paquete -->
+                                    <VBox spacing="15"
+                                          style="-fx-background-color: #FAFAFA;
+                                                 -fx-background-radius: 12;
+                                                 -fx-padding: 20;
+                                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                               text="📋 Información del Paquete" />
+                                        <Separator style="-fx-background-color: #BBDEFB;" />
+
+                                        <GridPane hgap="15" vgap="12">
+                                            <Label text="Descripción:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                                   style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtDescripcion" promptText="Ej: Documentos, Electrónica..."
+                                                       GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"
+                                                       style="-fx-background-radius: 8;" prefWidth="400"/>
+
+                                            <Label text="Peso (kg):" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                                   style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtPeso" promptText="Ej: 2.5"
+                                                       GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                                       style="-fx-background-radius: 8;" prefWidth="120"/>
+
+                                            <Label text="Volumen (m³):" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                                                   style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtVolumen" promptText="Ej: 0.5"
+                                                       GridPane.columnIndex="3" GridPane.rowIndex="1"
+                                                       style="-fx-background-radius: 8;" prefWidth="120"/>
+
+                                            <Label text="Tipo de Envío:" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                                                   style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
+                                            <ComboBox fx:id="cbTipoEnvio" prefWidth="200"
+                                                      GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                                      style="-fx-background-radius: 8;"/>
+                                        </GridPane>
+                                    </VBox>
+
+                                    <!-- Direcciones -->
+                                    <HBox spacing="15">
+                                        <!-- Origen -->
+                                        <VBox spacing="12" HBox.hgrow="ALWAYS"
+                                              style="-fx-background-color: #E3F2FD;
                                                      -fx-background-radius: 12;
                                                      -fx-padding: 20;
                                                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
-                                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                                   text="📋 Información del Paquete" />
-                                            <Separator style="-fx-background-color: #BBDEFB;" />
-
-                                            <GridPane hgap="15" vgap="12">
-                                                <Label text="Descripción:" GridPane.columnIndex="0" GridPane.rowIndex="0"
-                                                       style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtDescripcion" promptText="Ej: Documentos, Electrónica..."
-                                                           GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3"
-                                                           style="-fx-background-radius: 8;" prefWidth="400"/>
-
-                                                <Label text="Peso (kg):" GridPane.columnIndex="0" GridPane.rowIndex="1"
-                                                       style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtPeso" promptText="Ej: 2.5"
-                                                           GridPane.columnIndex="1" GridPane.rowIndex="1"
-                                                           style="-fx-background-radius: 8;" prefWidth="120"/>
-
-                                                <Label text="Volumen (m³):" GridPane.columnIndex="2" GridPane.rowIndex="1"
-                                                       style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtVolumen" promptText="Ej: 0.5"
-                                                           GridPane.columnIndex="3" GridPane.rowIndex="1"
-                                                           style="-fx-background-radius: 8;" prefWidth="120"/>
-
-                                                <Label text="Tipo de Envío:" GridPane.columnIndex="0" GridPane.rowIndex="2"
-                                                       style="-fx-font-size: 13px; -fx-text-fill: #666;"/>
-                                                <ComboBox fx:id="cbTipoEnvio" prefWidth="200"
-                                                          GridPane.columnIndex="1" GridPane.rowIndex="2"
-                                                          style="-fx-background-radius: 8;"/>
-                                            </GridPane>
+                                            <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                                   text="📍 Origen" />
+                                            <Label text="Calle:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtOrigenCalle" promptText="Ej: Cra 15 #45-67"
+                                                       style="-fx-background-radius: 8;"/>
+                                            <Label text="Ciudad:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtOrigenCiudad" promptText="Ej: Armenia"
+                                                       style="-fx-background-radius: 8;"/>
                                         </VBox>
 
-                                        <!-- Direcciones -->
-                                        <HBox spacing="15">
-                                            <!-- Origen -->
-                                            <VBox spacing="12" HBox.hgrow="ALWAYS"
-                                                  style="-fx-background-color: #E3F2FD;
-                                                         -fx-background-radius: 12;
-                                                         -fx-padding: 20;
-                                                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
-                                                <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                                       text="📍 Origen" />
-                                                <Label text="Calle:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtOrigenCalle" promptText="Ej: Cra 15 #45-67"
-                                                           style="-fx-background-radius: 8;"/>
-                                                <Label text="Ciudad:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtOrigenCiudad" promptText="Ej: Armenia"
-                                                           style="-fx-background-radius: 8;"/>
-                                            </VBox>
-
-                                            <!-- Destino -->
-                                            <VBox spacing="12" HBox.hgrow="ALWAYS"
-                                                  style="-fx-background-color: #FFF3E0;
-                                                         -fx-background-radius: 12;
-                                                         -fx-padding: 20;
-                                                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
-                                                <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #F57C00;"
-                                                       text="📍 Destino" />
-                                                <Label text="Calle:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtDestinoCalle" promptText="Ej: Av 10 #23-89"
-                                                           style="-fx-background-radius: 8;"/>
-                                                <Label text="Ciudad:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
-                                                <TextField fx:id="txtDestinoCiudad" promptText="Ej: Pereira"
-                                                           style="-fx-background-radius: 8;"/>
-                                            </VBox>
-                                        </HBox>
-
-                                        <!-- Servicios Adicionales -->
-                                        <VBox spacing="12"
-                                              style="-fx-background-color: #FAFAFA;
+                                        <!-- Destino -->
+                                        <VBox spacing="12" HBox.hgrow="ALWAYS"
+                                              style="-fx-background-color: #FFF3E0;
                                                      -fx-background-radius: 12;
                                                      -fx-padding: 20;
                                                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
-                                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                                   text="⭐ Servicios Adicionales" />
-                                            <Separator style="-fx-background-color: #BBDEFB;" />
-
-                                            <CheckBox fx:id="chkSeguro" text="Seguro (+ $3,000)"
-                                                      style="-fx-font-size: 13px;"/>
-                                            <CheckBox fx:id="chkFragil" text="Paquete Frágil (+ $2,000)"
-                                                      style="-fx-font-size: 13px;"/>
-                                            <CheckBox fx:id="chkFirmaRequerida" text="Firma Requerida (+ $1,500)"
-                                                      style="-fx-font-size: 13px;"/>
-                                            <CheckBox fx:id="chkPrioridad" text="Entrega Prioritaria (+ $5,000)"
-                                                      style="-fx-font-size: 13px;"/>
+                                            <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #F57C00;"
+                                                   text="📍 Destino" />
+                                            <Label text="Calle:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtDestinoCalle" promptText="Ej: Av 10 #23-89"
+                                                       style="-fx-background-radius: 8;"/>
+                                            <Label text="Ciudad:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                                            <TextField fx:id="txtDestinoCiudad" promptText="Ej: Pereira"
+                                                       style="-fx-background-radius: 8;"/>
                                         </VBox>
+                                    </HBox>
 
-                                        <!-- Botón Limpiar -->
-                                        <HBox alignment="CENTER">
-                                            <Button text="🗑️ Limpiar Formulario" onAction="#limpiarFormulario"
-                                                    style="-fx-background-color: transparent;
-                                                           -fx-text-fill: #666;
-                                                           -fx-cursor: hand;
-                                                           -fx-border-color: #BBDEFB;
-                                                           -fx-border-radius: 8;
-                                                           -fx-background-radius: 8;
-                                                           -fx-padding: 8 20;" />
-                                        </HBox>
+                                    <!-- Servicios Adicionales -->
+                                    <VBox spacing="12"
+                                          style="-fx-background-color: #FAFAFA;
+                                                 -fx-background-radius: 12;
+                                                 -fx-padding: 20;
+                                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                               text="⭐ Servicios Adicionales" />
+                                        <Separator style="-fx-background-color: #BBDEFB;" />
 
-                                    </children>
-                                </VBox>
-                            </content>
+                                        <CheckBox fx:id="chkSeguro" text="🛡️ Seguro (+ $3,000)"
+                                                  style="-fx-font-size: 14px; -fx-text-fill: #333;"/>
+                                        <CheckBox fx:id="chkFragil" text="📦 Paquete Frágil (+ $2,000)"
+                                                  style="-fx-font-size: 14px; -fx-text-fill: #333;"/>
+                                        <CheckBox fx:id="chkFirmaRequerida" text="✍️ Firma Requerida (+ $1,500)"
+                                                  style="-fx-font-size: 14px; -fx-text-fill: #333;"/>
+                                        <CheckBox fx:id="chkPrioridad" text="⚡ Entrega Prioritaria (+ $5,000)"
+                                                  style="-fx-font-size: 14px; -fx-text-fill: #333;"/>
+                                    </VBox>
+
+                                    <!-- Botón Limpiar -->
+                                    <HBox alignment="CENTER">
+                                        <Button text="🗑️ Limpiar Formulario" onAction="#limpiarFormulario"
+                                                style="-fx-background-color: transparent;
+                                                       -fx-text-fill: #666;
+                                                       -fx-cursor: hand;
+                                                       -fx-border-color: #BBDEFB;
+                                                       -fx-border-radius: 8;
+                                                       -fx-background-radius: 8;
+                                                       -fx-padding: 8 20;" />
+                                    </HBox>
+
+                                </children>
+                            </VBox>
                         </ScrollPane>
 
                     </children>

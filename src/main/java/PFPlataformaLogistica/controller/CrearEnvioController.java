@@ -77,7 +77,6 @@ public class CrearEnvioController implements Initializable {
             // Obtener datos
             float peso = Float.parseFloat(txtPeso.getText());
             float volumen = Float.parseFloat(txtVolumen.getText());
-            boolean esPrioritario = chkPrioridad.isSelected();
 
             // Calcular distancia simulada (entre 5 y 50 km)
             float distancia = (float) (Math.random() * 45 + 5);
@@ -87,33 +86,57 @@ public class CrearEnvioController implements Initializable {
             float costoPorKm = distancia * 500;
             float costoPorKg = peso * 300;
             float costoPorVolumen = volumen * 100;
-            float recargoPrioridad = esPrioritario ? 5000 : 0;
 
-            // Servicios adicionales
+            float costoBase = tarifaBase + costoPorKm + costoPorKg + costoPorVolumen;
+
+            // ========== USAR DECORATOR (NUEVO) ==========
+            ServicioEnvio servicio = new EnvioBasico(costoBase, "Envío Estándar");
+
+            // Aplicar decoradores según los checkboxes seleccionados
             float recargos = 0;
-            if (chkSeguro.isSelected()) recargos += 3000;
-            if (chkFragil.isSelected()) recargos += 2000;
-            if (chkFirmaRequerida.isSelected()) recargos += 1500;
 
-            float costoTotal = tarifaBase + costoPorKm + costoPorKg + costoPorVolumen + recargoPrioridad + recargos;
+            if (chkSeguro.isSelected()) {
+                servicio = new SeguroDecorator(servicio);
+                recargos += 3000;
+            }
+
+            if (chkFragil.isSelected()) {
+                servicio = new FragilDecorator(servicio);
+                recargos += 2000;
+            }
+
+            if (chkFirmaRequerida.isSelected()) {
+                servicio = new FirmaDecorator(servicio);
+                recargos += 1500;
+            }
+
+            if (chkPrioridad.isSelected()) {
+                servicio = new PrioridadDecorator(servicio);
+                recargos += 5000;
+            }
+
+            // Calcular costo total usando el decorator
+            float costoTotal = servicio.calcularCosto();
 
             // Crear objeto Tarifa
             tarifaCalculada = new Tarifa(tarifaBase, costoPorKg, costoPorVolumen,
-                    esPrioritario ? 1 : 0, recargos);
+                    chkPrioridad.isSelected() ? 1 : 0, recargos);
 
             // Actualizar labels
             lblTarifaBase.setText(String.format("$%.2f", tarifaBase + costoPorKm));
             lblCostoPeso.setText(String.format("$%.2f", costoPorKg));
             lblCostoVolumen.setText(String.format("$%.2f", costoPorVolumen));
-            lblRecargos.setText(String.format("$%.2f", recargoPrioridad + recargos));
+            lblRecargos.setText(String.format("$%.2f", recargos));
             lblCostoEstimado.setText(String.format("$%.2f", costoTotal));
 
             // Habilitar botón de crear envío
             btnCrearEnvio.setDisable(false);
 
+            // Mostrar alerta con descripción completa usando decorator
             mostrarAlerta("Cotización Exitosa",
-                    String.format("El costo estimado de tu envío es: $%.2f\nDistancia aproximada: %.1f km",
-                            costoTotal, distancia),
+                    servicio.obtenerDescripcion() + "\n\n" +
+                            String.format("Costo Total: $%.2f\nDistancia aproximada: %.1f km",
+                                    costoTotal, distancia),
                     Alert.AlertType.INFORMATION);
 
         } catch (NumberFormatException e) {
