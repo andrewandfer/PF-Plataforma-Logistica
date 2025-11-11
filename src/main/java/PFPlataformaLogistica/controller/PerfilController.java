@@ -49,7 +49,7 @@ public class PerfilController {
                 txtEdad.setText(String.valueOf(usuarioActual.getEdad()));
             }
         } else {
-            System.out.println("⚠ No hay sesión activa, amor.");
+            System.out.println("⚠ No hay sesión activa");
         }
     }
 
@@ -58,16 +58,19 @@ public class PerfilController {
         if (usuarioActual != null) {
             if (!txtNombre.getText().isEmpty()) usuarioActual.setNombre(txtNombre.getText());
             if (!txtEmail.getText().isEmpty()) usuarioActual.setEmail(txtEmail.getText());
+            if (usuarioActual instanceof Usuario) {
+                if (!txtTelefono.getText().isEmpty())((Usuario) usuarioActual).setTelefono(txtTelefono.getText());
+            }
             try {
                 int edad = Integer.parseInt(txtEdad.getText());
                 usuarioActual.setEdad(edad);
             } catch (NumberFormatException e) {
-                System.out.println("⚠ Edad no válida o vacía, no se actualizó, amor.");
+                System.out.println("⚠ Edad no válida o vacía, no se actualizó");
             }
 
-            System.out.println("✅ Datos actualizados para " + usuarioActual.getNombre() + ", amor.");
+            System.out.println("✅ Datos actualizados para " + usuarioActual.getNombre());
         } else {
-            System.out.println("⚠ No hay usuario logueado, amor.");
+            System.out.println("⚠ No hay usuario logueado");
         }
     }
 
@@ -75,7 +78,7 @@ public class PerfilController {
 
     void OnBack(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "registro.fxml");
+        SceneManager.cambiarEscena(stage, "UsuarioView.fxml");
     }
 
 }

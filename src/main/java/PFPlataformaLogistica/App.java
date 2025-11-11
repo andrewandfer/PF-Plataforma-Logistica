@@ -58,6 +58,12 @@ public class App extends Application {
                 .contrasena("cyreneida")
                 .build();
         Empresa.getInstance().getListaPersonas().add(repartidor);
+
+        Usuario usuario= new Usuario.UsuarioBuilder()
+                .email("cyrene")
+                .contrasena("cyrene")
+                .build();
+        Empresa.getInstance().getListaPersonas().add(usuario);
     }
 
 

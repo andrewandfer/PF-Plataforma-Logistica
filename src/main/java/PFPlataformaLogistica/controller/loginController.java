@@ -87,7 +87,7 @@ public class loginController {
             }
         }
 
-        mostrarAlerta("Error", "Correo o contraseña incorrectos, amor.");
+        mostrarAlerta("Error", "Correo o contraseña incorrectos");
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

@@ -33,6 +33,7 @@ public class Usuario extends Persona {
         return listaDirecciones;
     }
 
+
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public void setDireccion(Direccion direccion) { this.direccion = direccion; }
     public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
