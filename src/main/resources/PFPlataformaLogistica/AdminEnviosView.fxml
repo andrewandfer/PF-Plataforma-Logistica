@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefHeight="750" prefWidth="1200" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
+           xmlns="http://javafx.com/javafx/20.0.2"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="PFPlataformaLogistica.controller.AdminEnviosController">
+
+    <children>
+        <BorderPane prefHeight="750" prefWidth="1200"
+                    style="-fx-background-color: #FFFFFF;
+                           -fx-background-radius: 20;
+                           -fx-border-radius: 20;
+                           -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);
+                           -fx-padding: 0;">
+
+            <!-- HEADER -->
+            <top>
+                <HBox alignment="CENTER_LEFT" spacing="20"
+                      style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);
+                             -fx-background-radius: 20 20 0 0;
+                             -fx-padding: 15 30;
+                             -fx-pref-height: 70;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+                    <children>
+                        <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
+                            <image>
+                                <Image url="@Imagenes/Logo.png" />
+                            </image>
+                        </ImageView>
+
+                        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
+                               text="👨‍💼 Gestión de Envíos - Administrador" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="btnActualizar" text="🔄 Actualizar" onAction="#actualizarTabla"
+                                style="-fx-background-color: white;
+                                       -fx-text-fill: #1976D2;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 8;
+                                       -fx-cursor: hand;
+                                       -fx-padding: 8 15;" />
+
+                        <Button fx:id="btnVolver" text="← Volver" onAction="#volver"
+                                style="-fx-background-color: transparent;
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-cursor: hand;" />
+                    </children>
+                </HBox>
+            </top>
+
+            <!-- CUERPO PRINCIPAL -->
+            <center>
+                <HBox spacing="0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 0 0 20 20;">
+                    <children>
+
+                        <!-- PANEL DE GESTIÓN -->
+                        <VBox alignment="TOP_CENTER" prefWidth="280" spacing="20"
+                              style="-fx-background-color: #E3F2FD;
+                                     -fx-padding: 20;
+                                     -fx-background-radius: 0 0 0 20;
+                                     -fx-border-color: #BBDEFB;
+                                     -fx-border-width: 0 1 0 0;">
+                            <children>
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                       text="🔧 Gestión" />
+
+                                <!-- Asignar Repartidor -->
+                                <VBox spacing="12"
+                                      style="-fx-background-color: white;
+                                             -fx-background-radius: 12;
+                                             -fx-padding: 15;
+                                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+                                    <Label text="🚚 Asignar Repartidor"
+                                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+
+                                    <Label text="Envío:" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                    <Label fx:id="lblEnvioSeleccionado" text="Ninguno"
+                                           style="-fx-text-fill: #999; -fx-font-style: italic; -fx-font-size: 11px;"/>
+
+                                    <Label text="Repartidor:" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                    <ComboBox fx:id="cbRepartidores" promptText="Selecciona..." prefWidth="220"
+                                              style="-fx-background-radius: 8; -fx-font-size: 11px;"/>
+
+                                    <Button text="✅ Asignar" onAction="#asignarRepartidor" maxWidth="Infinity"
+                                            style="-fx-background-color: #4CAF50;
+                                                   -fx-text-fill: white;
+                                                   -fx-background-radius: 8;
+                                                   -fx-font-size: 12px;
+                                                   -fx-cursor: hand;
+                                                   -fx-padding: 8;" />
+                                </VBox>
+
+                                <!-- Cambiar Estado -->
+                                <VBox spacing="12"
+                                      style="-fx-background-color: white;
+                                             -fx-background-radius: 12;
+                                             -fx-padding: 15;
+                                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+                                    <Label text="🔄 Cambiar Estado"
+                                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+
+                                    <Label text="Envío:" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                    <Label fx:id="lblEnvioSeleccionado2" text="Ninguno"
+                                           style="-fx-text-fill: #999; -fx-font-style: italic; -fx-font-size: 11px;"/>
+
+                                    <Label text="Nuevo Estado:" style="-fx-font-size: 11px; -fx-text-fill: #666;"/>
+                                    <ComboBox fx:id="cbNuevoEstado" promptText="Selecciona..." prefWidth="220"
+                                              style="-fx-background-radius: 8; -fx-font-size: 11px;"/>
+
+                                    <Button text="🔄 Actualizar" onAction="#cambiarEstado" maxWidth="Infinity"
+                                            style="-fx-background-color: #4FC3F7;
+                                                   -fx-text-fill: white;
+                                                   -fx-background-radius: 8;
+                                                   -fx-font-size: 12px;
+                                                   -fx-cursor: hand;
+                                                   -fx-padding: 8;" />
+                                </VBox>
+
+                                <Separator style="-fx-background-color: #BBDEFB;" />
+
+                                <!-- Filtros -->
+                                <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                       text="🔍 Filtros" />
+
+                                <Label text="Estado:" style="-fx-font-size: 12px; -fx-text-fill: #666;"/>
+                                <ComboBox fx:id="cbFiltroEstado" promptText="Todos" prefWidth="220"
+                                          style="-fx-background-radius: 8;"/>
+
+                                <Button text="Aplicar Filtro" onAction="#aplicarFiltros"
+                                        style="-fx-background-color: #FFFFFF;
+                                               -fx-border-color: #81D4FA;
+                                               -fx-background-radius: 8;
+                                               -fx-border-radius: 8;
+                                               -fx-text-fill: #1976D2;
+                                               -fx-pref-width: 220;
+                                               -fx-cursor: hand;" />
+
+                                <Button text="Limpiar" onAction="#limpiarFiltros"
+                                        style="-fx-background-color: transparent;
+                                               -fx-text-fill: #666;
+                                               -fx-cursor: hand;" />
+
+                            </children>
+                        </VBox>
+
+                        <!-- ÁREA DE CONTENIDO -->
+                        <VBox prefWidth="920" spacing="20"
+                              style="-fx-background-color: #FFFFFF; -fx-padding: 30;">
+                            <children>
+
+                                <!-- Estadísticas -->
+                                <HBox spacing="15" alignment="CENTER">
+                                    <children>
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #E3F2FD;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="Total" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+                                            <Label fx:id="lblTotalEnvios" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #4FC3F7; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #FFF9C4;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="Solicitados" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #F57F17;"/>
+                                            <Label fx:id="lblSolicitados" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #FFA000; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #BBDEFB;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="Asignados" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #1565C0;"/>
+                                            <Label fx:id="lblAsignados" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #2196F3; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #FFE0B2;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="En Ruta" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #E65100;"/>
+                                            <Label fx:id="lblEnRuta" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #FF6F00; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #C8E6C9;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="Entregados" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+                                            <Label fx:id="lblEntregados" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #4CAF50; -fx-font-weight: bold;"/>
+                                        </VBox>
+
+                                        <VBox alignment="CENTER" spacing="5"
+                                              style="-fx-background-color: #FFCDD2;
+                                                     -fx-background-radius: 10;
+                                                     -fx-padding: 12;
+                                                     -fx-pref-width: 120;
+                                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                            <Label text="Incidencias" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #C62828;"/>
+                                            <Label fx:id="lblIncidencias" text="0"
+                                                   style="-fx-font-size: 22px; -fx-text-fill: #D32F2F; -fx-font-weight: bold;"/>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+
+                                <!-- Tabla de Envíos -->
+                                <VBox spacing="10" VBox.vgrow="ALWAYS"
+                                      style="-fx-background-color: #FAFAFA;
+                                             -fx-background-radius: 12;
+                                             -fx-padding: 15;
+                                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                           text="Lista de Envíos" />
+
+                                    <TableView fx:id="tableEnvios" VBox.vgrow="ALWAYS"
+                                               style="-fx-background-color: white;
+                                                     -fx-background-radius: 8;">
+                                        <columns>
+                                            <TableColumn fx:id="colId" text="ID Envío" prefWidth="120"/>
+                                            <TableColumn fx:id="colFechaCreacion" text="Fecha" prefWidth="100"/>
+                                            <TableColumn fx:id="colOrigen" text="Origen" prefWidth="120"/>
+                                            <TableColumn fx:id="colDestino" text="Destino" prefWidth="120"/>
+                                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="110"/>
+                                            <TableColumn fx:id="colRepartidor" text="Repartidor" prefWidth="140"/>
+                                            <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80"/>
+                                        </columns>
+                                    </TableView>
+                                </VBox>
+
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
+            </center>
+
+            <!-- FOOTER -->
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="20"
+                      style="-fx-padding: 12 30;
+                             -fx-background-color: #FFFFFF;
+                             -fx-border-color: #EBEBEB;
+                             -fx-border-width: 1 0 0 0;
+                             -fx-background-radius: 0 0 20 20;">
+                    <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;"
+                               text="© 2025 Envío Rápido - Panel Administrativo" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;"
+                               text="Sistema de Gestión v1.0" />
+                    </children>
+                </HBox>
+            </bottom>
+
+        </BorderPane>
+    </children>
+</StackPane>

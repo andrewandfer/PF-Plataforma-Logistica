@@ -17,7 +17,7 @@ public final class Empresa {
     private LinkedList<Pago> listaPagos;
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
-    private LinkedList<Persona>listaPersonas;
+    private LinkedList<Persona> listaPersonas;
 
 
     public Empresa() {
@@ -32,13 +32,7 @@ public final class Empresa {
         this.listaPersonas = new LinkedList<>();
     }
 
-    public static Empresa getInstancia() {
-        return instancia;
-    }
 
-    public static void setInstancia(Empresa instancia) {
-        Empresa.instancia = instancia;
-    }
 
     public LinkedList<Repartidor> getListaRepartidores() {
         return listaRepartidores;
@@ -231,8 +225,6 @@ public final class Empresa {
             listaRepartidores.forEach(r -> System.out.println(" - " + r));
         }
     }
-
-
 
 
     //Metodos Administrador
@@ -453,6 +445,236 @@ public final class Empresa {
         }
 
     }
+
+
+    // ======================= MÉTODOS DE ENVÍO ====================================
+
+    // RF-022: Crear nuevo envío
+    public Envio crearEnvio(Producto producto, String fechaCreacion, String fechaEstimada,
+                            List<Direccion> direcciones, int peso, TipoEnvio tipoEnvio, Tarifa tarifa) {
+        String idEnvio = "ENV-" + System.currentTimeMillis();
+
+        Envio nuevoEnvio = new Envio(
+                producto,
+                fechaCreacion,
+                fechaEstimada,
+                idEnvio,
+                peso,
+                tipoEnvio,
+                EstadoEnvio.SOLICITADO,
+                direcciones,
+                tarifa,
+                null // Sin repartidor asignado inicialmente
+        );
+
+        if (listaEnvios == null) {
+            listaEnvios = new LinkedList<>();
+        }
+
+        listaEnvios.add(nuevoEnvio);
+        System.out.println("Envío creado correctamente: " + idEnvio);
+        return nuevoEnvio;
+    }
+
+
+    // RF-023: Actualizar estado del envío
+    public boolean cambiarEstadoEnvio(String idEnvio, EstadoEnvio nuevoEstado) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            System.out.println("No hay envíos registrados.");
+            return false;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                envio.setEstadoEnvio(nuevoEstado);
+                System.out.println("Estado del envío " + idEnvio + " actualizado a: " + nuevoEstado);
+                return true;
+            }
+        }
+
+        System.out.println("Envío no encontrado: " + idEnvio);
+        return false;
+    }
+
+    // RF-024: Cancelar envío (solo si no está asignado)
+    public boolean cancelarEnvio(String idEnvio) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            System.out.println("No hay envíos registrados.");
+            return false;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                if (envio.getEstadoEnvio() == EstadoEnvio.SOLICITADO) {
+                    listaEnvios.remove(envio);
+                    System.out.println("Envío cancelado correctamente: " + idEnvio);
+                    return true;
+                } else {
+                    System.out.println("El envío ya fue asignado, no se puede cancelar.");
+                    return false;
+                }
+            }
+        }
+
+        System.out.println("Envío no encontrado: " + idEnvio);
+        return false;
+    }
+
+    // RF-025: Filtrar envíos por fecha, estado o zona
+    public List<Envio> filtrarEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado, String ciudad) {
+        List<Envio> enviosFiltrados = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return enviosFiltrados;
+        }
+
+        for (Envio envio : listaEnvios) {
+            boolean cumpleFecha = true;
+            boolean cumpleEstado = true;
+            boolean cumpleCiudad = true;
+
+            // Filtro por fecha (simplificado - comparación de strings)
+            if (fechaInicio != null && !fechaInicio.isEmpty()) {
+                cumpleFecha = envio.getFechaCreacion().compareTo(fechaInicio) >= 0;
+            }
+            if (fechaFin != null && !fechaFin.isEmpty() && cumpleFecha) {
+                cumpleFecha = envio.getFechaCreacion().compareTo(fechaFin) <= 0;
+            }
+
+            // Filtro por estado
+            if (estado != null) {
+                cumpleEstado = envio.getEstadoEnvio() == estado;
+            }
+
+            // Filtro por ciudad (verifica si alguna dirección coincide)
+            if (ciudad != null && !ciudad.isEmpty()) {
+                cumpleCiudad = false;
+                for (Object obj : envio.getListaDirecciones()) {
+                    if (obj instanceof Direccion) {
+                        Direccion dir = (Direccion) obj;
+                        if (dir.getCiudad().equalsIgnoreCase(ciudad)) {
+                            cumpleCiudad = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (cumpleFecha && cumpleEstado && cumpleCiudad) {
+                enviosFiltrados.add(envio);
+            }
+        }
+
+        return enviosFiltrados;
+    }
+
+
+    // RF-026: Consultar detalle de un envío
+    public Envio buscarEnvioPorId(String idEnvio) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return null;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                return envio;
+            }
+        }
+
+        return null;
+    }
+
+    // Obtener todos los envíos de un usuario específico
+    public List<Envio> obtenerEnviosPorUsuario(Usuario usuario) {
+        List<Envio> enviosUsuario = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty() || usuario == null) {
+            return enviosUsuario;
+        }
+
+        // Verificar en enviosPropios del usuario
+        if (usuario.getEnviosPropios() != null) {
+            return new LinkedList<>(usuario.getEnviosPropios());
+        }
+
+        return enviosUsuario;
+    }
+
+    // Obtener repartidores disponibles (ACTIVO)
+    public List<Repartidor> obtenerRepartidoresDisponibles() {
+        List<Repartidor> disponibles = new LinkedList<>();
+
+        if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            return disponibles;
+        }
+
+        for (Repartidor repartidor : listaRepartidores) {
+            if (repartidor.getEstadoDisponibilidad() == EstadoRepartidor.ACTIVO) {
+                disponibles.add(repartidor);
+            }
+        }
+
+        return disponibles;
+    }
+
+    // RF-012: Asignar repartidor a envío y cambiar estado
+    public boolean asignarRepartidorAEnvio(String idEnvio, String idRepartidor) {
+        Envio envio = buscarEnvioPorId(idEnvio);
+        Repartidor repartidor = buscarRepartidor(idRepartidor);
+
+        if (envio == null) {
+            System.out.println("Envío no encontrado: " + idEnvio);
+            return false;
+        }
+
+        if (repartidor == null) {
+            System.out.println("Repartidor no encontrado: " + idRepartidor);
+            return false;
+        }
+
+        if (repartidor.getEstadoDisponibilidad() != EstadoRepartidor.ACTIVO) {
+            System.out.println("El repartidor no está disponible.");
+            return false;
+        }
+        // Asignar repartidor al envío
+        envio.setRepartidor(repartidor);
+        envio.setEstadoEnvio(EstadoEnvio.ASIGNADO);
+
+        // Agregar envío a la lista del repartidor
+        if (repartidor.getEnviosAsignados() == null) {
+            repartidor.setEnviosAsignados(new LinkedList<>());
+        }
+        repartidor.getEnviosAsignados().add(envio);
+
+        // Cambiar estado del repartidor
+        repartidor.setDisponibilidad(EstadoRepartidor.EN_RUTA);
+
+        System.out.println("Envío " + idEnvio + " asignado al repartidor " + repartidor.getNombre());
+        return true;
+    }
+
+    // RF-031: Calcular tarifa estimada
+    public float calcularTarifaEnvio(float distancia, int peso, int volumen, boolean esPrioritario) {
+        float tarifaBase = 5000; // Tarifa base
+        float costoPorKm = 500;
+        float costoPorKg = 300;
+        float costoPorVolumen = volumen * 100;
+        float recargoPrioridad = esPrioritario ? 2000 : 0;
+
+        float total = tarifaBase + (distancia * costoPorKm) + (peso * costoPorKg) + costoPorVolumen + recargoPrioridad;
+
+        return total;
+    }
+
+    // Agregar envío al usuario
+    public void agregarEnvioAUsuario(Usuario usuario, Envio envio) {
+        if (usuario.getEnviosPropios() == null) {
+            usuario.setEnviosPropios(new LinkedList<>());
+        }
+        usuario.getEnviosPropios().add(envio);
+    }
+
+
 }
 
 
