@@ -674,6 +674,225 @@ public final class Empresa {
         usuario.getEnviosPropios().add(envio);
     }
 
+    // ==================Metodos de pago =========================================
+
+    public PagoRecord registrarPago(Envio envio, Pago metodoPago, double monto, String detalles) {
+        // Validaciones
+        if (envio == null) {
+            System.out.println(" Error: El envío no puede ser nulo");
+            return null;
+        }
+
+        if (metodoPago == null) {
+            System.out.println(" Error: El método de pago no puede ser nulo");
+            return null;
+        }
+
+        if (monto <= 0) {
+            System.out.println(" Error: El monto debe ser mayor a cero");
+            return null;
+        }
+
+        // Procesar el pago usando el ProcesadorPago
+        ProcesadorPago procesador = new ProcesadorPago(metodoPago);
+        String resultadoProcesamiento = procesador.ejecutarPago(monto);
+
+        // Determinar si fue aprobado o rechazado
+        String resultado = resultadoProcesamiento.contains("exitoso") ||
+                resultadoProcesamiento.contains("EXITOSO") ||
+                resultadoProcesamiento.contains("aprobado") ||
+                resultadoProcesamiento.contains("APROBADO") ?
+                "APROBADO" : "RECHAZADO";
+
+        // Crear el registro del pago
+        String idPago = "PAGO-" + System.currentTimeMillis();
+        String fecha = java.time.LocalDate.now().toString();
+        String tipoMetodo = metodoPago.getClass().getSimpleName();
+
+        PagoRecord pagoRecord = new PagoRecord(
+                idPago,
+                monto,
+                fecha,
+                tipoMetodo,
+                resultado,
+                envio.getIdEnvio(),
+                detalles
+        );
+
+        // Agregar a la lista de pagos
+        if (listaPagos == null) {
+            listaPagos = new LinkedList<>();
+        }
+
+        listaPagos.add(pagoRecord);
+
+        System.out.println("Pago registrado: " + idPago);
+        return pagoRecord;
+    }
+
+    // Sobrecarga sin detalles
+    public PagoRecord registrarPago(Envio envio, Pago metodoPago, double monto) {
+        return registrarPago(envio, metodoPago, monto, "");
+    }
+
+    // RF-034: Consultar comprobantes de pago
+    public PagoRecord consultarComprobantePago(String idPago) {
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println("No hay pagos registrados en el sistema");
+            return null;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getIdPago().equals(idPago)) {
+                System.out.println("Comprobante encontrado:");
+                System.out.println(pago.generarComprobante());
+                return pago;
+            }
+        }
+
+        System.out.println(" No se encontró ningún pago con ID: " + idPago);
+        return null;
+    }
+
+    // Consultar todos los pagos de un envío
+    public List<PagoRecord> consultarPagosPorEnvio(String idEnvio) {
+        List<PagoRecord> pagosEnvio = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println("No hay pagos registrados en el sistema");
+            return pagosEnvio;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getIdEnvio().equals(idEnvio)) {
+                pagosEnvio.add(pago);
+            }
+        }
+
+        if (pagosEnvio.isEmpty()) {
+            System.out.println("No se encontraron pagos para el envío: " + idEnvio);
+        } else {
+            System.out.println("Se encontraron " + pagosEnvio.size() + " pago(s) para el envío " + idEnvio);
+        }
+
+        return pagosEnvio;
+    }
+
+
+    // RF-035: Listar pagos por rango de fechas
+    public List<PagoRecord> listarPagosPorFechas(String fechaInicio, String fechaFin) {
+        List<PagoRecord> pagosFiltrados = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosFiltrados;
+        }
+
+        System.out.println("Buscando pagos entre " + fechaInicio + " y " + fechaFin);
+
+        for (PagoRecord pago : listaPagos) {
+            String fechaPago = pago.getFecha();
+
+            // Comparación de fechas (formato: yyyy-MM-dd)
+            boolean dentroDeFechas = true;
+
+            if (fechaInicio != null && !fechaInicio.isEmpty()) {
+                dentroDeFechas = fechaPago.compareTo(fechaInicio) >= 0;
+            }
+
+            if (fechaFin != null && !fechaFin.isEmpty() && dentroDeFechas) {
+                dentroDeFechas = fechaPago.compareTo(fechaFin) <= 0;
+            }
+
+            if (dentroDeFechas) {
+                pagosFiltrados.add(pago);
+            }
+        }
+
+        System.out.println("Se encontraron " + pagosFiltrados.size() + " pago(s) en el rango de fechas");
+        return pagosFiltrados;
+    }
+
+
+    // Listar todos los pagos
+    public List<PagoRecord> listarTodosPagos() {
+        if (listaPagos== null) {
+            listaPagos = new LinkedList<>();
+        }
+        return new LinkedList<>(listaPagos);
+    }
+
+
+    // Obtener pagos por método
+    public List<PagoRecord> listarPagosPorMetodo(String metodoPago) {
+        List<PagoRecord> pagosPorMetodo = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosPorMetodo;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getMetodoPago().equalsIgnoreCase(metodoPago)) {
+                pagosPorMetodo.add(pago);
+            }
+        }
+
+        System.out.println("Se encontraron " + pagosPorMetodo.size() + " pago(s) con método: " + metodoPago);
+        return pagosPorMetodo;
+    }
+
+    // Obtener pagos por resultado (APROBADO/RECHAZADO)
+    public List<PagoRecord> listarPagosPorResultado(String resultado) {
+        List<PagoRecord> pagosPorResultado = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosPorResultado;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getResultado().equalsIgnoreCase(resultado)) {
+                pagosPorResultado.add(pago);
+            }
+        }
+
+        System.out.println(" Se encontraron " + pagosPorResultado.size() + " pago(s) con resultado: " + resultado);
+        return pagosPorResultado;
+    }
+
+
+    // Calcular ingresos totales
+    public double calcularIngresosTotales() {
+        double total = 0;
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            return total;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getResultado().equalsIgnoreCase("APROBADO")) {
+                total += pago.getMonto();
+            }
+        }
+
+        return total;
+    }
+
+    // Calcular ingresos por periodo
+    public double calcularIngresosPorPeriodo(String fechaInicio, String fechaFin) {
+        List<PagoRecord> pagosPeriodo = listarPagosPorFechas(fechaInicio, fechaFin);
+        double total = 0;
+
+        for (PagoRecord pago : pagosPeriodo) {
+            if (pago.getResultado().equalsIgnoreCase("APROBADO")) {
+                total += pago.getMonto();
+            }
+        }
+
+        return total;
+    }
+
 
 }
 
