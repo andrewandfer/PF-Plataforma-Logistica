@@ -1,0 +1,16 @@
+* [33mce74e5f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDEV-isa-ajustes[m[33m)[m Refactor: mover lógica CRUD al Administrador y añadir gestión de repartidores
+*   [33mded5c41[m Merge completado: cambios de DEV-andrew integrados
+[32m|[m[33m\[m  
+[32m|[m * [33mfa6479e[m[33m ([m[1;32mDEV-andrew[m[33m)[m 6:feat se añaden funcionalidades.
+[32m|[m * [33m279e989[m 6:feat se añaden fucionalidades sugeridas por devIsabel
+[32m|[m * [33mcbe60f5[m 5:feat se añaden funcionalidades.
+[32m|[m * [33md8f5135[m 4:feat se añaden funcionalidades.
+[32m|[m * [33mec83b3c[m 3.: se corrigen errores en las clases Administrador,Persona,producto,Repartidor y usuario ademas se implementa el patron singleton a Empresa3
+* [33m|[m   [33m607d76e[m Merge pull request #14 from andrewandfer/master
+[34m|[m[35m\[m [33m\[m  
+[34m|[m * [33m\[m   [33m6fd6b0b[m[33m ([m[1;32mmaster[m[33m)[m Merge pull request #13 from andrewandfer/DEV-isa
+[34m|[m [36m|[m[34m\[m [33m\[m  
+[34m|[m [36m|[m[34m/[m [33m/[m  
+[34m|[m[34m/[m[36m|[m [33m|[m   
+* [36m|[m [33m|[m   [33m0ab8948[m Merge remote-tracking branch 'origin/DEV-isa' into DEV-isa
+[1;32m|[m[1;33m\[m [36m\[m [33m\[m  

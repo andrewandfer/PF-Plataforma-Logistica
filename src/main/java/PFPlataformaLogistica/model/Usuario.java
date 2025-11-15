@@ -39,8 +39,16 @@ public class Usuario extends Persona {
     public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
     public void setEnviosPropios(LinkedList<Envio> enviosPropios) { this.enviosPropios = enviosPropios; }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     // Builder interno
-    public static class UsuarioBuilder extends Persona.PersonaBuilder<UsuarioBuilder> {
+    public static class UsuarioBuilder extends PersonaBuilder<UsuarioBuilder> {
         private String telefono;
         private Direccion direccion;
         private LinkedList<String> listaDirecciones;

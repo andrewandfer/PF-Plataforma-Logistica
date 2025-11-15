@@ -1,6 +1,7 @@
 package PFPlataformaLogistica.dto;
 
 import PFPlataformaLogistica.model.Envio;
+import PFPlataformaLogistica.model.EstadoRepartidor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public class RepartidorDTO implements Serializable {
 
     private  String telefono;
-    private boolean disponibilidad;
+    private EstadoRepartidor disponibilidad;
     private String zonaCobertura;
     private String localidad;
     private List<Envio> EnviosAsignados;
@@ -17,7 +18,7 @@ public class RepartidorDTO implements Serializable {
     public RepartidorDTO() {
     }
 
-    public RepartidorDTO(String telefono, boolean disponibilidad, String zonaCobertura, String localidad, List<Envio> enviosAsignados, String id) {
+    public RepartidorDTO(String telefono, EstadoRepartidor disponibilidad, String zonaCobertura, String localidad, List<Envio> enviosAsignados, String id) {
         this.telefono = telefono;
         this.disponibilidad = disponibilidad;
         this.zonaCobertura = zonaCobertura;
@@ -34,11 +35,11 @@ public class RepartidorDTO implements Serializable {
         this.telefono = telefono;
     }
 
-    public boolean isDisponibilidad() {
+    public EstadoRepartidor getDisponibilidad() {
         return disponibilidad;
     }
 
-    public void setDisponibilidad(boolean disponibilidad) {
+    public void setDisponibilidad(EstadoRepartidor disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
 

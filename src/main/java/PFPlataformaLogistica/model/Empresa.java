@@ -3,6 +3,7 @@ package PFPlataformaLogistica.model;
 import PFPlataformaLogistica.dto.RepartidorDTO;
 import PFPlataformaLogistica.dto.UsuarioDTO;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public final class Empresa {
     private LinkedList<Pago> listaPagos;
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
-    private LinkedList<Persona>listaPersonas;
+    private LinkedList<Persona> listaPersonas;
 
 
     public Empresa() {
@@ -31,13 +32,7 @@ public final class Empresa {
         this.listaPersonas = new LinkedList<>();
     }
 
-    public static Empresa getInstancia() {
-        return instancia;
-    }
 
-    public static void setInstancia(Empresa instancia) {
-        Empresa.instancia = instancia;
-    }
 
     public LinkedList<Repartidor> getListaRepartidores() {
         return listaRepartidores;
@@ -118,11 +113,21 @@ public final class Empresa {
         this.listaPersonas = listaPersonas;
     }
 
-    // Metodos Repartidor
+    //======================= Metodos Repartidor====================================
+
+
+    // RF-019: Registrar un nuevo repartidor
+    public void registrarRepartidor(Repartidor repartidor) {
+        if (listaRepartidores == null) listaRepartidores = new LinkedList<>();
+
+        listaRepartidores.add(repartidor);
+        System.out.println("Repartidor registrado correctamente: " + repartidor.getNombre());
+    }
+
     public void crearRepartidor(RepartidorDTO dto) {
         Repartidor nuevo = new Repartidor.RepartidorBuilder()
                 .telefono(dto.getTelefono())
-                .disponibilidad(dto.isDisponibilidad())
+                .disponibilidad(dto.getDisponibilidad())
                 .zonaCobertura(dto.getZonaCobertura())
                 .localidad(dto.getLocalidad())
                 .enviosAsignados(dto.getEnviosAsignados())
@@ -134,6 +139,8 @@ public final class Empresa {
 
         listaRepartidores.add(nuevo);
     }
+
+    // RF-019: Eliminar repartidor
 
     public void eliminarRepartidor(String id) {
         Repartidor repartidorAEliminar = null;
@@ -159,7 +166,7 @@ public final class Empresa {
         }
         for (Repartidor repartidor : listaRepartidores) {
             if (repartidor.getId().equalsIgnoreCase(dto.getId())) {
-                repartidor.setDisponibilidad(dto.isDisponibilidad());
+                repartidor.setDisponibilidad(dto.getDisponibilidad());
                 repartidor.setZonaCobertura(dto.getZonaCobertura());
                 repartidor.setLocalidad(dto.getLocalidad());
                 repartidor.setEnviosAsignados(dto.getEnviosAsignados());
@@ -179,7 +186,7 @@ public final class Empresa {
     }
 
 
-    public Repartidor actualizarEstadoRepartidor(String Id, boolean nuevaDisponibilidad) {
+    public Repartidor actualizarEstadoRepartidor(String Id, EstadoRepartidor nuevaDisponibilidad) {
         if (listaRepartidores == null || listaRepartidores.isEmpty()) {
             System.out.println("No hay repartidores registrados.");
             return null;
@@ -195,6 +202,28 @@ public final class Empresa {
 
         System.out.println("No se encontró un repartidor con el teléfono: " + Id);
         return null;
+    }
+
+    // RF-019: Consultar un repartidor por su documento
+    public Repartidor buscarRepartidor(String documento) {
+        if (listaRepartidores != null) {
+            for (Repartidor r : listaRepartidores) {
+                if (r.getId().equals(documento)) {
+                    return r;
+                }
+            }
+        }
+        return null;
+    }
+
+    // RF-019: Listar todos los repartidores registrados
+    public void listarRepartidores() {
+        System.out.println(" Lista de repartidores registrados:");
+        if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            System.out.println("No hay repartidores registrados.");
+        } else {
+            listaRepartidores.forEach(r -> System.out.println(" - " + r));
+        }
     }
 
 
@@ -416,6 +445,455 @@ public final class Empresa {
         }
 
     }
+
+
+    // ======================= MÉTODOS DE ENVÍO ====================================
+
+    // RF-022: Crear nuevo envío
+    public Envio crearEnvio(Producto producto, String fechaCreacion, String fechaEstimada,
+                            List<Direccion> direcciones, int peso, TipoEnvio tipoEnvio, Tarifa tarifa) {
+        String idEnvio = "ENV-" + System.currentTimeMillis();
+
+        Envio nuevoEnvio = new Envio(
+                producto,
+                fechaCreacion,
+                fechaEstimada,
+                idEnvio,
+                peso,
+                tipoEnvio,
+                EstadoEnvio.SOLICITADO,
+                direcciones,
+                tarifa,
+                null // Sin repartidor asignado inicialmente
+        );
+
+        if (listaEnvios == null) {
+            listaEnvios = new LinkedList<>();
+        }
+
+        listaEnvios.add(nuevoEnvio);
+        System.out.println("Envío creado correctamente: " + idEnvio);
+        return nuevoEnvio;
+    }
+
+
+    // RF-023: Actualizar estado del envío
+    public boolean cambiarEstadoEnvio(String idEnvio, EstadoEnvio nuevoEstado) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            System.out.println("No hay envíos registrados.");
+            return false;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                envio.setEstadoEnvio(nuevoEstado);
+                System.out.println("Estado del envío " + idEnvio + " actualizado a: " + nuevoEstado);
+                return true;
+            }
+        }
+
+        System.out.println("Envío no encontrado: " + idEnvio);
+        return false;
+    }
+
+    // RF-024: Cancelar envío (solo si no está asignado)
+    public boolean cancelarEnvio(String idEnvio) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            System.out.println("No hay envíos registrados.");
+            return false;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                if (envio.getEstadoEnvio() == EstadoEnvio.SOLICITADO) {
+                    listaEnvios.remove(envio);
+                    System.out.println("Envío cancelado correctamente: " + idEnvio);
+                    return true;
+                } else {
+                    System.out.println("El envío ya fue asignado, no se puede cancelar.");
+                    return false;
+                }
+            }
+        }
+
+        System.out.println("Envío no encontrado: " + idEnvio);
+        return false;
+    }
+
+    // RF-025: Filtrar envíos por fecha, estado o zona
+    public List<Envio> filtrarEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado, String ciudad) {
+        List<Envio> enviosFiltrados = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return enviosFiltrados;
+        }
+
+        for (Envio envio : listaEnvios) {
+            boolean cumpleFecha = true;
+            boolean cumpleEstado = true;
+            boolean cumpleCiudad = true;
+
+            // Filtro por fecha (simplificado - comparación de strings)
+            if (fechaInicio != null && !fechaInicio.isEmpty()) {
+                cumpleFecha = envio.getFechaCreacion().compareTo(fechaInicio) >= 0;
+            }
+            if (fechaFin != null && !fechaFin.isEmpty() && cumpleFecha) {
+                cumpleFecha = envio.getFechaCreacion().compareTo(fechaFin) <= 0;
+            }
+
+            // Filtro por estado
+            if (estado != null) {
+                cumpleEstado = envio.getEstadoEnvio() == estado;
+            }
+
+            // Filtro por ciudad (verifica si alguna dirección coincide)
+            if (ciudad != null && !ciudad.isEmpty()) {
+                cumpleCiudad = false;
+                for (Object obj : envio.getListaDirecciones()) {
+                    if (obj instanceof Direccion) {
+                        Direccion dir = (Direccion) obj;
+                        if (dir.getCiudad().equalsIgnoreCase(ciudad)) {
+                            cumpleCiudad = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (cumpleFecha && cumpleEstado && cumpleCiudad) {
+                enviosFiltrados.add(envio);
+            }
+        }
+
+        return enviosFiltrados;
+    }
+
+
+    // RF-026: Consultar detalle de un envío
+    public Envio buscarEnvioPorId(String idEnvio) {
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return null;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getIdEnvio().equals(idEnvio)) {
+                return envio;
+            }
+        }
+
+        return null;
+    }
+
+    // Obtener todos los envíos de un usuario específico
+    public List<Envio> obtenerEnviosPorUsuario(Usuario usuario) {
+        List<Envio> enviosUsuario = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty() || usuario == null) {
+            return enviosUsuario;
+        }
+
+        // Verificar en enviosPropios del usuario
+        if (usuario.getEnviosPropios() != null) {
+            return new LinkedList<>(usuario.getEnviosPropios());
+        }
+
+        return enviosUsuario;
+    }
+
+    // Obtener repartidores disponibles (ACTIVO)
+    public List<Repartidor> obtenerRepartidoresDisponibles() {
+        List<Repartidor> disponibles = new LinkedList<>();
+
+        if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            return disponibles;
+        }
+
+        for (Repartidor repartidor : listaRepartidores) {
+            if (repartidor.getEstadoDisponibilidad() == EstadoRepartidor.ACTIVO) {
+                disponibles.add(repartidor);
+            }
+        }
+
+        return disponibles;
+    }
+
+    // RF-012: Asignar repartidor a envío y cambiar estado
+    public boolean asignarRepartidorAEnvio(String idEnvio, String idRepartidor) {
+        Envio envio = buscarEnvioPorId(idEnvio);
+        Repartidor repartidor = buscarRepartidor(idRepartidor);
+
+        if (envio == null) {
+            System.out.println("Envío no encontrado: " + idEnvio);
+            return false;
+        }
+
+        if (repartidor == null) {
+            System.out.println("Repartidor no encontrado: " + idRepartidor);
+            return false;
+        }
+
+        if (repartidor.getEstadoDisponibilidad() != EstadoRepartidor.ACTIVO) {
+            System.out.println("El repartidor no está disponible.");
+            return false;
+        }
+        // Asignar repartidor al envío
+        envio.setRepartidor(repartidor);
+        envio.setEstadoEnvio(EstadoEnvio.ASIGNADO);
+
+        // Agregar envío a la lista del repartidor
+        if (repartidor.getEnviosAsignados() == null) {
+            repartidor.setEnviosAsignados(new LinkedList<>());
+        }
+        repartidor.getEnviosAsignados().add(envio);
+
+        // Cambiar estado del repartidor
+        repartidor.setDisponibilidad(EstadoRepartidor.EN_RUTA);
+
+        System.out.println("Envío " + idEnvio + " asignado al repartidor " + repartidor.getNombre());
+        return true;
+    }
+
+    // RF-031: Calcular tarifa estimada
+    public float calcularTarifaEnvio(float distancia, int peso, int volumen, boolean esPrioritario) {
+        float tarifaBase = 5000; // Tarifa base
+        float costoPorKm = 500;
+        float costoPorKg = 300;
+        float costoPorVolumen = volumen * 100;
+        float recargoPrioridad = esPrioritario ? 2000 : 0;
+
+        float total = tarifaBase + (distancia * costoPorKm) + (peso * costoPorKg) + costoPorVolumen + recargoPrioridad;
+
+        return total;
+    }
+
+    // Agregar envío al usuario
+    public void agregarEnvioAUsuario(Usuario usuario, Envio envio) {
+        if (usuario.getEnviosPropios() == null) {
+            usuario.setEnviosPropios(new LinkedList<>());
+        }
+        usuario.getEnviosPropios().add(envio);
+    }
+
+    // ==================Metodos de pago =========================================
+
+    public PagoRecord registrarPago(Envio envio, Pago metodoPago, double monto, String detalles) {
+        // Validaciones
+        if (envio == null) {
+            System.out.println(" Error: El envío no puede ser nulo");
+            return null;
+        }
+
+        if (metodoPago == null) {
+            System.out.println(" Error: El método de pago no puede ser nulo");
+            return null;
+        }
+
+        if (monto <= 0) {
+            System.out.println(" Error: El monto debe ser mayor a cero");
+            return null;
+        }
+
+        // Procesar el pago usando el ProcesadorPago
+        ProcesadorPago procesador = new ProcesadorPago(metodoPago);
+        String resultadoProcesamiento = procesador.ejecutarPago(monto);
+
+        // Determinar si fue aprobado o rechazado
+        String resultado = resultadoProcesamiento.contains("exitoso") ||
+                resultadoProcesamiento.contains("EXITOSO") ||
+                resultadoProcesamiento.contains("aprobado") ||
+                resultadoProcesamiento.contains("APROBADO") ?
+                "APROBADO" : "RECHAZADO";
+
+        // Crear el registro del pago
+        String idPago = "PAGO-" + System.currentTimeMillis();
+        String fecha = java.time.LocalDate.now().toString();
+        String tipoMetodo = metodoPago.getClass().getSimpleName();
+
+        PagoRecord pagoRecord = new PagoRecord(
+                idPago,
+                monto,
+                fecha,
+                tipoMetodo,
+                resultado,
+                envio.getIdEnvio(),
+                detalles
+        );
+
+        // Agregar a la lista de pagos
+        if (listaPagos == null) {
+            listaPagos = new LinkedList<>();
+        }
+
+        listaPagos.add(pagoRecord);
+
+        System.out.println("Pago registrado: " + idPago);
+        return pagoRecord;
+    }
+
+    // Sobrecarga sin detalles
+    public PagoRecord registrarPago(Envio envio, Pago metodoPago, double monto) {
+        return registrarPago(envio, metodoPago, monto, "");
+    }
+
+    // RF-034: Consultar comprobantes de pago
+    public PagoRecord consultarComprobantePago(String idPago) {
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println("No hay pagos registrados en el sistema");
+            return null;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getIdPago().equals(idPago)) {
+                System.out.println("Comprobante encontrado:");
+                System.out.println(pago.generarComprobante());
+                return pago;
+            }
+        }
+
+        System.out.println(" No se encontró ningún pago con ID: " + idPago);
+        return null;
+    }
+
+    // Consultar todos los pagos de un envío
+    public List<PagoRecord> consultarPagosPorEnvio(String idEnvio) {
+        List<PagoRecord> pagosEnvio = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println("No hay pagos registrados en el sistema");
+            return pagosEnvio;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getIdEnvio().equals(idEnvio)) {
+                pagosEnvio.add(pago);
+            }
+        }
+
+        if (pagosEnvio.isEmpty()) {
+            System.out.println("No se encontraron pagos para el envío: " + idEnvio);
+        } else {
+            System.out.println("Se encontraron " + pagosEnvio.size() + " pago(s) para el envío " + idEnvio);
+        }
+
+        return pagosEnvio;
+    }
+
+
+    // RF-035: Listar pagos por rango de fechas
+    public List<PagoRecord> listarPagosPorFechas(String fechaInicio, String fechaFin) {
+        List<PagoRecord> pagosFiltrados = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosFiltrados;
+        }
+
+        System.out.println("Buscando pagos entre " + fechaInicio + " y " + fechaFin);
+
+        for (PagoRecord pago : listaPagos) {
+            String fechaPago = pago.getFecha();
+
+            // Comparación de fechas (formato: yyyy-MM-dd)
+            boolean dentroDeFechas = true;
+
+            if (fechaInicio != null && !fechaInicio.isEmpty()) {
+                dentroDeFechas = fechaPago.compareTo(fechaInicio) >= 0;
+            }
+
+            if (fechaFin != null && !fechaFin.isEmpty() && dentroDeFechas) {
+                dentroDeFechas = fechaPago.compareTo(fechaFin) <= 0;
+            }
+
+            if (dentroDeFechas) {
+                pagosFiltrados.add(pago);
+            }
+        }
+
+        System.out.println("Se encontraron " + pagosFiltrados.size() + " pago(s) en el rango de fechas");
+        return pagosFiltrados;
+    }
+
+
+    // Listar todos los pagos
+    public List<PagoRecord> listarTodosPagos() {
+        if (listaPagos== null) {
+            listaPagos = new LinkedList<>();
+        }
+        return new LinkedList<>(listaPagos);
+    }
+
+
+    // Obtener pagos por método
+    public List<PagoRecord> listarPagosPorMetodo(String metodoPago) {
+        List<PagoRecord> pagosPorMetodo = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosPorMetodo;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getMetodoPago().equalsIgnoreCase(metodoPago)) {
+                pagosPorMetodo.add(pago);
+            }
+        }
+
+        System.out.println("Se encontraron " + pagosPorMetodo.size() + " pago(s) con método: " + metodoPago);
+        return pagosPorMetodo;
+    }
+
+    // Obtener pagos por resultado (APROBADO/RECHAZADO)
+    public List<PagoRecord> listarPagosPorResultado(String resultado) {
+        List<PagoRecord> pagosPorResultado = new LinkedList<>();
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            System.out.println(" No hay pagos registrados en el sistema");
+            return pagosPorResultado;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getResultado().equalsIgnoreCase(resultado)) {
+                pagosPorResultado.add(pago);
+            }
+        }
+
+        System.out.println(" Se encontraron " + pagosPorResultado.size() + " pago(s) con resultado: " + resultado);
+        return pagosPorResultado;
+    }
+
+
+    // Calcular ingresos totales
+    public double calcularIngresosTotales() {
+        double total = 0;
+
+        if (listaPagos == null || listaPagos.isEmpty()) {
+            return total;
+        }
+
+        for (PagoRecord pago : listaPagos) {
+            if (pago.getResultado().equalsIgnoreCase("APROBADO")) {
+                total += pago.getMonto();
+            }
+        }
+
+        return total;
+    }
+
+    // Calcular ingresos por periodo
+    public double calcularIngresosPorPeriodo(String fechaInicio, String fechaFin) {
+        List<PagoRecord> pagosPeriodo = listarPagosPorFechas(fechaInicio, fechaFin);
+        double total = 0;
+
+        for (PagoRecord pago : pagosPeriodo) {
+            if (pago.getResultado().equalsIgnoreCase("APROBADO")) {
+                total += pago.getMonto();
+            }
+        }
+
+        return total;
+    }
+
+
 }
 
 
