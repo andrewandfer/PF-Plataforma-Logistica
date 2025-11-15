@@ -2,9 +2,9 @@ package PFPlataformaLogistica.model;
 
 import java.util.List;
 
-public class Repartidor extends Persona {
+public class Repartidor extends Persona implements IRepartidorComponent{
     private String telefono;
-    private boolean disponibilidad;
+    private  EstadoRepartidor disponibilidad;
     private String zonaCobertura;
     private String localidad;
     private List<Envio> enviosAsignados;
@@ -24,7 +24,7 @@ public class Repartidor extends Persona {
         return telefono;
     }
 
-    public boolean isDisponibilidad() {
+    public EstadoRepartidor getEstadoDisponibilidad() {
         return disponibilidad;
     }
 
@@ -40,10 +40,41 @@ public class Repartidor extends Persona {
         return enviosAsignados;
     }
 
+    public void setEstadoDisponibilidad(EstadoRepartidor estadoRepartidor) {
+        this.disponibilidad = estadoRepartidor;
+    }
+// RF-020: Cambia la disponibilidad del repartidor (Activo/Inactivo/En ruta).
+
+    public void cambiarDisponibilidad(EstadoRepartidor nuevoEstado) {
+        this.disponibilidad = nuevoEstado;
+        System.out.println("Estado de disponibilidad actualizado a: " + nuevoEstado);
+    }
+ //RF-021: Muestra los envíos asignados al repartidor.
+
+    public void consultarEnviosAsignados() {
+        System.out.println("📦 Envíos asignados a " + getNombre() + ":");
+        if (enviosAsignados == null || enviosAsignados.isEmpty()) {
+            System.out.println("No hay envíos asignados actualmente.");
+        } else {
+            enviosAsignados.forEach(envio ->
+                    System.out.println(" - " + envio.toString()));
+        }
+    }
+    /**
+     * RF-019: Muestra la información completa del repartidor.
+     */
+    @Override
+    public void mostrarInfo() {
+        System.out.println(this.toString());
+    }
+
+
+
+
     // Clase Builder que extiende de PersonaBuilder
     public static class RepartidorBuilder extends Persona.PersonaBuilder<RepartidorBuilder> {
         private String telefono;
-        private boolean disponibilidad;
+        private EstadoRepartidor disponibilidad;
         private String zonaCobertura;
         private String localidad;
         private List<Envio> enviosAsignados;
@@ -53,7 +84,7 @@ public class Repartidor extends Persona {
             return self();
         }
 
-        public RepartidorBuilder disponibilidad(boolean disponibilidad) {
+        public RepartidorBuilder disponibilidad(EstadoRepartidor disponibilidad) {
             this.disponibilidad = disponibilidad;
             return self();
         }
@@ -82,13 +113,18 @@ public class Repartidor extends Persona {
         public Repartidor build() {
             return new Repartidor(this);
         }
+
     }
+
+
+
+
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    public void setDisponibilidad(boolean disponibilidad) {
+    public void setDisponibilidad(EstadoRepartidor disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
 
