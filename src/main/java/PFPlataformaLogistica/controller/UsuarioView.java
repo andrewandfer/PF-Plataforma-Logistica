@@ -38,12 +38,16 @@ public class UsuarioView {
     }
 
     @FXML
-    void OnConsultarEnvios(ActionEvent event) {
-
+    private void OnConsultarEnvios() {
+        Stage stage = (Stage) btnEnvios.getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "ConsultarEnvioUsuario.fxml");
     }
 
     @FXML
     void OnDireccionesFrecuentes(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "DireccionUsuarioManager.fxml");
+
 
     }
 

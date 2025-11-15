@@ -1,10 +1,7 @@
 package PFPlataformaLogistica;
 
 import PFPlataformaLogistica.dto.UsuarioDTO;
-import PFPlataformaLogistica.model.Administrador;
-import PFPlataformaLogistica.model.Empresa;
-import PFPlataformaLogistica.model.Repartidor;
-import PFPlataformaLogistica.model.Usuario;
+import PFPlataformaLogistica.model.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -31,9 +28,9 @@ public class App extends Application {
         Usuario usuario3= new Usuario.UsuarioBuilder()
                 .telefono("314572026")
                 .nombre("juan")
-                .contrasena("fuanfokkusu")
+                .contrasena("1")
                 .id("21534689")
-                .email("juanfokkusu@gmail.com")
+                .email("1")
                 .build();
         Empresa.getInstance().getListaPersonas().add(usuario3);
 
@@ -64,6 +61,12 @@ public class App extends Application {
                 .contrasena("cyrene")
                 .build();
         Empresa.getInstance().getListaPersonas().add(usuario);
+        Producto producto1 = new Producto("!1111","pelotitadejuguete",45);
+        usuario.getListaProductos().add(producto1);
+        Tarifa tarifa1= new Tarifa(15000,5,15,5,15);
+
+        Envio enviojuan= new Envio(usuario3.getListaProductos(),"12/24/25","14/12/25","125634",5,TipoEnvio.PRIORITARIA,EstadoEnvio.ENRUTA,tarifa1,repartidor);
+        usuario3.getEnviosPropios().add(enviojuan);
     }
 
 

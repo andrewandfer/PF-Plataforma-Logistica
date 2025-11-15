@@ -108,6 +108,8 @@ public class registroController {
         }
     }
 
+    public static class ConsultarEnvioUsuario {
+    }
 }
 
 

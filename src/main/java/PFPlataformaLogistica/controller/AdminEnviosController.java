@@ -157,14 +157,7 @@ public class AdminEnviosController implements Initializable {
     }
 
     private String obtenerDireccionTexto(Envio envio, int indice) {
-        if (envio.getListaDirecciones() != null && envio.getListaDirecciones().size() > indice) {
-            Object obj = envio.getListaDirecciones().get(indice);
-            if (obj instanceof Direccion) {
-                Direccion dir = (Direccion) obj;
-                return dir.getCiudad();
-            }
-        }
-        return "N/A";
+        return (indice == 0) ? envio.getOrigen() : envio.getDestino();
     }
 
     @FXML

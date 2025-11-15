@@ -2,8 +2,6 @@ package PFPlataformaLogistica.model;
 
 import PFPlataformaLogistica.dto.RepartidorDTO;
 import PFPlataformaLogistica.dto.UsuarioDTO;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +12,7 @@ public final class Empresa {
     private LinkedList<Administrador> listaAdministradores;
     private LinkedList<Usuario> listaUsuarios;
     private LinkedList<Paquete> listaPaquetes;
-    private LinkedList<Pago> listaPagos;
+    private LinkedList<PagoRecord> listaPagos;
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
     private LinkedList<Persona> listaPersonas;
@@ -74,11 +72,11 @@ public final class Empresa {
         this.listaPaquetes = listaPaquetes;
     }
 
-    public LinkedList<Pago> getListaPagos() {
+    public LinkedList<PagoRecord> getListaPagos() {
         return listaPagos;
     }
 
-    public void setListaPagos(LinkedList<Pago> listaPagos) {
+    public void setListaPagos(LinkedList<PagoRecord> listaPagos) {
         this.listaPagos = listaPagos;
     }
 
@@ -559,7 +557,7 @@ public final class Empresa {
                     }
                 }
             }
-
+            
             if (cumpleFecha && cumpleEstado && cumpleCiudad) {
                 enviosFiltrados.add(envio);
             }
@@ -892,7 +890,6 @@ public final class Empresa {
 
         return total;
     }
-
 
 }
 
