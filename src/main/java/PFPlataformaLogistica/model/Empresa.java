@@ -2,8 +2,10 @@ package PFPlataformaLogistica.model;
 
 import PFPlataformaLogistica.dto.RepartidorDTO;
 import PFPlataformaLogistica.dto.UsuarioDTO;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public final class Empresa {
     private String nombre;
@@ -16,6 +18,7 @@ public final class Empresa {
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
     private LinkedList<Persona> listaPersonas;
+
 
 
     public Empresa() {
@@ -142,10 +145,12 @@ public final class Empresa {
 
     public void eliminarRepartidor(String id) {
         Repartidor repartidorAEliminar = null;
-        for (Repartidor repartidor : listaRepartidores) {
-            if (repartidor.getId().equalsIgnoreCase(id)) {
-                repartidorAEliminar = repartidor;
-                break;
+        if (listaRepartidores != null) {
+            for (Repartidor repartidor : listaRepartidores) {
+                if (repartidor.getId().equalsIgnoreCase(id)) {
+                    repartidorAEliminar = repartidor;
+                    break;
+                }
             }
         }
         if (repartidorAEliminar != null) {
@@ -278,10 +283,12 @@ public final class Empresa {
 
     public void eliminarUsuario(String id) {
         Usuario usuarioAEliminar = null;
-        for (Usuario usuario : listaUsuarios) {
-            if (usuario.getId().equalsIgnoreCase(id)) {
-                usuarioAEliminar = usuario;
-                break;
+        if (listaUsuarios != null) {
+            for (Usuario usuario : listaUsuarios) {
+                if (usuario.getId().equalsIgnoreCase(id)) {
+                    usuarioAEliminar = usuario;
+                    break;
+                }
             }
         }
         if (usuarioAEliminar != null) {
@@ -308,10 +315,10 @@ public final class Empresa {
 
                 System.out.println("Usuario actualizado correctamente: " + dto.getEmail());
                 return;
-
             }
-            System.out.println("No se encontró ningún usuario con el correo: " + dto.getEmail());
         }
+        // FIX: mensaje de no encontrado debe ir fuera del loop
+        System.out.println("No se encontró ningún usuario con el correo: " + dto.getEmail());
     }
 
     public List<Usuario> obtenerUsuarios() {
@@ -356,17 +363,19 @@ public final class Empresa {
                 return;
 
             }
-            System.out.println("No se encontró ninguna direccion con el id: " + dto.getIdDireccion());
         }
+        System.out.println("No se encontró ninguna direccion con el id: " + dto.getIdDireccion());
     }
 
     public void eliminarDireccion(String idDireccion) {
         Direccion direccionAEliminar = null;
 
-        for (Direccion direccion : listaDirecciones) {
-            if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
-                direccionAEliminar = direccion;
-                break;
+        if (listaDirecciones != null) {
+            for (Direccion direccion : listaDirecciones) {
+                if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
+                    direccionAEliminar = direccion;
+                    break;
+                }
             }
         }
         if (direccionAEliminar != null) {
@@ -377,92 +386,101 @@ public final class Empresa {
         }
     }
 
+
+
     public Direccion obtenerDireccionMasFrecuentePorUsuario(Usuario usuario) {
+        if (usuario == null) return null;
         if (listaEnvios == null || listaEnvios.isEmpty()) {
             return null;
         }
 
-        List<Direccion> direccionesUsuario = new LinkedList<>();
+        Map<String, Integer> contador = new HashMap<>();
 
-        //  1. Recorrer los envíos
+        // 1. Recorrer los envíos y contar ocurrencias de origen/destino del usuario
         for (Envio envio : listaEnvios) {
-            if (envio.getListaPaquetes() == null) continue;
+            if (usuario.getEnviosPropios() != null && usuario.getEnviosPropios().contains(envio)) {
+                String origen = envio.getOrigen();
+                String destino = envio.getDestino();
 
-            // 🔹 2. Recorrer los paquetes dentro del envío
-            for (Paquete paquete : envio.getListaPaquetes()) {
-                if (paquete.getUsuario() != null && paquete.getUsuario().equals(usuario)) {
-                    Direccion direccion = paquete.getDireccion();
-                    if (direccion != null) {
-                        direccionesUsuario.add(direccion);
-                    }
+                if (origen != null && !origen.isEmpty()) {
+                    contador.put(origen, contador.getOrDefault(origen, 0) + 1);
+                }
+                if (destino != null && !destino.isEmpty()) {
+                    contador.put(destino, contador.getOrDefault(destino, 0) + 1);
                 }
             }
         }
 
-        // Si el usuario no tiene paquetes registrados
-        if (direccionesUsuario.isEmpty()) {
+        if (contador.isEmpty()) {
             return null;
         }
 
-        // 🔹 3. Buscar la dirección más repetida
-        Direccion direccionMasFrecuente = null;
-        int maxConteo = 0;
-
-        for (int i = 0; i < direccionesUsuario.size(); i++) {
-            Direccion actual = direccionesUsuario.get(i);
-            int conteo = 0;
-
-            for (int j = 0; j < direccionesUsuario.size(); j++) {
-                if (actual.equals(direccionesUsuario.get(j))) {
-                    conteo++;
-                }
-            }
-
-            if (conteo > maxConteo) {
-                maxConteo = conteo;
-                direccionMasFrecuente = actual;
+        // 2. Encontrar la cadena más frecuente
+        String masFrecuente = null;
+        int max = 0;
+        for (Map.Entry<String, Integer> e : contador.entrySet()) {
+            if (e.getValue() > max) {
+                max = e.getValue();
+                masFrecuente = e.getKey();
             }
         }
 
-        return direccionMasFrecuente;
+        // 3. Buscar objeto Direccion en listaDirecciones que coincida por calle/ciudad/alias
+        if (masFrecuente != null && listaDirecciones != null) {
+            for (Direccion dir : listaDirecciones) {
+                if ((dir.getCalle() != null && dir.getCalle().equalsIgnoreCase(masFrecuente)) ||
+                        (dir.getCiudad() != null && dir.getCiudad().equalsIgnoreCase(masFrecuente)) ||
+                        (dir.getAlias() != null && dir.getAlias().equalsIgnoreCase(masFrecuente))) {
+                    return dir;
+                }
+            }
+        }
 
+        return null;
     }
 
     public void consultarDetalleDireccion(String idDireccion) {
         boolean encontrada = false;
-        for (Direccion direccion : listaDirecciones) {
-            if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
-                System.out.println("Detalles de la dirección:");
-                System.out.println("ID: " + direccion.getIdDireccion());
-                System.out.println("Alias: " + direccion.getAlias());
-                System.out.println("Calle: " + direccion.getCalle());
-                System.out.println("Ciudad: " + direccion.getCiudad());
-                encontrada = true;
-                break;
+        if (listaDirecciones != null) {
+            for (Direccion direccion : listaDirecciones) {
+                if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
+                    System.out.println("Detalles de la dirección:");
+                    System.out.println("ID: " + direccion.getIdDireccion());
+                    System.out.println("Alias: " + direccion.getAlias());
+                    System.out.println("Calle: " + direccion.getCalle());
+                    System.out.println("Ciudad: " + direccion.getCiudad());
+                    encontrada = true;
+                    break;
+                }
             }
         }
-
+        if (!encontrada) {
+            System.out.println("Dirección no encontrada: " + idDireccion);
+        }
     }
 
 
     // ======================= MÉTODOS DE ENVÍO ====================================
 
     // RF-022: Crear nuevo envío
-    public Envio crearEnvio(Producto producto, String fechaCreacion, String fechaEstimada,
-                            List<Direccion> direcciones, int peso, TipoEnvio tipoEnvio, Tarifa tarifa) {
-        String idEnvio = "ENV-" + System.currentTimeMillis();
+    public Envio crearEnvio(LinkedList<Producto> listaProductos, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo, Direccion direccion) {
+
+        idEnvio = "ENV-" + System.currentTimeMillis();
 
         Envio nuevoEnvio = new Envio(
-                producto,
+                listaProductos,
                 fechaCreacion,
                 fechaEstimada,
                 idEnvio,
-                peso,
+                pesoEnvio,
                 tipoEnvio,
                 EstadoEnvio.SOLICITADO,
-                direcciones,
                 tarifa,
-                null // Sin repartidor asignado inicialmente
+                null,
+                origen
+                ,destino
+                ,costo
+                ,direccion
         );
 
         if (listaEnvios == null) {
@@ -470,7 +488,6 @@ public final class Empresa {
         }
 
         listaEnvios.add(nuevoEnvio);
-        System.out.println("Envío creado correctamente: " + idEnvio);
         return nuevoEnvio;
     }
 
@@ -519,7 +536,7 @@ public final class Empresa {
     }
 
     // RF-025: Filtrar envíos por fecha, estado o zona
-    public List<Envio> filtrarEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado, String ciudad) {
+    /*public List<Envio> filtrarEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado, String ciudad) {
         List<Envio> enviosFiltrados = new LinkedList<>();
 
         if (listaEnvios == null || listaEnvios.isEmpty()) {
@@ -547,24 +564,26 @@ public final class Empresa {
             // Filtro por ciudad (verifica si alguna dirección coincide)
             if (ciudad != null && !ciudad.isEmpty()) {
                 cumpleCiudad = false;
-                for (Object obj : envio.getListaDirecciones()) {
-                    if (obj instanceof Direccion) {
-                        Direccion dir = (Direccion) obj;
-                        if (dir.getCiudad().equalsIgnoreCase(ciudad)) {
-                            cumpleCiudad = true;
-                            break;
+                if (envio.getDireccion() != null) {
+                    for (Object obj : envio.getDireccion()) {
+                        if (obj instanceof Direccion) {
+                            Direccion dir = (Direccion) obj;
+                            if (dir.getCiudad() != null && dir.getCiudad().equalsIgnoreCase(ciudad)) {
+                                cumpleCiudad = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-            
+
             if (cumpleFecha && cumpleEstado && cumpleCiudad) {
                 enviosFiltrados.add(envio);
             }
         }
 
         return enviosFiltrados;
-    }
+    }*/
 
 
     // RF-026: Consultar detalle de un envío
@@ -607,6 +626,7 @@ public final class Empresa {
         }
 
         for (Repartidor repartidor : listaRepartidores) {
+            // FIX: usar getDisponibilidad() que corresponde con setDisponibilidad(...)
             if (repartidor.getEstadoDisponibilidad() == EstadoRepartidor.ACTIVO) {
                 disponibles.add(repartidor);
             }
@@ -890,18 +910,4 @@ public final class Empresa {
 
         return total;
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

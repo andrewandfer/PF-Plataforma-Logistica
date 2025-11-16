@@ -114,8 +114,8 @@ public class ConsultarEnviosController implements Initializable {
         // Obtener envíos del usuario
         if (usuarioActual.getEnviosPropios() != null && !usuarioActual.getEnviosPropios().isEmpty()) {
             for (Envio envio : usuarioActual.getEnviosPropios()) {
-                String origen = obtenerCiudad(envio, 0);
-                String destino = obtenerCiudad(envio, 1);
+                String origen = null;
+                String destino = null;
                 String costo = calcularCosto(envio);
 
                 enviosData.add(new EnvioData(
@@ -131,7 +131,7 @@ public class ConsultarEnviosController implements Initializable {
 
         tableEnvios.setItems(enviosData);
     }
-
+/*
     private String obtenerCiudad(Envio envio, int indice) {
         if (envio.getListaDirecciones() != null && envio.getListaDirecciones().size() > indice) {
             Object obj = envio.getListaDirecciones().get(indice);
@@ -142,7 +142,7 @@ public class ConsultarEnviosController implements Initializable {
         }
         return "N/A";
     }
-
+*/
     private String calcularCosto(Envio envio) {
         if (envio.getTarifa() != null) {
             float total = envio.getTarifa().getBase() +
@@ -165,8 +165,8 @@ public class ConsultarEnviosController implements Initializable {
             if (usuarioActual.getEnviosPropios() != null) {
                 for (Envio envio : usuarioActual.getEnviosPropios()) {
                     if (envio.getEstadoEnvio().toString().equals(estadoSeleccionado)) {
-                        String origen = obtenerCiudad(envio, 0);
-                        String destino = obtenerCiudad(envio, 1);
+                        String origen = null;
+                        String destino = null;
                         String costo = calcularCosto(envio);
 
                         enviosData.add(new EnvioData(

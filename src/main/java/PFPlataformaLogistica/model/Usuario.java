@@ -20,7 +20,6 @@ public class Usuario extends Persona {
     }
 
     // Getters y setters
-
     public String getTelefono() {
         return telefono;
     }
@@ -33,11 +32,33 @@ public class Usuario extends Persona {
         return listaDirecciones;
     }
 
+    public LinkedList<Producto> getListaProductos() {
+        return listaProductos;
+    }
 
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-    public void setDireccion(Direccion direccion) { this.direccion = direccion; }
-    public void setListaDirecciones(LinkedList<String> listaDirecciones) { this.listaDirecciones = listaDirecciones; }
-    public void setEnviosPropios(LinkedList<Envio> enviosPropios) { this.enviosPropios = enviosPropios; }
+    public LinkedList<Envio> getEnviosPropios() {
+        return enviosPropios;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
+
+    public void setListaDirecciones(LinkedList<String> listaDirecciones) {
+        this.listaDirecciones = listaDirecciones;
+    }
+
+    public void setListaProductos(LinkedList<Producto> listaProductos) {
+        this.listaProductos = listaProductos;
+    }
+
+    public void setEnviosPropios(LinkedList<Envio> enviosPropios) {
+        this.enviosPropios = enviosPropios;
+    }
 
     public String getId() {
         return id;
@@ -47,13 +68,13 @@ public class Usuario extends Persona {
         this.id = id;
     }
 
-    // Builder interno
+    // Builder interno CORREGIDO
     public static class UsuarioBuilder extends PersonaBuilder<UsuarioBuilder> {
         private String telefono;
         private Direccion direccion;
-        private LinkedList<String> listaDirecciones;
-        private LinkedList<Producto> listaProductos;
-        private LinkedList<Envio> enviosPropios;
+        private LinkedList<String> listaDirecciones = new LinkedList<>(); // Inicializado
+        private LinkedList<Producto> listaProductos = new LinkedList<>(); // Inicializado
+        private LinkedList<Envio> enviosPropios = new LinkedList<>();     // Inicializado
 
         public UsuarioBuilder telefono(String telefono) {
             this.telefono = telefono;
@@ -66,17 +87,39 @@ public class Usuario extends Persona {
         }
 
         public UsuarioBuilder listaDirecciones(LinkedList<String> listaDirecciones) {
-            this.listaDirecciones = listaDirecciones;
+            if (listaDirecciones != null) {
+                this.listaDirecciones = listaDirecciones;
+            }
             return self();
         }
 
         public UsuarioBuilder listaProductos(LinkedList<Producto> listaProductos) {
-            this.listaProductos = listaProductos;
+            if (listaProductos != null) {
+                this.listaProductos = listaProductos;
+            }
             return self();
         }
 
         public UsuarioBuilder enviosPropios(LinkedList<Envio> enviosPropios) {
-            this.enviosPropios = enviosPropios;
+            if (enviosPropios != null) {
+                this.enviosPropios = enviosPropios;
+            }
+            return self();
+        }
+
+        // Métodos para agregar elementos individuales
+        public UsuarioBuilder agregarDireccion(String direccion) {
+            this.listaDirecciones.add(direccion);
+            return self();
+        }
+
+        public UsuarioBuilder agregarProducto(Producto producto) {
+            this.listaProductos.add(producto);
+            return self();
+        }
+
+        public UsuarioBuilder agregarEnvio(Envio envio) {
+            this.enviosPropios.add(envio);
             return self();
         }
 
@@ -87,6 +130,16 @@ public class Usuario extends Persona {
 
         @Override
         public Usuario build() {
+            // Asegurar que las listas nunca sean null
+            if (this.listaDirecciones == null) {
+                this.listaDirecciones = new LinkedList<>();
+            }
+            if (this.listaProductos == null) {
+                this.listaProductos = new LinkedList<>();
+            }
+            if (this.enviosPropios == null) {
+                this.enviosPropios = new LinkedList<>();
+            }
             return new Usuario(this);
         }
     }
@@ -99,17 +152,5 @@ public class Usuario extends Persona {
                 ", contrasena='" + contrasena + '\'' +
                 ", telefono='" + telefono + '\'' +
                 '}';
-    }
-
-    public LinkedList<Envio> getEnviosPropios() {
-        return enviosPropios;
-    }
-
-    public LinkedList<Producto> getListaProductos() {
-        return listaProductos;
-    }
-
-    public void setListaProductos(LinkedList<Producto> listaProductos) {
-        this.listaProductos = listaProductos;
     }
 }
