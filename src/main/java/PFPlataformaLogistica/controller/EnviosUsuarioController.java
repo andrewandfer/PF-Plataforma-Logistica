@@ -16,9 +16,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class EnviosUsuarioController implements Initializable {
 
+    // UI Components
     @FXML private TableView<EnvioTableData> tableEnvios;
     @FXML private TableColumn<EnvioTableData, String> colId;
     @FXML private TableColumn<EnvioTableData, String> colFechaCreacion;
@@ -37,42 +39,62 @@ public class EnviosUsuarioController implements Initializable {
     @FXML private Label lblEnTransito;
     @FXML private Label lblEntregados;
 
-    @FXML private Button btnNuevoEnvio;
-    @FXML private Button btnRastrear;
     @FXML private Button btnVolver;
 
+    // Dependencies
     private Empresa empresa;
     private Usuario usuarioActual;
     private ObservableList<EnvioTableData> enviosData;
+    private final EnvioTableDataMapper tableDataMapper = new EnvioTableDataMapper();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        empresa = Empresa.getInstance();
-
-        // Obtener usuario actual
-        Persona persona = SesionManager.getPersonaActual();
-        if (persona instanceof Usuario) {
-            usuarioActual = (Usuario) persona;
-        } else {
-            mostrarAlerta("Error", "No hay sesión de usuario activa", Alert.AlertType.ERROR);
-            return;
-        }
-
-        // Configurar tabla
-        configurarTabla();
-
-        // Configurar ComboBox de estados
-        cbEstado.setItems(FXCollections.observableArrayList(
-                "Todos", "SOLICITADO", "ASIGNADO", "ENRUTA", "ENTREGADO", "INCIDENCIA"
-        ));
-        cbEstado.setValue("Todos");
-
-        // Cargar envíos
-        cargarEnvios();
-        actualizarEstadisticas();
+        initializeDependencies();
+        setupUIComponents();
+        loadUserData();
     }
 
-    private void configurarTabla() {
+    private void initializeDependencies() {
+        empresa = Empresa.getInstance();
+        usuarioActual = obtenerUsuarioActual();
+        enviosData = FXCollections.observableArrayList();
+    }
+
+    private Usuario obtenerUsuarioActual() {
+        Persona persona = SesionManager.getPersonaActual();
+        if (persona instanceof Usuario) {
+            return (Usuario) persona;
+        }
+        mostrarErrorSesion();
+        return null;
+    }
+
+    private void mostrarErrorSesion() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText("No hay sesión de usuario activa");
+        alert.showAndWait();
+    }
+
+    private void setupUIComponents() {
+        configureTable();
+        configureFilters();
+    }
+
+    private void loadUserData() {
+        if (usuarioActual != null) {
+            cargarEnvios();
+            actualizarEstadisticas();
+        }
+    }
+
+    private void configureTable() {
+        setupCellValueFactories();
+        setupEstadoCellFactory();
+    }
+
+    private void setupCellValueFactories() {
         colId.setCellValueFactory(new PropertyValueFactory<>("idEnvio"));
         colFechaCreacion.setCellValueFactory(new PropertyValueFactory<>("fechaCreacion"));
         colFechaEstimada.setCellValueFactory(new PropertyValueFactory<>("fechaEstimada"));
@@ -81,86 +103,80 @@ public class EnviosUsuarioController implements Initializable {
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         colRepartidor.setCellValueFactory(new PropertyValueFactory<>("repartidor"));
         colCosto.setCellValueFactory(new PropertyValueFactory<>("costo"));
+    }
 
-        // Estilizar columna de estado con colores
-        colEstado.setCellFactory(column -> new TableCell<EnvioTableData, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    switch (item) {
-                        case "SOLICITADO":
-                            setStyle("-fx-background-color: #FFF9C4; -fx-text-fill: #F57F17;");
-                            break;
-                        case "ASIGNADO":
-                            setStyle("-fx-background-color: #BBDEFB; -fx-text-fill: #1565C0;");
-                            break;
-                        case "ENRUTA":
-                            setStyle("-fx-background-color: #FFE0B2; -fx-text-fill: #E65100;");
-                            break;
-                        case "ENTREGADO":
-                            setStyle("-fx-background-color: #C8E6C9; -fx-text-fill: #2E7D32;");
-                            break;
-                        case "INCIDENCIA":
-                            setStyle("-fx-background-color: #FFCDD2; -fx-text-fill: #C62828;");
-                            break;
-                    }
-                }
-            }
-        });
+    private void setupEstadoCellFactory() {
+        colEstado.setCellFactory(column -> new EstadoStyledTableCell());
+    }
+
+    private void configureFilters() {
+        cbEstado.setItems(FXCollections.observableArrayList(
+                "Todos", "SOLICITADO", "ASIGNADO", "ENRUTA", "ENTREGADO", "INCIDENCIA"
+        ));
+        cbEstado.setValue("Todos");
     }
 
     private void cargarEnvios() {
-        enviosData = FXCollections.observableArrayList();
-
         List<Envio> envios = empresa.obtenerEnviosPorUsuario(usuarioActual);
-
-        if (envios != null && !envios.isEmpty()) {
-            for (Envio envio : envios) {
-                String origen = obtenerDireccionTexto(envio, 0);
-                String destino = obtenerDireccionTexto(envio, 1);
-                String repartidor = envio.getRepartidor() != null ?
-                        envio.getRepartidor().getNombre() : "Sin asignar";
-                String costo = envio.getTarifa() != null ?
-                        String.format("$%.2f", calcularCostoTotal(envio.getTarifa())) : "N/A";
-
-                enviosData.add(new EnvioTableData(
-                        envio.getIdEnvio(),
-                        envio.getFechaCreacion(),
-                        envio.getFechaEstimada(),
-                        origen,
-                        destino,
-                        envio.getEstadoEnvio().toString(),
-                        repartidor,
-                        costo
-                ));
-            }
-        }
-
+        enviosData.setAll(convertToTableData(envios));
         tableEnvios.setItems(enviosData);
     }
 
-    private String obtenerDireccionTexto(Envio envio, int indice) {
-        if (envio.getListaDirecciones() != null && envio.getListaDirecciones().size() > indice) {
-            Object obj = envio.getListaDirecciones().get(indice);
-            if (obj instanceof Direccion) {
-                Direccion dir = (Direccion) obj;
-                return dir.getCalle() + ", " + dir.getCiudad();
-            }
-        }
-        return "N/A";
-    }
-
-    private float calcularCostoTotal(Tarifa tarifa) {
-        return tarifa.getBase() + tarifa.getPeso() + tarifa.getVolumen() + tarifa.getRecargo();
+    private List<EnvioTableData> convertToTableData(List<Envio> envios) {
+        return envios.stream()
+                .map(tableDataMapper::toTableData)
+                .collect(Collectors.toList());
     }
 
     @FXML
     private void aplicarFiltros() {
+        FiltroEnvios filtro = buildFiltro();
+        List<Envio> enviosFiltrados = filtrarEnviosLocalmente(filtro);
+
+        enviosData.setAll(convertToTableData(enviosFiltrados));
+        actualizarEstadisticas();
+    }
+
+    private List<Envio> filtrarEnviosLocalmente(FiltroEnvios filtro) {
+        List<Envio> todosEnvios = empresa.obtenerEnviosPorUsuario(usuarioActual);
+
+        return todosEnvios.stream()
+                .filter(envio -> filtrarPorEstado(envio, filtro.estado()))
+                .filter(envio -> filtrarPorFecha(envio, filtro.fechaInicio(), filtro.fechaFin()))
+                .collect(Collectors.toList());
+    }
+
+    private boolean filtrarPorEstado(Envio envio, EstadoEnvio estadoFiltro) {
+        if (estadoFiltro == null) {
+            return true;
+        }
+        return envio.getEstadoEnvio() == estadoFiltro;
+    }
+
+    private boolean filtrarPorFecha(Envio envio, String fechaInicio, String fechaFin) {
+        if (fechaInicio == null && fechaFin == null) {
+            return true;
+        }
+
+        String fechaCreacion = envio.getFechaCreacion();
+        if (fechaCreacion == null) {
+            return false;
+        }
+
+        boolean pasaFiltro = true;
+
+        if (fechaInicio != null) {
+            pasaFiltro = fechaCreacion.compareTo(fechaInicio) >= 0;
+        }
+
+        if (fechaFin != null) {
+            pasaFiltro = pasaFiltro && fechaCreacion.compareTo(fechaFin) <= 0;
+        }
+
+        return pasaFiltro;
+    }
+
+    private FiltroEnvios buildFiltro() {
         String estadoSeleccionado = cbEstado.getValue();
         LocalDate fechaInicio = dpFechaInicio.getValue();
         LocalDate fechaFin = dpFechaFin.getValue();
@@ -173,33 +189,7 @@ public class EnviosUsuarioController implements Initializable {
         String fechaInicioStr = fechaInicio != null ? fechaInicio.format(DateTimeFormatter.ISO_DATE) : null;
         String fechaFinStr = fechaFin != null ? fechaFin.format(DateTimeFormatter.ISO_DATE) : null;
 
-        List<Envio> enviosFiltrados = empresa.filtrarEnvios(fechaInicioStr, fechaFinStr, estadoFiltro, null);
-
-        // Filtrar por usuario
-        enviosData.clear();
-        for (Envio envio : enviosFiltrados) {
-            if (usuarioActual.getEnviosPropios().contains(envio)) {
-                String origen = obtenerDireccionTexto(envio, 0);
-                String destino = obtenerDireccionTexto(envio, 1);
-                String repartidor = envio.getRepartidor() != null ?
-                        envio.getRepartidor().getNombre() : "Sin asignar";
-                String costo = envio.getTarifa() != null ?
-                        String.format("$%.2f", calcularCostoTotal(envio.getTarifa())) : "N/A";
-
-                enviosData.add(new EnvioTableData(
-                        envio.getIdEnvio(),
-                        envio.getFechaCreacion(),
-                        envio.getFechaEstimada(),
-                        origen,
-                        destino,
-                        envio.getEstadoEnvio().toString(),
-                        repartidor,
-                        costo
-                ));
-            }
-        }
-
-        actualizarEstadisticas();
+        return new FiltroEnvios(fechaInicioStr, fechaFinStr, estadoFiltro);
     }
 
     @FXML
@@ -212,59 +202,131 @@ public class EnviosUsuarioController implements Initializable {
     }
 
     private void actualizarEstadisticas() {
+        EstadisticasEnvios estadisticas = calcularEstadisticas();
+        actualizarLabelsEstadisticas(estadisticas);
+    }
+
+    private EstadisticasEnvios calcularEstadisticas() {
         int total = enviosData.size();
-        int enTransito = 0;
-        int entregados = 0;
+        int enTransito = (int) enviosData.stream()
+                .filter(data -> data.getEstado().equals("ENRUTA") || data.getEstado().equals("ASIGNADO"))
+                .count();
+        int entregados = (int) enviosData.stream()
+                .filter(data -> data.getEstado().equals("ENTREGADO"))
+                .count();
 
-        for (EnvioTableData data : enviosData) {
-            if (data.getEstado().equals("ENRUTA") || data.getEstado().equals("ASIGNADO")) {
-                enTransito++;
-            } else if (data.getEstado().equals("ENTREGADO")) {
-                entregados++;
-            }
-        }
+        return new EstadisticasEnvios(total, enTransito, entregados);
+    }
 
-        lblTotalEnvios.setText(String.valueOf(total));
-        lblEnTransito.setText(String.valueOf(enTransito));
-        lblEntregados.setText(String.valueOf(entregados));
+    private void actualizarLabelsEstadisticas(EstadisticasEnvios estadisticas) {
+        lblTotalEnvios.setText(String.valueOf(estadisticas.total()));
+        lblEnTransito.setText(String.valueOf(estadisticas.enTransito()));
+        lblEntregados.setText(String.valueOf(estadisticas.entregados()));
     }
 
     @FXML
     private void abrirCrearEnvio() {
-        Stage stage = (Stage) btnNuevoEnvio.getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "CrearEnvio.fxml");
+        navigateToScene("CrearEnvio.fxml");
     }
 
     @FXML
     private void abrirRastrearEnvio() {
-        Stage stage = (Stage) btnRastrear.getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "RastrearEnvio.fxml");
+        navigateToScene("RastrearEnvio.fxml");
     }
 
     @FXML
     private void volverAlMenu() {
-        Stage stage = (Stage) btnVolver.getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "UsuarioView.fxml");
+        navigateToScene("UsuarioView.fxml");
     }
 
-    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    private void navigateToScene(String fxmlFile) {
+        Stage stage = (Stage) btnVolver.getScene().getWindow();
+        SceneManager.cambiarEscena(stage, fxmlFile);
+    }
+
+    // Records para inmutabilidad y claridad
+    private record FiltroEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado) {}
+    private record EstadisticasEnvios(int total, int enTransito, int entregados) {}
+
+    // Mapper para convertir Envio a EnvioTableData
+    private class EnvioTableDataMapper {
+        public EnvioTableData toTableData(Envio envio) {
+            return new EnvioTableData(
+                    envio.getIdEnvio(),
+                    envio.getFechaCreacion(),
+                    envio.getFechaEstimada(),
+                    obtenerOrigen(envio),
+                    obtenerDestino(envio),
+                    envio.getEstadoEnvio().toString(),
+                    obtenerNombreRepartidor(envio),
+                    formatearCosto(envio)
+            );
+        }
+
+        private String obtenerOrigen(Envio envio) {
+            return envio.getOrigen() != null ? envio.getOrigen() : "N/A";
+        }
+
+        private String obtenerDestino(Envio envio) {
+            return envio.getDestino() != null ? envio.getDestino() : "N/A";
+        }
+
+        private String obtenerNombreRepartidor(Envio envio) {
+            return envio.getRepartidor() != null ? envio.getRepartidor().getNombre() : "Sin asignar";
+        }
+
+        private String formatearCosto(Envio envio) {
+            return envio.getCosto() > 0 ? String.format("$%,d", envio.getCosto()) : "N/A";
+        }
+    }
+
+    // TableCell personalizada para estilizar estados
+    private class EstadoStyledTableCell extends TableCell<EnvioTableData, String> {
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setStyle("");
+            } else {
+                setText(item);
+                aplicarEstiloEstado(item);
+            }
+        }
+
+        private void aplicarEstiloEstado(String estado) {
+            switch (estado) {
+                case "SOLICITADO":
+                    setStyle("-fx-background-color: #FFF9C4; -fx-text-fill: #F57F17;");
+                    break;
+                case "ASIGNADO":
+                    setStyle("-fx-background-color: #BBDEFB; -fx-text-fill: #1565C0;");
+                    break;
+                case "ENRUTA":
+                    setStyle("-fx-background-color: #FFE0B2; -fx-text-fill: #E65100;");
+                    break;
+                case "ENTREGADO":
+                    setStyle("-fx-background-color: #C8E6C9; -fx-text-fill: #2E7D32;");
+                    break;
+                case "INCIDENCIA":
+                    setStyle("-fx-background-color: #FFCDD2; -fx-text-fill: #C62828;");
+                    break;
+                default:
+                    setStyle("");
+            }
+        }
     }
 
     // Clase interna para datos de la tabla
     public static class EnvioTableData {
-        private String idEnvio;
-        private String fechaCreacion;
-        private String fechaEstimada;
-        private String origen;
-        private String destino;
-        private String estado;
-        private String repartidor;
-        private String costo;
+        private final String idEnvio;
+        private final String fechaCreacion;
+        private final String fechaEstimada;
+        private final String origen;
+        private final String destino;
+        private final String estado;
+        private final String repartidor;
+        private final String costo;
 
         public EnvioTableData(String idEnvio, String fechaCreacion, String fechaEstimada,
                               String origen, String destino, String estado, String repartidor, String costo) {
@@ -289,4 +351,3 @@ public class EnviosUsuarioController implements Initializable {
         public String getCosto() { return costo; }
     }
 }
-

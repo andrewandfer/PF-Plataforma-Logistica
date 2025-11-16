@@ -62,7 +62,7 @@ public class Administrador extends Persona {
 
     }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
+/* <<<<<<<<<<<<<<   Windsurf Command  >>>>>>>>>>>>>>>> */
     /**
      * Muestra la lista de usuarios registrados en la empresa.
      * Si no hay usuarios registrados, se muestra un mensaje indicando esto.

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
+           xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="PFPlataformaLogistica.controller.GestionRepartidoresController">
+
+    <children>
+        <BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);                            -fx-padding: 0;">
+
+            <!-- HEADER -->
+            <top>
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                              -fx-background-radius: 20 20 0 0;                              -fx-padding: 15 30;                              -fx-pref-height: 70;                              -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+                    <children>
+
+                        <!-- LOGO -->
+                        <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
+                            <image>
+                                <Image url="@Imagenes/Logo.png" />
+                            </image>
+                        </ImageView>
+
+                        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="Gestión de Repartidores" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="btnVolver" onAction="#volver" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Volver" />
+                    </children>
+                </HBox>
+            </top>
+
+            <!-- CUERPO PRINCIPAL -->
+            <center>
+                <HBox spacing="0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 0 0 20 20;">
+                    <children>
+
+                        <!-- MENÚ LATERAL -->
+                        <VBox alignment="TOP_CENTER" prefWidth="220" spacing="15" style="-fx-background-color: #E3F2FD;                                      -fx-padding: 20;                                      -fx-background-radius: 0 0 0 20;                                      -fx-border-color: #BBDEFB;                                      -fx-border-width: 0 1 0 0;">
+                            <children>
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Acciones" />
+
+                                <Button fx:id="btnNuevoRepartidor" onAction="#abrirCrearRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Nuevo Repartidor" />
+
+                                <Button fx:id="btnEditarRepartidor" onAction="#abrirEditarRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Editar" />
+
+                                <Button fx:id="btnEliminarRepartidor" onAction="#eliminarRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Eliminar" />
+
+                                <Button fx:id="btnCambiarEstado" onAction="#abrirCambiarEstado" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Cambiar Estado" />
+
+                                <Button fx:id="btnVerEnvios" onAction="#abrirVerEnvios" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Ver Envíos" />
+
+                                <!-- Barra de búsqueda -->
+                                <VBox spacing="10" style="-fx-padding: 20 0 0 0;">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Filtros" />
+
+                                    <TextField fx:id="txtBuscar" promptText="Buscar..." style="-fx-pref-width: 160;" />
+
+                                    <ComboBox fx:id="cbFiltroEstado" promptText="Estado" style="-fx-pref-width: 160;" />
+
+                                    <HBox spacing="5">
+                                        <Button text="Buscar" onAction="#buscarRepartidores" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-pref-width: 75; -fx-cursor: hand;" />
+                                        <Button text="Limpiar" onAction="#limpiarFiltros" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-pref-width: 75; -fx-cursor: hand;" />
+                                    </HBox>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- ÁREA DE CONTENIDO -->
+                        <VBox prefWidth="680" style="-fx-background-color: #FFFFFF; -fx-padding: 20;">
+                            <children>
+                                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976D2; -fx-padding: 0 0 15 0;" text="Lista de Repartidores" />
+
+                                <!-- Tabla de repartidores -->
+                                <TableView fx:id="tableRepartidores" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colId" text="ID" prefWidth="80" />
+                                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="120" />
+                                        <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100" />
+                                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="90" />
+                                        <TableColumn fx:id="colZona" text="Zona Cobertura" prefWidth="120" />
+                                        <TableColumn fx:id="colLocalidad" text="Localidad" prefWidth="100" />
+                                        <TableColumn fx:id="colEnviosAsignados" text="Envíos" prefWidth="60" />
+                                    </columns>
+                                    <columnResizePolicy>
+                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                    </columnResizePolicy>
+                                </TableView>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
+            </center>
+
+            <!-- FOOTER -->
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 12 30;                              -fx-background-color: #FFFFFF;                              -fx-border-color: #EBEBEB;                              -fx-border-width: 1 0 0 0;                              -fx-background-radius: 0 0 20 20;">
+                    <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido - Módulo Repartidores" />
+                    <Region HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Total Repartidores: " />
+                        <Label fx:id="lblTotalRepartidores" style="-fx-font-size: 12px; -fx-text-fill: #2196F3; -fx-font-weight: bold;" text="0" />
+                    </children>
+                </HBox>
+            </bottom>
+
+        </BorderPane>
+    </children>
+</StackPane>

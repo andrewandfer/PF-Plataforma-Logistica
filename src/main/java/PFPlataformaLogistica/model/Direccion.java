@@ -8,7 +8,7 @@ public class Direccion {
     private double latitud;
     private double longitud;
 
-    public Direccion() {} // Constructor vacío para compatibilidad
+
 
     private Direccion(DireccionBuilder builder) {
         this.idDireccion = builder.idDireccion;
