@@ -9,7 +9,7 @@
 <StackPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
            xmlns="http://javafx.com/javafx/20.0.2"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="PFPlataformaLogistica.controller.PerfilController">
+           fx:controller="PFPlataformaLogistica.controller.CrearDireccionUsuarioController">
 
     <children>
         <BorderPane prefHeight="700" prefWidth="1100"
@@ -36,7 +36,7 @@
                         </ImageView>
 
                         <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
-                               text="👤 Modificar Perfil" />
+                               text=" Crear Nueva Dirección" />
 
                         <Region HBox.hgrow="ALWAYS" />
 
@@ -74,9 +74,9 @@
                                      -fx-border-width: 0 1 0 0;">
                             <children>
                                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                       text="Gestión de Perfil" />
+                                       text="Gestión de Direcciones" />
 
-                                <Button fx:id="btnModificarPerfil" text=" Modificar Perfil"
+                                <Button fx:id="btnCrearDireccion" text="📍 Crear Dirección"
                                         style="-fx-background-color: #4FC3F7;
                                                -fx-text-fill: white;
                                                -fx-background-radius: 8;
@@ -84,7 +84,7 @@
                                                -fx-pref-width: 160;
                                                -fx-cursor: hand;" />
 
-                                <Button fx:id="btnCambiarContrasena" text=" Cambiar Contraseña" onAction="#cambiarContrasena"
+                                <Button fx:id="btnConsultarDirecciones" text="📋 Consultar Direcciones" onAction="#consultarDirecciones"
                                         style="-fx-background-color: #FFFFFF;
                                                -fx-border-color: #81D4FA;
                                                -fx-background-radius: 8;
@@ -93,7 +93,7 @@
                                                -fx-pref-width: 160;
                                                -fx-cursor: hand;" />
 
-                                <Button fx:id="btnVerHistorial" text="📊 Historial Envíos" onAction="#verHistorialEnvios"
+                                <Button fx:id="btnMisDirecciones" text="Mis Direcciones" onAction="#verMisDirecciones"
                                         style="-fx-background-color: #FFFFFF;
                                                -fx-border-color: #81D4FA;
                                                -fx-background-radius: 8;
@@ -105,14 +105,20 @@
                                 <Separator style="-fx-background-color: #BBDEFB;" />
 
                                 <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                       text="Información del Usuario" />
+                                       text="Información" />
+
+                                <TextFlow style="-fx-padding: 0 5;">
+                                    <Text text="Complete todos los campos obligatorios (" style="-fx-font-size: 11px; -fx-fill: #666;"/>
+                                    <Text text="*" style="-fx-font-size: 11px; -fx-fill: #F44336; -fx-font-weight: bold;"/>
+                                    <Text text=") para crear una nueva dirección." style="-fx-font-size: 11px; -fx-fill: #666;"/>
+                                </TextFlow>
 
                                 <VBox spacing="5" style="-fx-padding: 10 0;">
-                                    <Label fx:id="lblUsuarioActual" style="-fx-font-size: 12px; -fx-text-fill: #666; -fx-font-weight: bold;" text="Usuario: " />
-                                    <Label fx:id="lblEmailActual" style="-fx-font-size: 12px; -fx-text-fill: #666;" text="Email: " />
-                                    <Label fx:id="lblTotalEnvios" style="-fx-font-size: 12px; -fx-text-fill: #666;" text="Total Envíos: 0" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #1976D2; -fx-font-weight: bold;" text="Campos Obligatorios:" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="• ID Dirección" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="• Calle" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="• Ciudad" />
                                 </VBox>
-
                             </children>
                         </VBox>
 
@@ -124,9 +130,9 @@
                                 <!-- Título del Formulario -->
                                 <VBox spacing="8">
                                     <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
-                                           text="Modificar Información Personal" />
+                                           text="Nueva Dirección" />
                                     <Label style="-fx-font-size: 14px; -fx-text-fill: #666;"
-                                           text="Actualice su información personal según sea necesario" />
+                                           text="Complete la información de la nueva dirección" />
                                 </VBox>
 
                                 <!-- Formulario -->
@@ -139,53 +145,53 @@
                                     </columnConstraints>
 
                                     <!-- Fila 1 -->
-                                    <Label text="Nombre *" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                    <Label text="ID Dirección *" GridPane.columnIndex="0" GridPane.rowIndex="0"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <TextField fx:id="txtNombre" promptText="Ingrese su nombre" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                    <TextField fx:id="txtIdDireccion" promptText="Ej: DIR-001" GridPane.columnIndex="1" GridPane.rowIndex="0"
                                                style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
-                                    <Label text="Edad" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                                    <Label text="Alias" GridPane.columnIndex="2" GridPane.rowIndex="0"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <TextField fx:id="txtEdad" promptText="Ingrese su edad" GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                    <TextField fx:id="txtAlias" promptText="Ej: Casa, Oficina, etc." GridPane.columnIndex="3" GridPane.rowIndex="0"
                                                style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
                                     <!-- Fila 2 -->
-                                    <Label text="Email *" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                    <Label text="Calle *" GridPane.columnIndex="0" GridPane.rowIndex="1"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <TextField fx:id="txtEmail" promptText="ejemplo@correo.com" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                    <TextField fx:id="txtCalle" promptText="Ej: Calle 123 #45-67" GridPane.columnIndex="1" GridPane.rowIndex="1"
                                                style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
-                                    <Label text="Teléfono" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                                    <Label text="Ciudad *" GridPane.columnIndex="2" GridPane.rowIndex="1"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <TextField fx:id="txtTelefono" promptText="+57 300 123 4567" GridPane.columnIndex="3" GridPane.rowIndex="1"
+                                    <TextField fx:id="txtCiudad" promptText="Ej: Bogotá, Medellín, etc." GridPane.columnIndex="3" GridPane.rowIndex="1"
                                                style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
-                                    <!-- Fila 3 - Contraseña -->
-                                    <Label text="Contraseña Actual" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                                    <!-- Fila 3 -->
+                                    <Label text="Latitud" GridPane.columnIndex="0" GridPane.rowIndex="2"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <PasswordField fx:id="txtContrasenaActual" promptText="Ingrese contraseña actual" GridPane.columnIndex="1" GridPane.rowIndex="2"
-                                                   style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+                                    <TextField fx:id="txtLatitud" promptText="Ej: 4.710989" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
-                                    <Label text="Nueva Contraseña" GridPane.columnIndex="2" GridPane.rowIndex="2"
+                                    <Label text="Longitud" GridPane.columnIndex="2" GridPane.rowIndex="2"
                                            style="-fx-font-weight: bold; -fx-text-fill: #333;" />
-                                    <PasswordField fx:id="txtNuevaContrasena" promptText="Opcional - nueva contraseña" GridPane.columnIndex="3" GridPane.rowIndex="2"
-                                                   style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+                                    <TextField fx:id="txtLongitud" promptText="Ej: -74.072092" GridPane.columnIndex="3" GridPane.rowIndex="2"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
 
                                 </GridPane>
 
                                 <!-- Botones de Acción -->
                                 <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 0 20;">
-                                    <Button fx:id="btnCancelar" text="Cancelar" onAction="#cancelarEdicion"
+                                    <Button fx:id="btnLimpiar" text="Limpiar Formulario" onAction="#limpiarFormulario"
                                             style="-fx-background-color: #FFFFFF;
                                                    -fx-border-color: #BDBDBD;
                                                    -fx-background-radius: 8;
                                                    -fx-border-radius: 8;
                                                    -fx-text-fill: #666;
-                                                   -fx-pref-width: 120;
+                                                   -fx-pref-width: 150;
                                                    -fx-pref-height: 40;
                                                    -fx-cursor: hand;" />
 
-                                    <Button fx:id="btnGuardar" text="Guardar Cambios" onAction="#guardarCambios"
+                                    <Button fx:id="btnCrear" text="Crear Dirección" onAction="#crearDireccion"
                                             style="-fx-background-color: #4CAF50;
                                                    -fx-background-radius: 8;
                                                    -fx-text-fill: white;
@@ -204,9 +210,9 @@
                                              -fx-border-radius: 8;
                                              -fx-border-width: 1;">
                                     <Label fx:id="lblMensaje" style="-fx-text-fill: #2E7D32; -fx-font-weight: bold;"
-                                           text="Perfil actualizado exitosamente!" />
+                                           text="Dirección creada exitosamente!" />
                                     <Label style="-fx-text-fill: #2E7D32; -fx-font-size: 12px;"
-                                           text="Los cambios han sido guardados correctamente." />
+                                           text="La dirección ha sido agregada al sistema." />
                                 </VBox>
 
                             </children>
@@ -226,7 +232,7 @@
                              -fx-background-radius: 0 0 20 20;">
                     <children>
                         <Label style="-fx-font-size: 12px; -fx-text-fill: #666;"
-                               text="© 2025 Envío Rápido - Gestión de Perfil" />
+                               text="© 2025 Envío Rápido - Gestión de Direcciones" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;"
                                text="Soporte Técnico" />

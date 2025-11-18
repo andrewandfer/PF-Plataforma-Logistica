@@ -4,7 +4,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
@@ -25,11 +24,22 @@
                             </image>
                         </ImageView>
 
-                        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="Gestión de Repartidores" />
+                        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="Panel de Repartidor" />
 
                         <Region HBox.hgrow="ALWAYS" />
 
-                        <Button fx:id="btnVolver" onAction="#volver" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Volver" />
+                        <!-- Botón de Cerrar Sesión en la esquina derecha -->
+                        <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion"
+                                style="-fx-background-color: rgba(255,255,255,0.2);
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 15;
+                                       -fx-border-radius: 15;
+                                       -fx-border-color: white;
+                                       -fx-border-width: 1;
+                                       -fx-cursor: hand;
+                                       -fx-padding: 8 15;"
+                                text="Cerrar Sesión" />
                     </children>
                 </HBox>
             </top>
@@ -44,28 +54,20 @@
                             <children>
                                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Acciones" />
 
-                                <Button fx:id="btnNuevoRepartidor" onAction="#abrirCrearRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Nuevo Repartidor" />
-
-                                <Button fx:id="btnEditarRepartidor" onAction="#abrirEditarRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Editar" />
-
-                                <Button fx:id="btnEliminarRepartidor" onAction="#eliminarRepartidor" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Eliminar" />
+                                <Button fx:id="btnActualizarInfo" onAction="#abrirActualizarInfo" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Actualizar Información" />
 
                                 <Button fx:id="btnCambiarEstado" onAction="#abrirCambiarEstado" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Cambiar Estado" />
 
                                 <Button fx:id="btnVerEnvios" onAction="#abrirVerEnvios" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Ver Envíos" />
 
-                                <!-- Barra de búsqueda -->
-                                <VBox spacing="10" style="-fx-padding: 20 0 0 0;">
-                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Filtros" />
+                                <!-- Información del repartidor actual -->
+                                <VBox spacing="10" style="-fx-padding: 20 0 0 0; -fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-padding: 15; -fx-border-color: #BBDEFB; -fx-border-radius: 8;">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Mi Información" />
 
-                                    <TextField fx:id="txtBuscar" promptText="Buscar..." style="-fx-pref-width: 160;" />
-
-                                    <ComboBox fx:id="cbFiltroEstado" promptText="Estado" style="-fx-pref-width: 160;" />
-
-                                    <HBox spacing="5">
-                                        <Button text="Buscar" onAction="#buscarRepartidores" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-pref-width: 75; -fx-cursor: hand;" />
-                                        <Button text="Limpiar" onAction="#limpiarFiltros" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-pref-width: 75; -fx-cursor: hand;" />
-                                    </HBox>
+                                    <Label fx:id="lblMiNombre" style="-fx-font-size: 12px; -fx-text-fill: #333;" text="Nombre: " />
+                                    <Label fx:id="lblMiEstado" style="-fx-font-size: 12px; -fx-text-fill: #333;" text="Estado: " />
+                                    <Label fx:id="lblMiZona" style="-fx-font-size: 12px; -fx-text-fill: #333;" text="Zona: " />
+                                    <Label fx:id="lblMiEnvios" style="-fx-font-size: 12px; -fx-text-fill: #333;" text="Envíos asignados: 0" />
                                 </VBox>
                             </children>
                         </VBox>
@@ -73,23 +75,114 @@
                         <!-- ÁREA DE CONTENIDO -->
                         <VBox prefWidth="680" style="-fx-background-color: #FFFFFF; -fx-padding: 20;">
                             <children>
-                                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976D2; -fx-padding: 0 0 15 0;" text="Lista de Repartidores" />
 
-                                <!-- Tabla de repartidores -->
-                                <TableView fx:id="tableRepartidores" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="colId" text="ID" prefWidth="80" />
-                                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="120" />
-                                        <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100" />
-                                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="90" />
-                                        <TableColumn fx:id="colZona" text="Zona Cobertura" prefWidth="120" />
-                                        <TableColumn fx:id="colLocalidad" text="Localidad" prefWidth="100" />
-                                        <TableColumn fx:id="colEnviosAsignados" text="Envíos" prefWidth="60" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                </TableView>
+                                <!-- Vista de Actualizar Información -->
+                                <VBox fx:id="vboxActualizarInfo" spacing="20" visible="true">
+                                    <children>
+                                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Actualizar Mi Información" />
+
+                                        <GridPane hgap="15" vgap="15">
+                                            <columnConstraints>
+                                                <ColumnConstraints prefWidth="150" />
+                                                <ColumnConstraints prefWidth="250" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints prefHeight="35" />
+                                                <RowConstraints prefHeight="35" />
+                                                <RowConstraints prefHeight="35" />
+                                                <RowConstraints prefHeight="35" />
+                                                <RowConstraints prefHeight="35" />
+                                            </rowConstraints>
+
+                                            <children>
+                                                <Label text="Nombre:" style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                                <TextField fx:id="txtNombre" prefWidth="250" GridPane.columnIndex="1" />
+
+                                                <Label text="Teléfono:" style="-fx-font-weight: bold; -fx-text-fill: #333;" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtTelefono" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                                <Label text="Email:" style="-fx-font-weight: bold; -fx-text-fill: #333;" GridPane.rowIndex="2" />
+                                                <TextField fx:id="txtEmail" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                                <Label text="Zona de Cobertura:" style="-fx-font-weight: bold; -fx-text-fill: #333;" GridPane.rowIndex="3" />
+                                                <TextField fx:id="txtZona" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                                <Label text="Localidad:" style="-fx-font-weight: bold; -fx-text-fill: #333;" GridPane.rowIndex="4" />
+                                                <TextField fx:id="txtLocalidad" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                            </children>
+                                        </GridPane>
+
+                                        <HBox spacing="15">
+                                            <Button fx:id="btnGuardarInfo" onAction="#guardarInformacion" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-width: 120; -fx-cursor: hand;" text="Guardar" />
+                                            <Button fx:id="btnCancelarInfo" onAction="#cancelarActualizacion" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-width: 120; -fx-cursor: hand;" text="Cancelar" />
+                                        </HBox>
+
+                                        <Label fx:id="lblMensajeInfo" style="-fx-font-size: 14px; -fx-text-fill: #666;" text="" />
+                                    </children>
+                                </VBox>
+
+                                <!-- Vista de Estado Actual -->
+                                <VBox fx:id="vboxEstado" spacing="15" visible="false">
+                                    <children>
+                                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Mi Estado Actual" />
+
+                                        <HBox spacing="20" alignment="CENTER_LEFT">
+                                            <children>
+                                                <VBox spacing="10">
+                                                    <Label style="-fx-font-size: 14px; -fx-text-fill: #333;" text="Estado actual:" />
+                                                    <Label fx:id="lblEstadoActual" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="ACTIVO" />
+                                                </VBox>
+
+                                                <VBox spacing="10">
+                                                    <Label style="-fx-font-size: 14px; -fx-text-fill: #333;" text="Cambiar estado:" />
+                                                    <HBox spacing="10">
+                                                        <ComboBox fx:id="cbNuevoEstado" prefWidth="120" />
+                                                        <Button fx:id="btnActualizarEstado" onAction="#actualizarEstado" style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Actualizar" />
+                                                    </HBox>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <!-- Vista de Envíos Asignados -->
+                                <VBox fx:id="vboxEnvios" spacing="15" visible="false">
+                                    <children>
+                                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Mis Envíos Asignados" />
+
+                                        <HBox spacing="20" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label fx:id="lblTotalEnvios" style="-fx-font-size: 14px; -fx-text-fill: #666;" text="Total de envíos asignados: 0" />
+                                                <Button fx:id="btnActualizarLista" onAction="#actualizarListaEnvios" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Actualizar Lista" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Tabla de envíos asignados -->
+                                        <TableView fx:id="tableEnvios" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colIdEnvio" text="ID Envío" prefWidth="80" />
+                                                <TableColumn fx:id="colDestino" text="Destino" prefWidth="150" />
+                                                <TableColumn fx:id="colEstadoEnvio" text="Estado" prefWidth="100" />
+                                                <TableColumn fx:id="colFechaEstimada" text="Fecha Estimada" prefWidth="120" />
+                                                <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80" />
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+
+                                        <!-- Panel para completar envío -->
+                                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #F5F5F5; -fx-background-radius: 8; -fx-padding: 15;">
+                                            <children>
+                                                <Label style="-fx-font-size: 14px; -fx-text-fill: #333;" text="Completar envío:" />
+                                                <TextField fx:id="txtIdEnvioCompletar" promptText="ID del envío" prefWidth="100" />
+                                                <Button fx:id="btnCompletarEnvio" onAction="#completarEnvio" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Marcar como Entregado" />
+                                                <Label fx:id="lblMensajeCompletar" style="-fx-font-size: 12px; -fx-text-fill: #666;" text="" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
                             </children>
                         </VBox>
 
@@ -101,10 +194,9 @@
             <bottom>
                 <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 12 30;                              -fx-background-color: #FFFFFF;                              -fx-border-color: #EBEBEB;                              -fx-border-width: 1 0 0 0;                              -fx-background-radius: 0 0 20 20;">
                     <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido - Módulo Repartidores" />
-                    <Region HBox.hgrow="ALWAYS" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Total Repartidores: " />
-                        <Label fx:id="lblTotalRepartidores" style="-fx-font-size: 12px; -fx-text-fill: #2196F3; -fx-font-weight: bold;" text="0" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido - Panel Repartidor" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblInfoSesion" style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Sesión activa" />
                     </children>
                 </HBox>
             </bottom>

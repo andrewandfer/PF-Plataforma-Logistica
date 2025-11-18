@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.registroController">
+<StackPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.registroController">
 
     <children>
         <BorderPane prefHeight="600" prefWidth="900" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);">
@@ -27,7 +19,9 @@
                             </image>
                         </ImageView>
                         <Label style="-fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;" text="Crear Cuenta" />
+
                         <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnVolver" onAction="#volver" style="-fx-background-color: transparent;                                        -fx-text-fill: white;                                        -fx-font-weight: bold;                                        -fx-cursor: hand;" text="← Volver" />
                     </children>
                 </HBox>
             </top>

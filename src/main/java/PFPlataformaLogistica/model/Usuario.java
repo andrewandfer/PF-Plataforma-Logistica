@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Usuario extends Persona {
     private String telefono;
     private Direccion direccion;
-    private LinkedList<String> listaDirecciones;
+    private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Producto> listaProductos;
     private LinkedList<Envio> enviosPropios;
 
@@ -28,7 +28,7 @@ public class Usuario extends Persona {
         return direccion;
     }
 
-    public LinkedList<String> getListaDirecciones() {
+    public LinkedList<Direccion> getListaDirecciones() {
         return listaDirecciones;
     }
 
@@ -48,7 +48,7 @@ public class Usuario extends Persona {
         this.direccion = direccion;
     }
 
-    public void setListaDirecciones(LinkedList<String> listaDirecciones) {
+    public void setListaDirecciones(LinkedList<Direccion> listaDirecciones) {
         this.listaDirecciones = listaDirecciones;
     }
 
@@ -60,19 +60,11 @@ public class Usuario extends Persona {
         this.enviosPropios = enviosPropios;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    // Builder interno CORREGIDO
+    // Builder
     public static class UsuarioBuilder extends PersonaBuilder<UsuarioBuilder> {
         private String telefono;
         private Direccion direccion;
-        private LinkedList<String> listaDirecciones = new LinkedList<>(); // Inicializado
+        private LinkedList<Direccion> listaDirecciones = new LinkedList<>(); // Inicializado
         private LinkedList<Producto> listaProductos = new LinkedList<>(); // Inicializado
         private LinkedList<Envio> enviosPropios = new LinkedList<>();     // Inicializado
 
@@ -86,7 +78,7 @@ public class Usuario extends Persona {
             return self();
         }
 
-        public UsuarioBuilder listaDirecciones(LinkedList<String> listaDirecciones) {
+        public UsuarioBuilder listaDirecciones(LinkedList<Direccion> listaDirecciones) {
             if (listaDirecciones != null) {
                 this.listaDirecciones = listaDirecciones;
             }
@@ -108,7 +100,7 @@ public class Usuario extends Persona {
         }
 
         // Métodos para agregar elementos individuales
-        public UsuarioBuilder agregarDireccion(String direccion) {
+        public UsuarioBuilder agregarDireccion(Direccion direccion) {
             this.listaDirecciones.add(direccion);
             return self();
         }

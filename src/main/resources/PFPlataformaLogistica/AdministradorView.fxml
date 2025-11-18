@@ -9,22 +9,19 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
 
-<StackPane prefHeight="600" prefWidth="1200" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.AdministradorPrincipalController">
+<StackPane prefHeight="450" prefWidth="600" style="-fx-background-color: #FFFFFF; -fx-padding: 0;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PFPlataformaLogistica.controller.AdministradorController">
 
     <children>
-        <BorderPane prefHeight="600" prefWidth="1200" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);                            -fx-padding: 0;">
+        <BorderPane prefHeight="450" prefWidth="600" style="-fx-background-color: #FFFFFF;                            -fx-background-radius: 20;                            -fx-border-radius: 20;                            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);                            -fx-padding: 0;">
 
             <!-- HEADER -->
             <top>
-                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                              -fx-background-radius: 20 20 0 0;                              -fx-padding: 15 30;                              -fx-pref-height: 70;                              -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);                              -fx-background-radius: 20 20 0 0;                              -fx-padding: 10 20;                              -fx-pref-height: 50;                              -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
                     <children>
 
                         <!-- LOGO EN LA ESQUINA IZQUIERDA -->
-                        <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
+                        <ImageView fitHeight="40" fitWidth="44" preserveRatio="true">
                             <image>
                                 <Image url="@Imagenes/Logo.png" />
                             </image>
@@ -42,131 +39,43 @@
                 </HBox>
             </top>
 
+            <!-- CENTRO -->
             <center>
-                <!-- Layout principal: Menú lateral y área de contenido -->
-                <HBox spacing="10" style="-fx-padding: 20; -fx-background-color: #FFFFFF; -fx-background-radius: 0 0 20 20;">
+                <VBox spacing="15" style="-fx-padding: 20; -fx-alignment: center;">
+                    <children>
+                        <!-- Título de bienvenida -->
+                        <Label style="-fx-font-size: 22px;                                       -fx-font-weight: bold;                                       -fx-text-fill: #1976D2;" text="Bienvenido, Administrador" />
 
-                    <!-- Menú lateral -->
-                    <VBox spacing="10" style="-fx-background-color: #F5F5F5;
-                                             -fx-background-radius: 10;
-                                             -fx-padding: 20 15;
-                                             -fx-border-color: #EBEBEB;
-                                             -fx-border-radius: 10;
-                                             -fx-border-width: 1;
-                                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 10, 0, 0, 5);"
-                          prefWidth="200">
-                        <children>
-                            <Label style="-fx-font-size: 16px;
-                                          -fx-font-weight: bold;
-                                          -fx-text-fill: #1976D2;"
-                                   text="Menú" />
+                        <!-- Menú vertical centrado -->
+                        <VBox spacing="10" style="-fx-background-color: #F5F5F5;                                                  -fx-background-radius: 10;                                                  -fx-padding: 15;                                                  -fx-border-color: #EBEBEB;                                                  -fx-border-radius: 10;                                                  -fx-border-width: 1;                                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 8, 0, 0, 3);                                                  -fx-alignment: center;">
+                            <children>
+                                <Label style="-fx-font-size: 14px;                                               -fx-font-weight: bold;                                               -fx-text-fill: #1976D2;" text="Menú" />
 
-                            <Button fx:id="btnGestionUsuarios"
-                                    onAction="#onGestionUsuarios"
-                                    style="-fx-background-color: #2196F3;
-                                           -fx-text-fill: white;
-                                           -fx-font-weight: bold;
-                                           -fx-background-radius: 8;
-                                           -fx-pref-width: 170;
-                                           -fx-pref-height: 40;
-                                           -fx-cursor: hand;"
-                                    text="Gestionar Usuarios" />
+                                <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" style="-fx-background-color: #2196F3;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-background-radius: 8;                                                -fx-pref-width: 180;                                                -fx-pref-height: 35;                                                -fx-cursor: hand;" text="Gestión Usuarios" />
 
-                            <Button fx:id="btnGestionRepartidores"
-                                    onAction="#onGestionRepartidores"
-                                    style="-fx-background-color: #2196F3;
-                                           -fx-text-fill: white;
-                                           -fx-font-weight: bold;
-                                           -fx-background-radius: 8;
-                                           -fx-pref-width: 170;
-                                           -fx-pref-height: 40;
-                                           -fx-cursor: hand;"
-                                    text="Gestionar Repartidores" />
+                                <Button fx:id="btnGestionRepartidores" onAction="#onGestionRepartidores" style="-fx-background-color: #2196F3;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-background-radius: 8;                                                -fx-pref-width: 180;                                                -fx-pref-height: 35;                                                -fx-cursor: hand;" text="Gestión Repartidores" />
 
-                            <Button fx:id="btnMetricas"
-                                    onAction="#onMetricas"
-                                    style="-fx-background-color: #2196F3;
-                                           -fx-text-fill: white;
-                                           -fx-font-weight: bold;
-                                           -fx-background-radius: 8;
-                                           -fx-pref-width: 170;
-                                           -fx-pref-height: 40;
-                                           -fx-cursor: hand;"
-                                    text="Ver Métricas" />
+                                <Button fx:id="btnGestionEnvios" onAction="#onGestionEnvios" style="-fx-background-color: #2196F3;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-background-radius: 8;                                                -fx-pref-width: 180;                                                -fx-pref-height: 35;                                                -fx-cursor: hand;" text="Gestión Envíos" />
 
-                            <!-- Puedes añadir más botones aquí -->
-                        </children>
-                    </VBox>
+                                <Button fx:id="btnPanelMetricas" onAction="#onPanelMetricas" style="-fx-background-color: #2196F3;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-background-radius: 8;                                                -fx-pref-width: 180;                                                -fx-pref-height: 35;                                                -fx-cursor: hand;" text="Panel de Métricas" />
 
-                    <!-- Área de contenido principal -->
-                    <StackPane style="-fx-background-color: #FFFFFF;
-                                      -fx-background-radius: 15;
-                                      -fx-border-color: #EBEBEB;
-                                      -fx-border-radius: 15;
-                                      -fx-border-width: 1;
-                                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 10, 0, 0, 5);"
-                               HBox.hgrow="ALWAYS">
-                        <children>
-                            <!-- Contenido que se mostrará aquí -->
-                            <VBox spacing="20" style="-fx-alignment: center; -fx-padding: 20;">
-                                <children>
-                                    <Label style="-fx-font-size: 22px;
-                                                  -fx-font-weight: bold;
-                                                  -fx-text-fill: #1976D2;"
-                                           text="Métricas del Sistema" />
-
-                                    <!-- Gráfico de métricas -->
-                                    <BarChart fx:id="chartMetricas"
-                                              style="-fx-background-color: #FFFFFF;
-                                                     -fx-border-radius: 8;
-                                                     -fx-border-color: #EBEBEB;
-                                                     -fx-border-width: 1;"
-                                              prefHeight="400"
-                                              prefWidth="800">
-                                        <xAxis>
-                                            <CategoryAxis side="BOTTOM" />
-                                        </xAxis>
-                                        <yAxis>
-                                            <NumberAxis side="LEFT" />
-                                        </yAxis>
-                                    </BarChart>
-
-                                    <Label style="-fx-font-size: 12px;
-                                                  -fx-text-fill: #666;"
-                                           text="Gráfico de métricas (envíos, ingresos, promedio de entrega)."
-                                           wrapText="true" />
-                                </children>
-                            </VBox>
-                        </children>
-                    </StackPane>
-                </HBox>
+                                <Button fx:id="btnCerrarSesion" onAction="#onCerrarSesion" style="-fx-background-color: #E53935;                                                -fx-text-fill: white;                                                -fx-font-weight: bold;                                                -fx-background-radius: 8;                                                -fx-pref-width: 180;                                                -fx-pref-height: 35;                                                -fx-cursor: hand;" text="Cerrar Sesión" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
             </center>
 
             <!-- FOOTER -->
             <bottom>
-                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 12 30;                              -fx-background-color: #FFFFFF;                              -fx-border-color: #EBEBEB;                              -fx-border-width: 1 0 0 0;                              -fx-background-radius: 0 0 20 20;">
+                <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 8 20;                              -fx-background-color: #FFFFFF;                              -fx-border-color: #EBEBEB;                              -fx-border-width: 1 0 0 0;                              -fx-background-radius: 0 0 20 20;">
                     <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="© 2025 Envío Rápido" />
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #666;" text="© 2025 Envío Rápido" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;" text="Términos y Privacidad" />
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #2196F3;" text="Términos y Privacidad" />
                     </children>
                 </HBox>
             </bottom>
-
-            <!-- Botón de volver en la esquina inferior derecha -->
-            <StackPane BorderPane.alignment="BOTTOM_RIGHT" style="-fx-padding: 20 20 30 0;">
-                <Button fx:id="btnVolver"
-                        onAction="#onVolver"
-                        style="-fx-background-color: #2196F3;
-                               -fx-text-fill: white;
-                               -fx-font-weight: bold;
-                               -fx-background-radius: 8;
-                               -fx-pref-width: 100;
-                               -fx-pref-height: 35;
-                               -fx-cursor: hand;
-                               -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);"
-                        text="Volver" />
-            </StackPane>
 
         </BorderPane>
     </children>

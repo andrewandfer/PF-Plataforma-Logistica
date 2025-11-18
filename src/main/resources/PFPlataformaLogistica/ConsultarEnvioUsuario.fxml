@@ -72,6 +72,9 @@
                                                -fx-pref-width: 160;
                                                -fx-cursor: hand;" />
 
+                                <Button fx:id="btnMetodosPago" onAction="#OnMetodosDePago" style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160; -fx-cursor: hand;" text="Métodos de Pago" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" />
+
+
                                 <Button fx:id="btnRastrear" text="🔍 Rastrear" onAction="#abrirRastrear"
                                         style="-fx-background-color: #FFFFFF;
                                                -fx-border-color: #81D4FA;

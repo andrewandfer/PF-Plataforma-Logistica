@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
@@ -88,7 +89,7 @@ public class CrearEnvioController implements Initializable {
     }
 
     private Usuario obtenerUsuarioActual() {
-        Persona persona = SesionManager.getPersonaActual();
+        Persona persona = SesionManager.getUsuarioActual(Usuario.class);
         if (persona instanceof Usuario) {
             return (Usuario) persona;
         }
@@ -192,7 +193,7 @@ public class CrearEnvioController implements Initializable {
             }
 
             Envio nuevoEnvio = construirEnvio();
-
+            empresa.getListaEnvios().add(nuevoEnvio);
             // Guardar envío en el sistema
             empresa.agregarEnvioAUsuario(usuarioActual, nuevoEnvio);
 
@@ -251,7 +252,7 @@ public class CrearEnvioController implements Initializable {
 
     private void volver() {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "EnviosUsuarioView.fxml");
+        SceneManager.cambiarEscena(stage, "ConsultarEnvioUsuario.fxml");
     }
 
     private boolean validarCamposParaCotizacion() {
@@ -322,8 +323,9 @@ public class CrearEnvioController implements Initializable {
                 (int) Float.parseFloat(txtPeso.getText())
         );
 
-        LinkedList<Producto> listaProductos = new LinkedList<>();
+        ArrayList<Producto> listaProductos = new ArrayList<>();
         listaProductos.add(producto);
+
 
         // Crear direcciones
         Direccion direccionOrigen = new Direccion.DireccionBuilder()
@@ -376,6 +378,7 @@ public class CrearEnvioController implements Initializable {
                 costoTotal, // costo
                 direccionDestino // dirección de entrega
         );
+
     }
 
     // Método alternativo si los getters de Tarifa no existen

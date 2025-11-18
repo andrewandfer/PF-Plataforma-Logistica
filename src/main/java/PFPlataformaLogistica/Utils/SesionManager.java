@@ -3,23 +3,25 @@ package PFPlataformaLogistica.Utils;
 import PFPlataformaLogistica.model.Persona;
 
 public class SesionManager {
-    private static Persona personaActual;
 
-    public static void iniciarSesion(Persona persona) {
-        personaActual = persona;
+    private static Object usuarioActual;   // 🔥 ahora puede ser lo que sea
+
+    public static void iniciarSesion(Object usuario) {
+        usuarioActual = usuario;
     }
 
-    public static Persona getPersonaActual() {
-        return personaActual;
+    public static <T> T getUsuarioActual(Class<T> tipo) {
+        return tipo.cast(usuarioActual);
     }
 
     public static void cerrarSesion() {
-        personaActual = null;
+        usuarioActual = null;
     }
 
     public static boolean haySesionActiva() {
-        return personaActual != null;
+        return usuarioActual != null;
     }
 }
+
 
 

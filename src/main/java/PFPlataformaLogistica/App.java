@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class App extends Application {
@@ -36,6 +38,7 @@ public class App extends Application {
                 .longitud(10.00)
                 .build();
 
+
         // Crear usuario3
         Usuario usuario3 = new Usuario.UsuarioBuilder()
                 .telefono("314572026")
@@ -43,7 +46,10 @@ public class App extends Application {
                 .contrasena("1")
                 .id("21534689")
                 .email("1")
+                .edad(48)
                 .build();
+        usuario3.getListaDirecciones().add(direccion1);
+
 
         // Inicializar listas manualmente si es necesario
         if (usuario3.getListaProductos() == null) {
@@ -53,7 +59,8 @@ public class App extends Application {
             usuario3.setEnviosPropios(new LinkedList<>());
         }
 
-        empresa.getListaPersonas().add(usuario3);
+        empresa.anadirUsuarioListas(usuario3);
+
 
         // Crear usuario4
         Usuario usuario4 = new Usuario.UsuarioBuilder()
@@ -70,21 +77,25 @@ public class App extends Application {
             usuario4.setEnviosPropios(new LinkedList<>());
         }
 
-        empresa.getListaPersonas().add(usuario4);
+        empresa.anadirUsuarioListas(usuario4);
 
         // Crear administrador
         Administrador administrador = new Administrador.AdministradorBuilder()
                 .nombre("admin")
-                .email("admin@gmail.com")
-                .contrasena("admin123")
+                .email("2")
+                .contrasena("2")
                 .build();
         empresa.getListaPersonas().add(administrador);
 
         // Crear repartidor
         Repartidor repartidor = new Repartidor.RepartidorBuilder()
                 .nombre("cyrene")
-                .email("cyrene@gmail.com")
-                .contrasena("cyrene123")
+                .email("3")
+                .contrasena("3")
+                .telefono("3145077280")
+                .zonaCobertura("centro")
+                .localidad("armenia")
+                .id("23")
                 .build();
         empresa.getListaPersonas().add(repartidor);
 
@@ -101,7 +112,7 @@ public class App extends Application {
             usuario.setEnviosPropios(new LinkedList<>());
         }
 
-        empresa.getListaPersonas().add(usuario);
+        empresa.anadirUsuarioListas(usuario);
 
         // Crear y agregar producto
         Producto producto1 = new Producto("1111", "pelota de juguete", 45);
@@ -111,14 +122,14 @@ public class App extends Application {
         Tarifa tarifa1 = new Tarifa(15000, 5, 15, 5, 15);
 
         // Crear lista de productos para el envío
-        LinkedList<Producto> productosEnvio = new LinkedList<>();
+        ArrayList<Producto> productosEnvio = new ArrayList<>();
         productosEnvio.add(producto1);
 
         // Crear envío usando el método crearEnvio de Empresa
         Envio enviojuan = empresa.crearEnvio(
                 productosEnvio,
-                "2024-12-24", // Formato de fecha corregido
-                "2024-12-25", // Formato de fecha corregido
+                "2024-12-24",
+                "2024-12-25",
                 "125634",
                 5,
                 TipoEnvio.PRIORITARIA,
@@ -130,11 +141,7 @@ public class App extends Application {
                 12000,
                 direccion1
         );
-
-        // CORRECCIÓN: Usar el método correcto agregarEnvioAUsuario
-        empresa.agregarEnvioAUsuario(usuario3, enviojuan);
-
-        // También agregar el envío a la lista general de envíos de la empresa
-        // (esto ya se hace automáticamente en el método crearEnvio)
+        usuario3.getEnviosPropios().add(enviojuan);
+        empresa.getListaRepartidores().add(repartidor);
     }
 }

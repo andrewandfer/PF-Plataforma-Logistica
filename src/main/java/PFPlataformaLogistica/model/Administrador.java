@@ -1,6 +1,5 @@
 package PFPlataformaLogistica.model;
 
-import PFPlataformaLogistica.dto.RepartidorDTO;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,22 +51,12 @@ public class Administrador extends Persona {
         System.out.println("Usuario agregado correctamente: " + usuario.getId());
     }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
 
-/* <<<<<<<<<<  7961ec38-ad89-4861-ac5c-5d7f2eb5b329  >>>>>>>>>>> */
-
-
-/* <<<<<<<<<<  6729f8ad-560f-470a-a312-a05f72ec263a  >>>>>>>>>>> */
     public void eliminarUsuario(String id) {
 
     }
 
-/* <<<<<<<<<<<<<<   Windsurf Command  >>>>>>>>>>>>>>>> */
-    /**
-     * Muestra la lista de usuarios registrados en la empresa.
-     * Si no hay usuarios registrados, se muestra un mensaje indicando esto.
-     */
-/* <<<<<<<<<<  4d9f071c-bffb-4897-b294-9d1595cdc49b  >>>>>>>>>>> */
+
     public void listarUsuarios() {
         if (listaUsuarios.isEmpty()) {
             System.out.println("No hay usuarios registrados.");
@@ -79,10 +68,7 @@ public class Administrador extends Persona {
         }
     }
 
-    /**
-     * Agrega un repartidor a la lista de repartidores de la empresa.
-     * @param repartidor el repartidor a agregar
-     */
+
     public void crearRepartidor(Repartidor repartidor) {
         listaRepartidores.add(repartidor);
         System.out.println("Repartidor agregado (entidad): " + repartidor.getId());

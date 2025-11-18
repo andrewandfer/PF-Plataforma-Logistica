@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="PFPlataformaLogistica.controller.GestionEnviosAdministradorController"
+            prefHeight="700.0" prefWidth="1100.0">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0"
+              style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7); -fx-padding: 15 30;">
+            <children>
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
+                       text=" Gestión de Envíos" />
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="txtBuscarEnvio" promptText=" Buscar por ID..."
+                           style="-fx-background-radius: 20; -fx-font-size: 13px; -fx-pref-width: 200;" />
+                <Button onAction="#buscarEnvio" text="Buscar"
+                        style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold; -fx-border-color: white; -fx-border-radius: 20; -fx-padding: 5 15;" />
+                <Button fx:id="btnVolver" onAction="#volverAlMenu" text="← Volver"
+                        style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-weight: bold;" />
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="0.0">
+            <children>
+                <!-- Menú Lateral -->
+                <VBox alignment="TOP_CENTER" prefWidth="220.0" spacing="15.0"
+                      style="-fx-background-color: #E3F2FD; -fx-padding: 20; -fx-border-color: #BBDEFB; -fx-border-width: 0 1 0 0;">
+                    <children>
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                               text="Gestión de Envíos" />
+
+                        <!-- Asignar/Reasignar -->
+                        <VBox spacing="8.0" alignment="CENTER">
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                   text="Asignar Repartidor" />
+                            <ComboBox fx:id="cbRepartidores" promptText="Seleccionar repartidor" prefWidth="160.0" />
+                            <Button onAction="#asignarRepartidor" text="Asignar"
+                                    style="-fx-background-color: #4FC3F7; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold; -fx-pref-width: 140;" />
+                            <Button onAction="#reasignarRepartidor" text="Reasignar"
+                                    style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold; -fx-pref-width: 140;" />
+                        </VBox>
+
+                        <!-- Cambiar Estado -->
+                        <VBox spacing="8.0" alignment="CENTER">
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                   text="Cambiar Estado" />
+                            <ComboBox fx:id="cbEstados" promptText="Seleccionar estado" prefWidth="160.0" />
+                            <Button onAction="#cambiarEstadoEnvio" text="Actualizar Estado"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold; -fx-pref-width: 140;" />
+                        </VBox>
+
+                        <!-- Registrar Incidencia -->
+                        <VBox spacing="8.0" alignment="CENTER">
+                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                   text=" Registrar Incidencia" />
+                            <ComboBox fx:id="cbTiposIncidencia" promptText="Tipo de incidencia" prefWidth="160.0" />
+                            <TextArea fx:id="txtDescripcionIncidencia" promptText="Descripción..."
+                                      wrapText="true" prefWidth="160.0" prefHeight="80.0" />
+                            <Button onAction="#registrarIncidencia" text="Registrar Incidencia"
+                                    style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold; -fx-pref-width: 140;" />
+                        </VBox>
+
+                        <Separator />
+
+                        <!-- Filtros -->
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                               text="Filtros" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="Estado:" />
+                        <ComboBox fx:id="cbFiltrarEstado" promptText="Todos los estados" prefWidth="160.0" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;" text="Repartidor:" />
+                        <ComboBox fx:id="cbFiltrarRepartidor" promptText="Todos los repartidores" prefWidth="160.0" />
+                        <Button onAction="#aplicarFiltros" text="Aplicar Filtros"
+                                style="-fx-background-color: #FFFFFF; -fx-border-color: #81D4FA; -fx-background-radius: 8; -fx-border-radius: 8; -fx-text-fill: #1976D2; -fx-pref-width: 160;" />
+                        <Button onAction="#limpiarFiltros" text="Limpiar Filtros"
+                                style="-fx-background-color: transparent; -fx-text-fill: #666;" />
+                    </children>
+                </VBox>
+
+                <!-- Contenido Principal -->
+                <VBox prefWidth="880.0" spacing="20.0" style="-fx-padding: 30;">
+                    <children>
+                        <!-- Estadísticas -->
+                        <HBox spacing="20.0" alignment="CENTER">
+                            <children>
+                                <VBox alignment="CENTER" spacing="8.0"
+                                      style="-fx-background-color: #E3F2FD; -fx-background-radius: 12; -fx-padding: 20; -fx-pref-width: 150;">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                           text="Total Envíos" />
+                                    <Label fx:id="lblTotalEnvios" text="0"
+                                           style="-fx-font-size: 28px; -fx-text-fill: #4FC3F7; -fx-font-weight: bold;" />
+                                </VBox>
+                                <VBox alignment="CENTER" spacing="8.0"
+                                      style="-fx-background-color: #FFF3E0; -fx-background-radius: 12; -fx-padding: 20; -fx-pref-width: 150;">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #F57C00;"
+                                           text="Pendientes" />
+                                    <Label fx:id="lblPendientes" text="0"
+                                           style="-fx-font-size: 28px; -fx-text-fill: #FF9800; -fx-font-weight: bold;" />
+                                </VBox>
+                                <VBox alignment="CENTER" spacing="8.0"
+                                      style="-fx-background-color: #E8F5E9; -fx-background-radius: 12; -fx-padding: 20; -fx-pref-width: 150;">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"
+                                           text="Con Incidencias" />
+                                    <Label fx:id="lblIncidencias" text="0"
+                                           style="-fx-font-size: 28px; -fx-text-fill: #4CAF50; -fx-font-weight: bold;" />
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- Tabla -->
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                   text="Lista de Envíos - RF-012" />
+                            <TableView fx:id="tableEnvios" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colId" prefWidth="100.0" text="ID Envío" />
+                                    <TableColumn fx:id="colFechaCreacion" prefWidth="100.0" text="Fecha Creación" />
+                                    <TableColumn fx:id="colOrigen" prefWidth="120.0" text="Origen" />
+                                    <TableColumn fx:id="colDestino" prefWidth="120.0" text="Destino" />
+                                    <TableColumn fx:id="colEstado" prefWidth="100.0" text="Estado" />
+                                    <TableColumn fx:id="colRepartidor" prefWidth="120.0" text="Repartidor" />
+                                    <TableColumn fx:id="colPeso" prefWidth="80.0" text="Peso (kg)" />
+                                    <TableColumn fx:id="colCosto" prefWidth="80.0" text="Costo" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+</BorderPane>

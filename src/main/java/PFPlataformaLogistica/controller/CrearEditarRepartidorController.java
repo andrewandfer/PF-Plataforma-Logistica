@@ -34,6 +34,7 @@ public class CrearEditarRepartidorController implements Initializable {
     private String repartidorId;
 
     @Override
+
     public void initialize(URL url, ResourceBundle resourceBundle) {
         empresa = Empresa.getInstance();
         configurarCombobox();

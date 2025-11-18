@@ -1,11 +1,12 @@
 // java
 package PFPlataformaLogistica.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Envio {
-    private LinkedList<Producto> listaProductos;
+    private ArrayList<Producto> listaProductos;
     private String fechaCreacion;
     private String fechaEstimada;
     private String idEnvio;
@@ -19,8 +20,7 @@ public class Envio {
     private int costo;
     private Direccion direccion;
 
-
-    public Envio(LinkedList<Producto> listaProductos, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo, Direccion direccion) {
+    public Envio(ArrayList<Producto> listaProductos, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo, Direccion direccion) {
         this.listaProductos = listaProductos;
         this.fechaCreacion = fechaCreacion;
         this.fechaEstimada = fechaEstimada;
@@ -36,11 +36,11 @@ public class Envio {
         this.direccion = direccion;
     }
 
-    public LinkedList<Producto> getListaProductos() {
+    public ArrayList<Producto> getListaProductos() {
         return listaProductos;
     }
 
-    public void setListaProductos(LinkedList<Producto> listaProductos) {
+    public void setListaProductos(ArrayList<Producto> listaProductos) {
         this.listaProductos = listaProductos;
     }
 
@@ -143,19 +143,20 @@ public class Envio {
     @Override
     public String toString() {
         return "Envio{" +
-                "listaProductos=" + listaProductos +
+                "listaProductos=" + (listaProductos != null ? listaProductos.size() + " productos" : "null") +
                 ", fechaCreacion='" + fechaCreacion + '\'' +
                 ", fechaEstimada='" + fechaEstimada + '\'' +
                 ", idEnvio='" + idEnvio + '\'' +
                 ", pesoEnvio=" + pesoEnvio +
                 ", tipoEnvio=" + tipoEnvio +
                 ", estadoEnvio=" + estadoEnvio +
-                ", tarifa=" + tarifa +
-                ", repartidor=" + repartidor +
+                ", tarifa=" + (tarifa != null ? tarifa.toString() : "null") +
+                // FIX: Only show repartidor name/email, not the full object
+                ", repartidor=" + (repartidor != null ? repartidor.getNombre() + " (" + repartidor.getEmail() + ")" : "null") +
                 ", origen='" + origen + '\'' +
                 ", destino='" + destino + '\'' +
                 ", costo=" + costo +
-                ", Direccion=" + direccion +
+                ", direccion=" + (direccion != null ? direccion.toString() : "null") +
                 '}';
     }
 }

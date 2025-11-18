@@ -1,11 +1,11 @@
 package PFPlataformaLogistica.controller;
 
-
 import PFPlataformaLogistica.Utils.SceneManager;
 import PFPlataformaLogistica.Utils.SesionManager;
 import PFPlataformaLogistica.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -35,6 +35,7 @@ public class ConsultarEnviosController implements Initializable {
     @FXML private Button btnNuevoEnvio;
     @FXML private Button btnRastrear;
     @FXML private Button btnVolver;
+    @FXML private Button btnMetodosPago;
 
     private Empresa empresa;
     private Usuario usuarioActual;
@@ -45,14 +46,13 @@ public class ConsultarEnviosController implements Initializable {
         empresa = Empresa.getInstance();
 
         // Obtener usuario actual
-        Persona persona = SesionManager.getPersonaActual();
+        Persona persona = SesionManager.getUsuarioActual(Usuario.class);
         if (persona instanceof Usuario) {
             usuarioActual = (Usuario) persona;
         } else {
             mostrarAlerta("Error", "No hay sesión de usuario activa", Alert.AlertType.ERROR);
             return;
         }
-
 
         // Configurar tabla
         configurarTabla();
@@ -131,18 +131,7 @@ public class ConsultarEnviosController implements Initializable {
 
         tableEnvios.setItems(enviosData);
     }
-/*
-    private String obtenerCiudad(Envio envio, int indice) {
-        if (envio.getListaDirecciones() != null && envio.getListaDirecciones().size() > indice) {
-            Object obj = envio.getListaDirecciones().get(indice);
-            if (obj instanceof Direccion) {
-                Direccion dir = (Direccion) obj;
-                return dir.getCiudad();
-            }
-        }
-        return "N/A";
-    }
-*/
+
     private String calcularCosto(Envio envio) {
         if (envio.getTarifa() != null) {
             float total = envio.getTarifa().getBase() +
@@ -234,6 +223,177 @@ public class ConsultarEnviosController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    public void OnMetodosDePago(ActionEvent event) {
+        EnvioData envioSeleccionado = tableEnvios.getSelectionModel().getSelectedItem();
+
+        if (envioSeleccionado == null) {
+            mostrarAlerta("Selección requerida", "Por favor seleccione un envío para procesar el pago", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Buscar el envío completo en la empresa
+        Envio envio = empresa.buscarEnvioPorId(envioSeleccionado.getIdEnvio());
+        if (envio == null) {
+            mostrarAlerta("Error", "No se encontró el envío seleccionado", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Mostrar diálogo de selección de método de pago
+        String metodoPago = mostrarDialogoMetodoPago();
+        if (metodoPago == null) {
+            return; // Usuario canceló
+        }
+
+        // Procesar el pago según el método seleccionado
+        procesarPago(envio, metodoPago);
+    }
+
+    private String mostrarDialogoMetodoPago() {
+        // Crear diálogo personalizado
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Seleccionar Método de Pago");
+        dialog.setHeaderText("Elija su método de pago preferido");
+
+        // Botones
+        ButtonType btnEfectivo = new ButtonType("Efectivo", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnPaypal = new ButtonType("PayPal", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnTarjeta = new ButtonType("Tarjeta", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().addAll(btnEfectivo, btnPaypal, btnTarjeta, btnCancelar);
+
+        // Configurar resultado
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnEfectivo) {
+                return "EFECTIVO";
+            } else if (dialogButton == btnPaypal) {
+                return "PAYPAL";
+            } else if (dialogButton == btnTarjeta) {
+                return "TARJETA";
+            }
+            return null;
+        });
+
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private void procesarPago(Envio envio, String metodoPago) {
+        try {
+            String datoPago = "";
+            String detalles = "";
+
+            // Solicitar información adicional según el método
+            switch (metodoPago) {
+                case "PAYPAL":
+                    datoPago = solicitarEmailPayPal();
+                    if (datoPago == null) return;
+                    detalles = "PayPal: " + datoPago;
+                    break;
+
+                case "TARJETA":
+                    datoPago = solicitarNumeroTarjeta();
+                    if (datoPago == null) return;
+                    detalles = "Tarjeta terminada en: " + datoPago.substring(datoPago.length() - 4);
+                    break;
+
+                case "EFECTIVO":
+                    detalles = "Pago en efectivo al repartidor";
+                    break;
+            }
+
+            // Calcular monto (usar el costo del envío o uno simulado)
+            double monto = calcularMontoPago(envio);
+
+            // Procesar el pago usando el método que ya tienes en Empresa
+            PagoRecord pagoRecord = empresa.procesarPagoConMetodo(metodoPago, datoPago, envio, monto, detalles);
+
+            if (pagoRecord != null && pagoRecord.getResultado().equals("APROBADO")) {
+                mostrarComprobantePago(pagoRecord);
+                mostrarAlerta("Pago Exitoso", "El pago se procesó correctamente", Alert.AlertType.INFORMATION);
+
+                // Actualizar la tabla si es necesario
+                cargarEnvios();
+            } else {
+                mostrarAlerta("Pago Rechazado", "No se pudo procesar el pago. Intente con otro método.", Alert.AlertType.ERROR);
+            }
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al procesar el pago: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private String solicitarEmailPayPal() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("PayPal");
+        dialog.setHeaderText("Ingrese su email de PayPal");
+        dialog.setContentText("Email:");
+
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private String solicitarNumeroTarjeta() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Tarjeta de Crédito/Débito");
+        dialog.setHeaderText("Ingrese el número de su tarjeta");
+        dialog.setContentText("Número:");
+
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private double calcularMontoPago(Envio envio) {
+        // Si el envío ya tiene un costo calculado, usarlo
+        if (envio.getCosto() > 0) {
+            return envio.getCosto();
+        }
+
+        // Si no, calcular un monto simulado basado en la tarifa
+        if (envio.getTarifa() != null) {
+            return envio.getTarifa().getBase() +
+                    envio.getTarifa().getPeso() +
+                    envio.getTarifa().getVolumen() +
+                    envio.getTarifa().getRecargo();
+        }
+
+        // Monto por defecto
+        return 50.0; // Monto simulado
+    }
+
+    private void mostrarComprobantePago(PagoRecord pagoRecord) {
+        // Mostrar el comprobante en un diálogo
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Comprobante de Pago");
+        alert.setHeaderText("Pago procesado exitosamente");
+        alert.setContentText(pagoRecord.generarComprobante());
+
+        // Agregar botón para generar PDF
+        ButtonType btnPDF = new ButtonType("Generar PDF", ButtonBar.ButtonData.OTHER);
+        ButtonType btnOK = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().setAll(btnPDF, btnOK);
+
+        // Mostrar y manejar la respuesta
+        alert.showAndWait().ifPresent(response -> {
+            if (response == btnPDF) {
+                generarPDFComprobante(pagoRecord);
+            }
+        });
+    }
+
+    private void generarPDFComprobante(PagoRecord pagoRecord) {
+        try {
+            // Generar PDF en la carpeta de documentos
+            String rutaDescargas = System.getProperty("user.home") + "/Documents";
+            String rutaPDF = pagoRecord.generarComprobantePDF(rutaDescargas);
+
+            if (rutaPDF != null) {
+                mostrarAlerta("PDF Generado", "Comprobante guardado en: " + rutaPDF, Alert.AlertType.INFORMATION);
+            } else {
+                mostrarAlerta("Error", "No se pudo generar el PDF", Alert.AlertType.ERROR);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al generar PDF: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     // Clase interna para datos de la tabla

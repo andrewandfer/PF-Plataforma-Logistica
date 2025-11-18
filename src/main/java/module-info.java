@@ -14,4 +14,7 @@ module cafeteria.PFPlataformaLogistica {
     // Exportar para que el módulo principal pueda usar las clases
     exports PFPlataformaLogistica;
     exports PFPlataformaLogistica.controller;
+    opens PFPlataformaLogistica.model to javafx.base;
+
 }
+

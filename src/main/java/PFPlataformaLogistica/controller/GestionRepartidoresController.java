@@ -1,262 +1,380 @@
-
 package PFPlataformaLogistica.controller;
 
 import PFPlataformaLogistica.Utils.SceneManager;
-import PFPlataformaLogistica.model.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import PFPlataformaLogistica.Utils.SesionManager;
+import PFPlataformaLogistica.model.Repartidor;
+import PFPlataformaLogistica.model.EstadoRepartidor;
+import PFPlataformaLogistica.model.Envio;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.List;
+import java.util.ArrayList;
 
-public class GestionRepartidoresController implements Initializable {
+public class GestionRepartidoresController {
 
-    @FXML private TableView<RepartidorTableData> tableRepartidores;
-    @FXML private TableColumn<RepartidorTableData, String> colId;
-    @FXML private TableColumn<RepartidorTableData, String> colNombre;
-    @FXML private TableColumn<RepartidorTableData, String> colTelefono;
-    @FXML private TableColumn<RepartidorTableData, String> colEstado;
-    @FXML private TableColumn<RepartidorTableData, String> colZona;
-    @FXML private TableColumn<RepartidorTableData, String> colLocalidad;
-    @FXML private TableColumn<RepartidorTableData, Integer> colEnviosAsignados;
 
-    @FXML private TextField txtBuscar;
-    @FXML private ComboBox<String> cbFiltroEstado;
+    // Componentes del menú lateral
+    @FXML private Label lblMiNombre;
+    @FXML private Label lblMiEstado;
+    @FXML private Label lblMiZona;
+    @FXML private Label lblMiEnvios;
 
-    @FXML private Button btnNuevoRepartidor;
-    @FXML private Button btnEditarRepartidor;
-    @FXML private Button btnEliminarRepartidor;
+    @FXML private Button btnActualizarInfo;
     @FXML private Button btnCambiarEstado;
     @FXML private Button btnVerEnvios;
-    @FXML private Button btnVolver;
+    @FXML private Button btnCerrarSesion;
 
-    @FXML private Label lblTotalRepartidores;
+    // Componentes de la vista de actualizar información
+    @FXML private VBox vboxActualizarInfo;
+    @FXML private TextField txtNombre;
+    @FXML private TextField txtTelefono;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtZona;
+    @FXML private TextField txtLocalidad;
+    @FXML private Button btnGuardarInfo;
+    @FXML private Button btnCancelarInfo;
+    @FXML private Label lblMensajeInfo;
 
-    private Empresa empresa;
-    private ObservableList<RepartidorTableData> repartidoresData;
+    // Componentes de la vista de estado
+    @FXML private VBox vboxEstado;
+    @FXML private Label lblEstadoActual;
+    @FXML private ComboBox<EstadoRepartidor> cbNuevoEstado;
+    @FXML private Button btnActualizarEstado;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        empresa = Empresa.getInstance();
-        setupTable();
-        setupFilters();
-        cargarRepartidores();
-        actualizarContador();
-    }
+    // Componentes de la vista de envíos
+    @FXML private VBox vboxEnvios;
+    @FXML private Label lblTotalEnvios;
+    @FXML private TableView<Envio> tableEnvios;
+    @FXML private TableColumn<Envio, String> colIdEnvio;
+    @FXML private TableColumn<Envio, String> colDestino;
+    @FXML private TableColumn<Envio, String> colEstadoEnvio;
+    @FXML private TableColumn<Envio, String> colFechaEstimada;
+    @FXML private TableColumn<Envio, String> colPeso;
 
-    private void setupTable() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        colZona.setCellValueFactory(new PropertyValueFactory<>("zonaCobertura"));
-        colLocalidad.setCellValueFactory(new PropertyValueFactory<>("localidad"));
-        colEnviosAsignados.setCellValueFactory(new PropertyValueFactory<>("enviosAsignados"));
+    @FXML private Button btnActualizarLista;
+    @FXML private TextField txtIdEnvioCompletar;
+    @FXML private Button btnCompletarEnvio;
+    @FXML private Label lblMensajeCompletar;
 
-        // Estilizar columna de estado
-        colEstado.setCellFactory(column -> new TableCell<RepartidorTableData, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    switch (item) {
-                        case "ACTIVO":
-                            setStyle("-fx-background-color: #C8E6C9; -fx-text-fill: #2E7D32; -fx-font-weight: bold;");
-                            break;
-                        case "INACTIVO":
-                            setStyle("-fx-background-color: #FFCDD2; -fx-text-fill: #C62828; -fx-font-weight: bold;");
-                            break;
-                        case "EN_RUTA":
-                            setStyle("-fx-background-color: #BBDEFB; -fx-text-fill: #1565C0; -fx-font-weight: bold;");
-                            break;
-                        default:
-                            setStyle("");
-                    }
-                }
-            }
-        });
+    @FXML private Label lblInfoSesion;
 
-        // Configurar selección única
-        tableRepartidores.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    }
-
-    private void setupFilters() {
-        cbFiltroEstado.setItems(FXCollections.observableArrayList(
-                "Todos", "ACTIVO", "INACTIVO", "EN_RUTA"
-        ));
-        cbFiltroEstado.setValue("Todos");
-    }
-
-    private void cargarRepartidores() {
-        repartidoresData = FXCollections.observableArrayList();
-
-        // Cargar repartidores desde listaPersonas
-        for (Persona persona : empresa.getListaPersonas()) {
-            if (persona instanceof Repartidor) {
-                Repartidor repartidor = (Repartidor) persona;
-                repartidoresData.add(crearRepartidorTableData(repartidor));
-            }
-        }
-
-        tableRepartidores.setItems(repartidoresData);
-        actualizarContador();
-    }
-
-    private RepartidorTableData crearRepartidorTableData(Repartidor repartidor) {
-        return new RepartidorTableData(
-                repartidor.getId(),
-                repartidor.getNombre(),
-                repartidor.getTelefono(),
-                repartidor.getEstadoDisponibilidad() != null ? repartidor.getEstadoDisponibilidad().toString() : "INACTIVO",
-                repartidor.getZonaCobertura() != null ? repartidor.getZonaCobertura() : "No definida",
-                repartidor.getLocalidad() != null ? repartidor.getLocalidad() : "No definida",
-                repartidor.getEnviosAsignados() != null ? repartidor.getEnviosAsignados().size() : 0
-        );
-    }
-
-    private void actualizarContador() {
-        if (lblTotalRepartidores != null) {
-            lblTotalRepartidores.setText(String.valueOf(repartidoresData.size()));
-        }
-    }
+    // Repartidor actual (sesión)
+    private Repartidor repartidorActual;
+    private Repartidor repartidorOriginal;
 
     @FXML
-    private void buscarRepartidores() {
-        String textoBusqueda = txtBuscar.getText().toLowerCase();
-        String estadoFiltro = cbFiltroEstado.getValue();
-
-        ObservableList<RepartidorTableData> filtrados = FXCollections.observableArrayList();
-
-        for (RepartidorTableData data : repartidoresData) {
-            boolean coincideBusqueda = data.getNombre().toLowerCase().contains(textoBusqueda) ||
-                    data.getTelefono().contains(textoBusqueda) ||
-                    data.getZonaCobertura().toLowerCase().contains(textoBusqueda) ||
-                    data.getLocalidad().toLowerCase().contains(textoBusqueda);
-
-            boolean coincideEstado = estadoFiltro.equals("Todos") || data.getEstado().equals(estadoFiltro);
-
-            if (coincideBusqueda && coincideEstado) {
-                filtrados.add(data);
-            }
-        }
-
-        tableRepartidores.setItems(filtrados);
-        actualizarContadorFiltrado(filtrados.size());
+    public void initialize() {
+        repartidorActual= SesionManager.getUsuarioActual(Repartidor.class);
+        cbNuevoEstado.getItems().setAll(EstadoRepartidor.values());
+        configurarTablaEnvios();
+        mostrarVistaActualizarInfo();
+        cargarRepartidorActual();
     }
 
-    private void actualizarContadorFiltrado(int cantidad) {
-        if (lblTotalRepartidores != null) {
-            lblTotalRepartidores.setText(cantidad + "/" + repartidoresData.size());
+    private void cargarRepartidorActual() {
+        this.repartidorActual = SesionManager.getUsuarioActual(Repartidor.class);
+        actualizarInformacionPersonal();
+        cargarDatosEnFormulario();
+    }
+
+
+    private void configurarTablaEnvios() {
+        colIdEnvio.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getIdEnvio()));
+
+        colDestino.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDestino()));
+
+        colEstadoEnvio.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getEstadoEnvio().toString()));
+
+        colFechaEstimada.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getFechaEstimada()));
+
+        colPeso.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(cellData.getValue().getPesoEnvio())));
+    }
+
+    private void actualizarInformacionPersonal() {
+        if (repartidorActual != null) {
+            lblMiNombre.setText("Nombre: " + repartidorActual.getNombre());
+            lblMiEstado.setText("Estado: " + repartidorActual.getEstadoDisponibilidad());
+            lblMiZona.setText("Zona: " + repartidorActual.getZonaCobertura());
+
+            int cantidadEnvios = repartidorActual.getEnviosAsignados() != null ?
+                    repartidorActual.getEnviosAsignados().size() : 0;
+            lblMiEnvios.setText("Envíos asignados: " + cantidadEnvios);
+
+            lblEstadoActual.setText(repartidorActual.getEstadoDisponibilidad().toString());
+            lblInfoSesion.setText("Conectado como: " + repartidorActual.getNombre());
         }
     }
 
+    private void cargarDatosEnFormulario() {
+        if (repartidorActual != null) {
+            txtNombre.setText(repartidorActual.getNombre());
+            txtTelefono.setText(repartidorActual.getTelefono());
+            txtEmail.setText(repartidorActual.getEmail());
+            txtZona.setText(repartidorActual.getZonaCobertura());
+            txtLocalidad.setText(repartidorActual.getLocalidad());
+        }
+    }
+
+    // MÉTODOS DE NAVEGACIÓN
     @FXML
-    private void limpiarFiltros() {
-        txtBuscar.clear();
-        cbFiltroEstado.setValue("Todos");
-        tableRepartidores.setItems(repartidoresData);
-        actualizarContador();
-    }
-
-    @FXML
-    private void abrirCrearRepartidor() {
-        try {
-            Stage stage = (Stage) btnVolver.getScene().getWindow();
-            SceneManager.cambiarEscena(stage, "view/CrearEditarRepartidorView.fxml");
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo abrir la ventana de creación: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void abrirEditarRepartidor() {
-        RepartidorTableData seleccionado = tableRepartidores.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            try {
-                // ✅ AHORA FUNCIONA: Usar SceneManager.setData()
-                SceneManager.setData("repartidorId", seleccionado.getId());
-                Stage stage = (Stage) btnVolver.getScene().getWindow();
-                SceneManager.cambiarEscena(stage, "view/CrearEditarRepartidorView.fxml");
-            } catch (Exception e) {
-                mostrarAlerta("Error", "No se pudo abrir la ventana de edición: " + e.getMessage(), Alert.AlertType.ERROR);
-            }
-        } else {
-            mostrarAlerta("Selección requerida", "Por favor selecciona un repartidor para editar", Alert.AlertType.WARNING);
-        }
-    }
-
-    @FXML
-    private void eliminarRepartidor() {
-        RepartidorTableData seleccionado = tableRepartidores.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText("¿Estás seguro de eliminar este repartidor?");
-            confirmacion.setContentText("Repartidor: " + seleccionado.getNombre() + "\nID: " + seleccionado.getId());
-
-            confirmacion.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    try {
-                        empresa.eliminarRepartidor(seleccionado.getId());
-                        cargarRepartidores(); // Recargar la tabla
-                        mostrarAlerta("Éxito", "Repartidor eliminado correctamente", Alert.AlertType.INFORMATION);
-                    } catch (Exception e) {
-                        mostrarAlerta("Error", "Error al eliminar repartidor: " + e.getMessage(), Alert.AlertType.ERROR);
-                    }
-                }
-            });
-        } else {
-            mostrarAlerta("Selección requerida", "Por favor selecciona un repartidor para eliminar", Alert.AlertType.WARNING);
-        }
+    private void abrirActualizarInfo() {
+        mostrarVistaActualizarInfo();
+        cargarDatosEnFormulario();
+        guardarEstadoOriginal();
     }
 
     @FXML
     private void abrirCambiarEstado() {
-        RepartidorTableData seleccionado = tableRepartidores.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            mostrarAlerta("Funcionalidad en desarrollo",
-                    "Cambio de estado para: " + seleccionado.getNombre() +
-                            "\n\nEstado actual: " + seleccionado.getEstado() +
-                            "\n\nEsta funcionalidad estará disponible pronto.",
+        mostrarVistaEstado();
+        cbNuevoEstado.setValue(repartidorActual.getEstadoDisponibilidad());
+    }
+
+    @FXML
+    private void abrirVerEnvios(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "EnviosAsignados.fxml");
+        actualizarTablaEnvios();
+    }
+
+    @FXML
+    private void cerrarSesion(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "login.fxml");
+    }
+
+    private void mostrarVistaActualizarInfo() {
+        vboxActualizarInfo.setVisible(true);
+        vboxEstado.setVisible(false);
+        vboxEnvios.setVisible(false);
+        lblMensajeInfo.setText("");
+    }
+
+    private void mostrarVistaEstado() {
+        vboxActualizarInfo.setVisible(false);
+        vboxEstado.setVisible(true);
+        vboxEnvios.setVisible(false);
+    }
+
+
+    // MÉTODOS DE ACTUALIZAR INFORMACIÓN
+    @FXML
+    private void guardarInformacion() {
+        if (validarFormulario()) {
+            try {
+                repartidorActual.setNombre(txtNombre.getText().trim());
+                repartidorActual.setTelefono(txtTelefono.getText().trim());
+                repartidorActual.setEmail(txtEmail.getText().trim());
+                repartidorActual.setZonaCobertura(txtZona.getText().trim());
+                repartidorActual.setLocalidad(txtLocalidad.getText().trim());
+                actualizarInformacionPersonal();
+
+                lblMensajeInfo.setText(" Información actualizada correctamente");
+                lblMensajeInfo.setStyle("-fx-text-fill: #4CAF50;");
+
+                mostrarAlerta("Información actualizada",
+                        "Tus datos personales han sido actualizados correctamente",
+                        Alert.AlertType.INFORMATION);
+
+            } catch (Exception e) {
+                lblMensajeInfo.setText("Error al actualizar la información");
+                lblMensajeInfo.setStyle("-fx-text-fill: #F44336;");
+                System.err.println("Error actualizando información: " + e.getMessage());
+            }
+        }
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000);
+                javafx.application.Platform.runLater(() ->
+                        lblMensajeInfo.setText(""));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    @FXML
+    private void cancelarActualizacion() {
+        if (repartidorOriginal != null) {
+            restaurarDatosOriginales();
+        }
+        cargarDatosEnFormulario();
+        lblMensajeInfo.setText(" Cambios cancelados");
+        lblMensajeInfo.setStyle("-fx-text-fill: #FF9800;");
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                javafx.application.Platform.runLater(() ->
+                        lblMensajeInfo.setText(""));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    private void guardarEstadoOriginal() {
+        this.repartidorOriginal = SesionManager.getUsuarioActual(Repartidor.class);
+    }
+
+    private void restaurarDatosOriginales() {
+        if (repartidorOriginal != null) {
+            repartidorActual.setNombre(repartidorOriginal.getNombre());
+            repartidorActual.setTelefono(repartidorOriginal.getTelefono());
+            repartidorActual.setEmail(repartidorOriginal.getEmail());
+            repartidorActual.setZonaCobertura(repartidorOriginal.getZonaCobertura());
+            repartidorActual.setLocalidad(repartidorOriginal.getLocalidad());
+            actualizarInformacionPersonal();
+        }
+    }
+
+    private boolean validarFormulario() {
+        String nombre = txtNombre.getText().trim();
+        String telefono = txtTelefono.getText().trim();
+        String email = txtEmail.getText().trim();
+        String zona = txtZona.getText().trim();
+        String localidad = txtLocalidad.getText().trim();
+
+        if (nombre.isEmpty()) {
+            mostrarAlerta("Error de validación", "El nombre es obligatorio", Alert.AlertType.WARNING);
+            txtNombre.requestFocus();
+            return false;
+        }
+
+        if (telefono.isEmpty()) {
+            mostrarAlerta("Error de validación", "El teléfono es obligatorio", Alert.AlertType.WARNING);
+            txtTelefono.requestFocus();
+            return false;
+        }
+
+        if (email.isEmpty()) {
+            mostrarAlerta("Error de validación", "El email es obligatorio", Alert.AlertType.WARNING);
+            txtEmail.requestFocus();
+            return false;
+        }
+
+        if (zona.isEmpty()) {
+            mostrarAlerta("Error de validación", "La zona de cobertura es obligatoria", Alert.AlertType.WARNING);
+            txtZona.requestFocus();
+            return false;
+        }
+
+        if (localidad.isEmpty()) {
+            mostrarAlerta("Error de validación", "La localidad es obligatoria", Alert.AlertType.WARNING);
+            txtLocalidad.requestFocus();
+            return false;
+        }
+
+        if (!email.contains("@") || !email.contains(".")) {
+            mostrarAlerta("Error de validación", "Ingresa un email válido", Alert.AlertType.WARNING);
+            txtEmail.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    // MÉTODOS DE GESTIÓN DE ESTADO
+    @FXML
+    private void actualizarEstado() {
+        EstadoRepartidor nuevoEstado = cbNuevoEstado.getValue();
+
+        if (nuevoEstado != null && repartidorActual != null) {
+            repartidorActual.cambiarDisponibilidad(nuevoEstado);
+            actualizarInformacionPersonal();
+
+            mostrarAlerta("Estado actualizado",
+                    "Tu estado ha sido cambiado a: " + nuevoEstado,
                     Alert.AlertType.INFORMATION);
         } else {
-            mostrarAlerta("Selección requerida", "Por favor selecciona un repartidor para cambiar estado", Alert.AlertType.WARNING);
+            mostrarAlerta("Error",
+                    "Selecciona un estado válido",
+                    Alert.AlertType.WARNING);
+        }
+    }
+
+    // MÉTODOS DE GESTIÓN DE ENVÍOS
+    @FXML
+    private void actualizarListaEnvios() {
+        actualizarTablaEnvios();
+    }
+
+    private void actualizarTablaEnvios() {
+        if (repartidorActual != null) {
+            List<Envio> envios = repartidorActual.getEnviosAsignados() != null ?
+                    new ArrayList<>(repartidorActual.getEnviosAsignados()) :
+                    new ArrayList<>();
+
+            tableEnvios.getItems().setAll(envios);
+            lblTotalEnvios.setText("Total de envíos asignados: " + envios.size());
+            actualizarInformacionPersonal();
         }
     }
 
     @FXML
-    private void abrirVerEnvios() {
-        RepartidorTableData seleccionado = tableRepartidores.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            mostrarAlerta("Funcionalidad en desarrollo",
-                    "Ver envíos para: " + seleccionado.getNombre() +
-                            "\n\nEnviós asignados: " + seleccionado.getEnviosAsignados() +
-                            "\n\nEsta funcionalidad estará disponible pronto.",
-                    Alert.AlertType.INFORMATION);
-        } else {
-            mostrarAlerta("Selección requerida", "Por favor selecciona un repartidor para ver envíos", Alert.AlertType.WARNING);
+    private void completarEnvio() {
+        String idEnvio = txtIdEnvioCompletar.getText().trim();
+
+        if (idEnvio.isEmpty()) {
+            mostrarAlerta("Error", "Ingresa el ID del envío", Alert.AlertType.WARNING);
+            return;
         }
+
+        if (repartidorActual != null && repartidorActual.getEnviosAsignados() != null) {
+            Envio envioEncontrado = null;
+            for (Envio envio : repartidorActual.getEnviosAsignados()) {
+                if (envio.getIdEnvio().equals(idEnvio)) {
+                    envioEncontrado = envio;
+                    break;
+                }
+            }
+
+            if (envioEncontrado != null) {
+                repartidorActual.getEnviosAsignados().remove(envioEncontrado);
+
+                if (repartidorActual.getEnviosAsignados().isEmpty()) {
+                    repartidorActual.cambiarDisponibilidad(EstadoRepartidor.ACTIVO);
+                }
+
+                lblMensajeCompletar.setText(" Envío " + idEnvio + " marcado como entregado");
+                lblMensajeCompletar.setStyle("-fx-text-fill: #4CAF50;");
+                txtIdEnvioCompletar.clear();
+                actualizarTablaEnvios();
+                actualizarInformacionPersonal();
+
+                mostrarAlerta("Envío completado",
+                        "El envío " + idEnvio + " ha sido marcado como entregado",
+                        Alert.AlertType.INFORMATION);
+
+            } else {
+                lblMensajeCompletar.setText(" No tienes asignado este envío");
+                lblMensajeCompletar.setStyle("-fx-text-fill: #F44336;");
+            }
+        }
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000);
+                javafx.application.Platform.runLater(() ->
+                        lblMensajeCompletar.setText(""));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
     }
 
-    @FXML
-    private void volver() {
-        try {
-            Stage stage = (Stage) btnVolver.getScene().getWindow();
-            SceneManager.cambiarEscena(stage, "view/MenuPrincipalView.fxml"); // Ajusta según tu menú principal
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo volver al menú principal: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
+    // MÉTODOS AUXILIARES
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
@@ -265,34 +383,16 @@ public class GestionRepartidoresController implements Initializable {
         alert.showAndWait();
     }
 
-    // Clase interna para datos de la tabla
-    public static class RepartidorTableData {
-        private final String id;
-        private final String nombre;
-        private final String telefono;
-        private final String estado;
-        private final String zonaCobertura;
-        private final String localidad;
-        private final int enviosAsignados;
-
-        public RepartidorTableData(String id, String nombre, String telefono, String estado,
-                                   String zonaCobertura, String localidad, int enviosAsignados) {
-            this.id = id;
-            this.nombre = nombre;
-            this.telefono = telefono;
-            this.estado = estado;
-            this.zonaCobertura = zonaCobertura;
-            this.localidad = localidad;
-            this.enviosAsignados = enviosAsignados;
+    public void setRepartidorActual(Repartidor repartidor) {
+        this.repartidorActual = repartidor;
+        actualizarInformacionPersonal();
+        cargarDatosEnFormulario();
+        if (vboxEnvios.isVisible()) {
+            actualizarTablaEnvios();
         }
-
-        // Getters
-        public String getId() { return id; }
-        public String getNombre() { return nombre; }
-        public String getTelefono() { return telefono; }
-        public String getEstado() { return estado; }
-        public String getZonaCobertura() { return zonaCobertura; }
-        public String getLocalidad() { return localidad; }
-        public int getEnviosAsignados() { return enviosAsignados; }
     }
-}
+
+    public Repartidor getRepartidorActual() {
+        return repartidorActual;
+    }
+} // <-- Esta es la llave de cierre que faltaba
