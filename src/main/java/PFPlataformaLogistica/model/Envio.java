@@ -1,3 +1,4 @@
+// java
 package PFPlataformaLogistica.model;
 
 import java.util.ArrayList;
@@ -5,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Envio {
-    private LinkedList<Producto> productosEnvio;
+    private ArrayList<Producto> listaProductos;
     private String fechaCreacion;
     private String fechaEstimada;
     private String idEnvio;
@@ -17,9 +18,10 @@ public class Envio {
     private String origen;
     private String destino;
     private int costo;
+    private Direccion direccion;
 
-    public Envio(LinkedList<Producto> productosEnvio, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo) {
-        this.productosEnvio = productosEnvio;
+    public Envio(ArrayList<Producto> listaProductos, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo, Direccion direccion) {
+        this.listaProductos = listaProductos;
         this.fechaCreacion = fechaCreacion;
         this.fechaEstimada = fechaEstimada;
         this.idEnvio = idEnvio;
@@ -31,14 +33,15 @@ public class Envio {
         this.origen = origen;
         this.destino = destino;
         this.costo = costo;
+        this.direccion = direccion;
     }
 
-    public LinkedList<Producto> getProductosEnvio() {
-        return productosEnvio;
+    public ArrayList<Producto> getListaProductos() {
+        return listaProductos;
     }
 
-    public void setProductosEnvio(LinkedList<Producto> productosEnvio) {
-        this.productosEnvio = productosEnvio;
+    public void setListaProductos(ArrayList<Producto> listaProductos) {
+        this.listaProductos = listaProductos;
     }
 
     public String getFechaCreacion() {
@@ -88,9 +91,11 @@ public class Envio {
     public void setEstadoEnvio(EstadoEnvio estadoEnvio) {
         this.estadoEnvio = estadoEnvio;
     }
+
     public Tarifa getTarifa() {
         return tarifa;
     }
+
     public void setTarifa(Tarifa tarifa) {
         this.tarifa = tarifa;
     }
@@ -127,18 +132,31 @@ public class Envio {
         this.costo = costo;
     }
 
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        direccion = direccion;
+    }
+
     @Override
     public String toString() {
         return "Envio{" +
-                "productosEnvio=" + productosEnvio +
+                "listaProductos=" + (listaProductos != null ? listaProductos.size() + " productos" : "null") +
                 ", fechaCreacion='" + fechaCreacion + '\'' +
                 ", fechaEstimada='" + fechaEstimada + '\'' +
                 ", idEnvio='" + idEnvio + '\'' +
                 ", pesoEnvio=" + pesoEnvio +
                 ", tipoEnvio=" + tipoEnvio +
                 ", estadoEnvio=" + estadoEnvio +
-                ", tarifa=" + tarifa +
-                ", repartidor=" + repartidor +
+                ", tarifa=" + (tarifa != null ? tarifa.toString() : "null") +
+                // FIX: Only show repartidor name/email, not the full object
+                ", repartidor=" + (repartidor != null ? repartidor.getNombre() + " (" + repartidor.getEmail() + ")" : "null") +
+                ", origen='" + origen + '\'' +
+                ", destino='" + destino + '\'' +
+                ", costo=" + costo +
+                ", direccion=" + (direccion != null ? direccion.toString() : "null") +
                 '}';
     }
 }

@@ -8,8 +8,6 @@ public class Direccion {
     private double latitud;
     private double longitud;
 
-    public Direccion() {} // Constructor vacío para compatibilidad
-
     private Direccion(DireccionBuilder builder) {
         this.idDireccion = builder.idDireccion;
         this.alias = builder.alias;
@@ -43,38 +41,75 @@ public class Direccion {
         private double latitud;
         private double longitud;
 
-        public DireccionBuilder idDireccion(String idDireccion) { this.idDireccion = idDireccion; return this; }
-        public DireccionBuilder alias(String alias) { this.alias = alias; return this; }
-        public DireccionBuilder calle(String calle) { this.calle = calle; return this; }
-        public DireccionBuilder ciudad(String ciudad) { this.ciudad = ciudad; return this; }
-        public DireccionBuilder latitud(double latitud) { this.latitud = latitud; return this; }
-        public DireccionBuilder longitud(double longitud) { this.longitud = longitud; return this; }
+        public DireccionBuilder idDireccion(String idDireccion) {
+            this.idDireccion = idDireccion;
+            return this;
+        }
+
+        public DireccionBuilder alias(String alias) {
+            this.alias = alias;
+            return this;
+        }
+
+        public DireccionBuilder calle(String calle) {
+            this.calle = calle;
+            return this;
+        }
+
+        public DireccionBuilder ciudad(String ciudad) {
+            this.ciudad = ciudad;
+            return this;
+        }
+
+        public DireccionBuilder latitud(double latitud) {
+            this.latitud = latitud;
+            return this;
+        }
+
+        public DireccionBuilder longitud(double longitud) {
+            this.longitud = longitud;
+            return this;
+        }
 
         public Direccion build() {
-            if (idDireccion == null || idDireccion.isEmpty())
+            // Validaciones obligatorias
+            if (idDireccion == null || idDireccion.trim().isEmpty()) {
                 throw new IllegalStateException("El ID de dirección es obligatorio");
-            if (ciudad == null || ciudad.isEmpty())
-                throw new IllegalStateException("La ciudad es obligatoria");
-            if (calle == null || calle.isEmpty())
-                throw new IllegalStateException("La calle es obligatoria");
-
-            if (latitud == 0 && longitud == 0) {
-                latitud = Math.random() * 90;
-                longitud = Math.random() * 180;
             }
+            if (calle == null || calle.trim().isEmpty()) {
+                throw new IllegalStateException("La calle es obligatoria");
+            }
+            if (ciudad == null || ciudad.trim().isEmpty()) {
+                throw new IllegalStateException("La ciudad es obligatoria");
+            }
+
+            // Generar coordenadas aleatorias si no se proporcionaron
+            if (latitud == 0.0 && longitud == 0.0) {
+                this.latitud = -34.6037 + (Math.random() * 0.1); // Coordenadas alrededor de Buenos Aires
+                this.longitud = -58.3816 + (Math.random() * 0.1);
+            }
+
             return new Direccion(this);
         }
     }
 
     @Override
     public String toString() {
-        return "Direccion{" +
-                "idDireccion='" + idDireccion + '\'' +
-                ", alias='" + alias + '\'' +
-                ", calle='" + calle + '\'' +
-                ", ciudad='" + ciudad + '\'' +
-                ", latitud=" + latitud +
-                ", longitud=" + longitud +
-                '}';
+        return String.format("Direccion{ID: '%s', Alias: '%s', Calle: '%s', Ciudad: '%s', Coord: (%.6f, %.6f)}",
+                idDireccion, alias, calle, ciudad, latitud, longitud);
+    }
+
+    // Método para mostrar dirección formateada
+    public String toFormattedString() {
+        if (alias != null && !alias.isEmpty()) {
+            return String.format("%s - %s, %s", alias, calle, ciudad);
+        } else {
+            return String.format("%s, %s", calle, ciudad);
+        }
+    }
+
+    // Método para validar coordenadas
+    public boolean coordenadasValidas() {
+        return latitud >= -90 && latitud <= 90 && longitud >= -180 && longitud <= 180;
     }
 }

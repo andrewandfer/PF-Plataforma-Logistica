@@ -1,4 +1,4 @@
 package PFPlataformaLogistica.controller;
 
-public class AdministradorViewController {
+public class GestionIncidentesController {
 }

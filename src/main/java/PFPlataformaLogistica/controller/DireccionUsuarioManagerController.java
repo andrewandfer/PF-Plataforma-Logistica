@@ -1,169 +1,175 @@
 package PFPlataformaLogistica.controller;
 
 import PFPlataformaLogistica.Utils.SceneManager;
-import PFPlataformaLogistica.model.Usuario;
+import PFPlataformaLogistica.Utils.SesionManager;
+import PFPlataformaLogistica.model.*;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-
-import java.net.URL;
-
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
-import java.util.ResourceBundle;
 
 public class DireccionUsuarioManagerController {
 
+    @FXML private Button btnActualizar;
+    @FXML private Button btnAyuda;
+    @FXML private Button btnConsultar;
+    @FXML private Button btnContacto;
+    @FXML private Button btnCrear;
+    @FXML private Button btnEliminar;
+    @FXML private Button btnVolver;
 
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        colIP.setCellValueFactory(cellData -> new SimpleStringProperty((cellData.getValue().getDireccion().getIdDireccion())));
-        colAlias.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDireccion().getAlias()));
-        colCiudad.setCellValueFactory(cellData-> new SimpleStringProperty(cellData.getValue().getDireccion().getCiudad()));
-        colCalle.setCellValueFactory((cellData -> new SimpleStringProperty((cellData.getValue().getDireccion().getCalle()))));
+    @FXML private TableColumn<Direccion, String> colAlias;
+    @FXML private TableColumn<Direccion, String> colCalle;
+    @FXML private TableColumn<Direccion, String> colCiudad;
+    @FXML private TableColumn<Direccion, String> colIP;
+
+    @FXML private TableView<Direccion> tablaDirecciones;
+
+    private Usuario usuarioActual;
+    private ObservableList<Direccion> direccionesData;
+
+    // ------------------ INITIALIZE ------------------
+
+    @FXML
+    private void initialize() {
+
+        Persona persona = SesionManager.getUsuarioActual(Usuario.class);
+
+        if (persona instanceof Usuario) {
+            usuarioActual = (Usuario) persona;
+        } else {
+            mostrarAlerta("Error", "No hay sesión de usuario activa", Alert.AlertType.ERROR);
+            return;
+        }
+
+        configurarColumnas();
+        cargarDirecciones();
     }
 
-    @FXML
-    private Button btnActualizar;
+    // ------------------ CONFIGURAR TABLA ------------------
 
-    @FXML
-    private Button btnAyuda;
+    private void configurarColumnas() {
+        colIP.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getIdDireccion()));
 
-    @FXML
-    private Button btnConsultar;
+        colAlias.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getAlias()));
 
-    @FXML
-    private Button btnContacto;
+        colCiudad.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getCiudad()));
 
-    @FXML
-    private Button btnCrear;
+        colCalle.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getCalle()));
+    }
 
-    @FXML
-    private Button btnEliminar;
+    // ------------------ CARGAR DATOS ------------------
 
-    @FXML
-    private Button btnVolver;
+    private void cargarDirecciones() {
+        direccionesData = FXCollections.observableArrayList();
 
-    @FXML
-    private TableColumn<Usuario, String> colAlias;
 
-    @FXML
+        if (usuarioActual.getListaDirecciones() != null) {
+            direccionesData.addAll(usuarioActual.getListaDirecciones());
+        }
 
-    private TableColumn<Usuario, String> colCalle;
+        tablaDirecciones.setItems(direccionesData);
+    }
 
-    @FXML
-    private TableColumn<Usuario, String> colCiudad;
-
-    @FXML
-    private TableColumn<Usuario, String> colIP;
-
-    @FXML
-    private TableView<Usuario> tablaDirecciones;
+    // ------------------ BOTONES ------------------
 
     @FXML
     void onActualizar(ActionEvent event) {
-        Usuario usuarioSeleccionado = tablaDirecciones.getSelectionModel().getSelectedItem();
-        if (usuarioSeleccionado != null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Actualizar Dirección");
-            alert.setHeaderText(null);
-            alert.setContentText("Actualizando la dirección: " + usuarioSeleccionado.getDireccion().getAlias());
-            alert.showAndWait();
-            // Aquí iría la lógica para abrir un formulario con los datos actuales y permitir la edición
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Actualizar Dirección");
-            alert.setHeaderText("Ninguna selección");
-            alert.setContentText("Por favor, selecciona una dirección de la tabla para actualizar.");
-            alert.showAndWait();
-        }
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "ActualizarDireccionUsuario.fxml");
+
     }
 
     @FXML
     void onAyuda(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Ayuda");
-        alert.setHeaderText("¿Necesitas ayuda?");
-        alert.setContentText("Aquí puedes encontrar información sobre cómo gestionar tus direcciones.");
-        alert.showAndWait();
+        mostrarInfo("Ayuda",
+                "Aquí puedes gestionar tus direcciones.");
     }
 
     @FXML
     void onConsultar(ActionEvent event) {
-        Usuario usuarioSeleccionado = tablaDirecciones.getSelectionModel().getSelectedItem();
-        if (usuarioSeleccionado != null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Consultar Dirección");
-            alert.setHeaderText("Detalles de la dirección:");
-            alert.setContentText(
-                    "ID: " + usuarioSeleccionado.getDireccion().getIdDireccion() + "\n" +
-                            "IP: " + usuarioSeleccionado.getDireccion().getIdDireccion() + "\n" + // Asumiendo que idDireccion es la IP
-                            "Calle: " + usuarioSeleccionado.getDireccion().getCalle() + "\n" +
-                            "Alias: " + usuarioSeleccionado.getDireccion().getAlias() + "\n" +
-                            "Ciudad: " + usuarioSeleccionado.getDireccion().getCiudad()
-            );
-            alert.showAndWait();
+        Direccion d = tablaDirecciones.getSelectionModel().getSelectedItem();
+
+        if (d != null) {
+            mostrarInfo("Detalles de la dirección",
+                    "ID: " + d.getIdDireccion() + "\n" +
+                            "Calle: " + d.getCalle() + "\n" +
+                            "Alias: " + d.getAlias() + "\n" +
+                            "Ciudad: " + d.getCiudad());
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Consultar Dirección");
-            alert.setHeaderText("Ninguna selección");
-            alert.setContentText("Por favor, selecciona una dirección de la tabla para consultar.");
-            alert.showAndWait();
+            mostrarAdvertencia("Selecciona una dirección para consultar.");
         }
     }
 
     @FXML
     void onContacto(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Contacto");
-        alert.setHeaderText("¿Tienes alguna pregunta?");
-        alert.setContentText("Puedes escribirnos a soporte@enviorapido.com");
-        alert.showAndWait();
+        mostrarInfo("Contacto",
+                "Escríbenos a soporte@enviorapido.com");
     }
 
     @FXML
     void onCrear(ActionEvent event) {
-        // Aquí iría la lógica para crear una nueva dirección
-        // Por ejemplo, abrir un diálogo para ingresar datos
-        // Supongamos que tienes un usuario actual (por ejemplo, de la sesión)
-        // Usuario usuarioActual = ...; // Obtener de la sesión o parámetro
-
-        // Ejemplo de creación con datos de prueba
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Crear Dirección");
-        alert.setHeaderText(null);
-        alert.setContentText("Funcionalidad de Crear aún no implementada.");
-        alert.showAndWait();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "CrearDireccionUsuario.fxml");
     }
 
     @FXML
     void onEliminar(ActionEvent event) {
-        Usuario usuarioSeleccionado = tablaDirecciones.getSelectionModel().getSelectedItem();
-        if (usuarioSeleccionado != null) {
+        Direccion d = tablaDirecciones.getSelectionModel().getSelectedItem();
+
+        if (d != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Eliminar Dirección");
             alert.setHeaderText("Confirmar eliminación");
-            alert.setContentText("¿Estás seguro de que deseas eliminar la dirección '" + usuarioSeleccionado.getDireccion().getAlias() + "'?");
+            alert.setContentText("¿Eliminar '" + d.getAlias() + "'?");
 
             if (alert.showAndWait().get() == ButtonType.OK) {
-                // Aquí iría la lógica para eliminar la dirección de la base de datos o del modelo
-                // Por ejemplo, una llamada a un servicio: direccionService.eliminar(usuarioSeleccionado.getDireccion().getIdDireccion());
-                // Y luego actualizar la tabla (si no lo hace automáticamente)
-                tablaDirecciones.getItems().remove(usuarioSeleccionado);
+                direccionesData.remove(d);
             }
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Eliminar Dirección");
-            alert.setHeaderText("Ninguna selección");
-            alert.setContentText("Por favor, selecciona una dirección de la tabla para eliminar.");
-            alert.showAndWait();
+            mostrarAdvertencia("Selecciona una dirección para eliminar.");
         }
     }
 
     @FXML
     private void onVolver() {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
-        SceneManager.cambiarEscena(stage, "EnviosUsuarioView.fxml");
+        SceneManager.cambiarEscena(stage, "EnviosUsuario.fxml");
     }
 
+    // ------------------ ALERTAS ------------------
+
+    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarInfo(String titulo, String msg) {
+        mostrarAlerta(titulo, msg, Alert.AlertType.INFORMATION);
+    }
+
+    private void mostrarAdvertencia(String msg) {
+        mostrarAlerta("Advertencia", msg, Alert.AlertType.WARNING);
+    }
+
+    public void OnTermino(MouseEvent mouseEvent) {
+    }
+
+    public void volver(ActionEvent event) {
+        Stage stage = (Stage) btnVolver.getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "UsuarioView.fxml");
+    }
 }
+

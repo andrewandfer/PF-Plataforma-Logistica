@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #FFFFFF; -fx-padding: 0;"
+           xmlns="http://javafx.com/javafx/20.0.2"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="PFPlataformaLogistica.controller.ActualizarDireccionUsuarioController">
+
+    <children>
+        <BorderPane prefHeight="700" prefWidth="1100"
+                    style="-fx-background-color: #FFFFFF;
+                           -fx-background-radius: 20;
+                           -fx-border-radius: 20;
+                           -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 15, 0, 0, 6);
+                           -fx-padding: 0;">
+
+            <!-- HEADER -->
+            <top>
+                <HBox alignment="CENTER_LEFT" spacing="20"
+                      style="-fx-background-color: linear-gradient(to right, #81D4FA, #4FC3F7);
+                             -fx-background-radius: 20 20 0 0;
+                             -fx-padding: 15 30;
+                             -fx-pref-height: 70;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+                    <children>
+                        <!-- LOGO -->
+                        <ImageView fitHeight="62.0" fitWidth="66.0" preserveRatio="true">
+                            <image>
+                                <Image url="@Imagenes/Logo.png" />
+                            </image>
+                        </ImageView>
+
+                        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
+                               text="✏️ Actualizar Dirección" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <!-- Botón Volver Atrás -->
+                        <Button fx:id="btnVolverAtras" text="← Volver Atrás" onAction="#volverAtras"
+                                style="-fx-background-color: rgba(255,255,255,0.2);
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 8;
+                                       -fx-border-radius: 8;
+                                       -fx-border-color: rgba(255,255,255,0.3);
+                                       -fx-padding: 8 15;
+                                       -fx-cursor: hand;" />
+
+                        <Button fx:id="btnVolverMenu" text="🏠 Volver al Menú" onAction="#volverAlMenu"
+                                style="-fx-background-color: transparent;
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-cursor: hand;" />
+                    </children>
+                </HBox>
+            </top>
+
+            <!-- CUERPO PRINCIPAL -->
+            <center>
+                <HBox spacing="0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 0 0 20 20;">
+                    <children>
+
+                        <!-- MENÚ LATERAL -->
+                        <VBox alignment="TOP_CENTER" prefWidth="220" spacing="15"
+                              style="-fx-background-color: #E3F2FD;
+                                     -fx-padding: 20;
+                                     -fx-background-radius: 0 0 0 20;
+                                     -fx-border-color: #BBDEFB;
+                                     -fx-border-width: 0 1 0 0;">
+                            <children>
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                       text="Gestión de Direcciones" />
+
+                                <Button fx:id="btnCrearDireccion" text="📍 Crear Dirección"
+                                        style="-fx-background-color: #FFFFFF;
+                                               -fx-border-color: #81D4FA;
+                                               -fx-background-radius: 8;
+                                               -fx-border-radius: 8;
+                                               -fx-text-fill: #1976D2;
+                                               -fx-pref-width: 160;
+                                               -fx-cursor: hand;" />
+
+                                <Button fx:id="btnConsultarDirecciones" text="📋 Consultar Direcciones"
+                                        style="-fx-background-color: #FFFFFF;
+                                               -fx-border-color: #81D4FA;
+                                               -fx-background-radius: 8;
+                                               -fx-border-radius: 8;
+                                               -fx-text-fill: #1976D2;
+                                               -fx-pref-width: 160;
+                                               -fx-cursor: hand;" />
+
+                                <Button fx:id="btnActualizarDireccion" text="✏️ Actualizar Dirección"
+                                        style="-fx-background-color: #4FC3F7;
+                                               -fx-text-fill: white;
+                                               -fx-background-radius: 8;
+                                               -fx-font-weight: bold;
+                                               -fx-pref-width: 160;
+                                               -fx-cursor: hand;" />
+
+                                <Separator style="-fx-background-color: #BBDEFB;" />
+
+                                <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                       text="Información" />
+
+                                <TextFlow style="-fx-padding: 0 5;">
+                                    <Text text="Busque una dirección por ID y modifique los campos necesarios." style="-fx-font-size: 11px; -fx-fill: #666;"/>
+                                </TextFlow>
+
+                                <VBox spacing="5" style="-fx-padding: 10 0;">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #1976D2; -fx-font-weight: bold;" text="Proceso:" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="1. Ingrese ID y busque" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="2. Modifique los campos" />
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="3. Guarde los cambios" />
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- ÁREA DE CONTENIDO - FORMULARIO -->
+                        <VBox prefWidth="880" spacing="25"
+                              style="-fx-background-color: #FFFFFF; -fx-padding: 40;">
+                            <children>
+
+                                <!-- Título del Formulario -->
+                                <VBox spacing="8">
+                                    <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                           text="Actualizar Dirección" />
+                                    <Label style="-fx-font-size: 14px; -fx-text-fill: #666;"
+                                           text="Busque y modifique la información de la dirección" />
+                                </VBox>
+
+                                <!-- Búsqueda -->
+                                <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #FAFAFA; -fx-background-radius: 12;">
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"
+                                           text="Buscar Dirección" />
+
+                                    <HBox spacing="15" alignment="CENTER_LEFT">
+                                        <Label text="ID de Dirección:" style="-fx-font-weight: bold; -fx-text-fill: #333; -fx-pref-width: 120;" />
+                                        <TextField fx:id="txtBuscarId" promptText="Ingrese el ID de la dirección a buscar"
+                                                   style="-fx-background-radius: 8; -fx-pref-height: 35; -fx-pref-width: 250;" />
+                                        <Button fx:id="btnBuscar" text="🔍 Buscar" onAction="#buscarDireccion"
+                                                style="-fx-background-color: #2196F3;
+                                                       -fx-background-radius: 8;
+                                                       -fx-text-fill: white;
+                                                       -fx-font-weight: bold;
+                                                       -fx-pref-width: 100;
+                                                       -fx-pref-height: 35;
+                                                       -fx-cursor: hand;" />
+                                    </HBox>
+                                </VBox>
+
+                                <!-- Formulario de Actualización -->
+                                <GridPane hgap="20" vgap="20" style="-fx-padding: 20; -fx-background-color: #FAFAFA; -fx-background-radius: 12;">
+                                    <columnConstraints>
+                                        <ColumnConstraints prefWidth="150" />
+                                        <ColumnConstraints prefWidth="300" />
+                                        <ColumnConstraints prefWidth="150" />
+                                        <ColumnConstraints prefWidth="300" />
+                                    </columnConstraints>
+
+                                    <!-- Fila 1 -->
+                                    <Label text="ID Dirección *" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtIdDireccion" promptText="ID de la dirección" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35; -fx-background-color: #F5F5F5;"
+                                               editable="false" />
+
+                                    <Label text="Alias" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtAlias" promptText="Ej: Casa, Oficina, etc." GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+
+                                    <!-- Fila 2 -->
+                                    <Label text="Calle *" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtCalle" promptText="Ej: Calle 123 #45-67" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+
+                                    <Label text="Ciudad *" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtCiudad" promptText="Ej: Bogotá, Medellín, etc." GridPane.columnIndex="3" GridPane.rowIndex="1"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+
+                                    <!-- Fila 3 -->
+                                    <Label text="Latitud" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtLatitud" promptText="Ej: 4.710989" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+
+                                    <Label text="Longitud" GridPane.columnIndex="2" GridPane.rowIndex="2"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #333;" />
+                                    <TextField fx:id="txtLongitud" promptText="Ej: -74.072092" GridPane.columnIndex="3" GridPane.rowIndex="2"
+                                               style="-fx-background-radius: 8; -fx-pref-height: 35;" />
+
+                                </GridPane>
+
+                                <!-- Botones de Acción -->
+                                <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 0 20;">
+                                    <Button fx:id="btnLimpiar" text="Limpiar" onAction="#limpiarFormulario"
+                                            style="-fx-background-color: #FFFFFF;
+                                                   -fx-border-color: #BDBDBD;
+                                                   -fx-background-radius: 8;
+                                                   -fx-border-radius: 8;
+                                                   -fx-text-fill: #666;
+                                                   -fx-pref-width: 120;
+                                                   -fx-pref-height: 40;
+                                                   -fx-cursor: hand;" />
+
+                                    <Button fx:id="btnGenerarCoordenadas" text="🎲 Generar Coordenadas" onAction="#generarCoordenadasAleatorias"
+                                            style="-fx-background-color: #FF9800;
+                                                   -fx-background-radius: 8;
+                                                   -fx-text-fill: white;
+                                                   -fx-font-weight: bold;
+                                                   -fx-pref-width: 180;
+                                                   -fx-pref-height: 40;
+                                                   -fx-cursor: hand;" />
+
+                                    <Button fx:id="btnActualizar" text="💾 Actualizar" onAction="#actualizarDireccion"
+                                            style="-fx-background-color: #4CAF50;
+                                                   -fx-background-radius: 8;
+                                                   -fx-text-fill: white;
+                                                   -fx-font-weight: bold;
+                                                   -fx-pref-width: 150;
+                                                   -fx-pref-height: 40;
+                                                   -fx-cursor: hand;" />
+                                </HBox>
+
+                                <!-- Mensaje de Estado -->
+                                <VBox fx:id="vboxMensaje" visible="false" spacing="10" alignment="CENTER"
+                                      style="-fx-background-color: #E8F5E9;
+                                             -fx-background-radius: 8;
+                                             -fx-padding: 15;
+                                             -fx-border-color: #C8E6C9;
+                                             -fx-border-radius: 8;
+                                             -fx-border-width: 1;">
+                                    <Label fx:id="lblMensaje" style="-fx-text-fill: #2E7D32; -fx-font-weight: bold;"
+                                           text="Dirección actualizada exitosamente!" />
+                                    <Label style="-fx-text-fill: #2E7D32; -fx-font-size: 12px;"
+                                           text="Los cambios han sido guardados en el sistema." />
+                                </VBox>
+
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
+            </center>
+
+            <!-- FOOTER -->
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="20"
+                      style="-fx-padding: 12 30;
+                             -fx-background-color: #FFFFFF;
+                             -fx-border-color: #EBEBEB;
+                             -fx-border-width: 1 0 0 0;
+                             -fx-background-radius: 0 0 20 20;">
+                    <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666;"
+                               text="© 2025 Envío Rápido - Actualización de Direcciones" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2196F3;"
+                               text="Soporte Técnico" />
+                    </children>
+                </HBox>
+            </bottom>
+
+        </BorderPane>
+    </children>
+</StackPane>

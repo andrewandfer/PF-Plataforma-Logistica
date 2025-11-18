@@ -1,5 +1,6 @@
 package PFPlataformaLogistica.controller;
 
+import PFPlataformaLogistica.Utils.SceneManager;
 import PFPlataformaLogistica.model.Empresa;
 import PFPlataformaLogistica.model.Usuario;
 import javafx.event.ActionEvent;
@@ -106,6 +107,11 @@ public class registroController {
             campo.setStyle("-fx-border-color: #EBEBEB; -fx-background-color: #F5F5F5; -fx-background-radius: 8;");
             error.setText("");
         }
+    }
+
+    public void volver(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "registro.fxml");
     }
 
     public static class ConsultarEnvioUsuario {

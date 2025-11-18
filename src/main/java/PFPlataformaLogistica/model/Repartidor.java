@@ -60,6 +60,7 @@ public class Repartidor extends Persona implements IRepartidorComponent{
                     System.out.println(" - " + envio.toString()));
         }
     }
+
     /**
      * RF-019: Muestra la información completa del repartidor.
      */
@@ -68,13 +69,10 @@ public class Repartidor extends Persona implements IRepartidorComponent{
         System.out.println(this.toString());
     }
 
-
-
-
     // Clase Builder que extiende de PersonaBuilder
     public static class RepartidorBuilder extends Persona.PersonaBuilder<RepartidorBuilder> {
         private String telefono;
-        private EstadoRepartidor disponibilidad;
+        private EstadoRepartidor disponibilidad = EstadoRepartidor.ACTIVO;
         private String zonaCobertura;
         private String localidad;
         private List<Envio> enviosAsignados;
@@ -113,12 +111,7 @@ public class Repartidor extends Persona implements IRepartidorComponent{
         public Repartidor build() {
             return new Repartidor(this);
         }
-
     }
-
-
-
-
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
@@ -143,19 +136,13 @@ public class Repartidor extends Persona implements IRepartidorComponent{
     @Override
     public String toString() {
         return "Repartidor{" +
-                "telefono='" + telefono + '\'' +
+                "nombre='" + getNombre() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", telefono='" + telefono + '\'' +
                 ", disponibilidad=" + disponibilidad +
                 ", zonaCobertura='" + zonaCobertura + '\'' +
                 ", localidad='" + localidad + '\'' +
-                ", enviosAsignados=" + enviosAsignados +
-                ", email='" + email + '\'' +
-                ", contrasena='" + contrasena + '\'' +
+                ", cantidadEnvios=" + (enviosAsignados != null ? enviosAsignados.size() : 0) +
                 '}';
     }
 }
-
-
-
-
-
-
