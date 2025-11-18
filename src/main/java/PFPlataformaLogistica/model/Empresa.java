@@ -3,9 +3,8 @@ package PFPlataformaLogistica.model;
 import PFPlataformaLogistica.dto.RepartidorDTO;
 import PFPlataformaLogistica.dto.UsuarioDTO;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Empresa {
     private String nombre;
@@ -14,10 +13,11 @@ public final class Empresa {
     private LinkedList<Administrador> listaAdministradores;
     private LinkedList<Usuario> listaUsuarios;
     private LinkedList<Paquete> listaPaquetes;
-    private LinkedList<Pago> listaPagos;
+    private LinkedList<PagoRecord> listaPagos;
     private LinkedList<Direccion> listaDirecciones;
     private LinkedList<Envio> listaEnvios;
     private LinkedList<Persona> listaPersonas;
+    private LinkedList<Incidencia> listaIncidencias;
 
 
     public Empresa() {
@@ -30,8 +30,8 @@ public final class Empresa {
         this.listaDirecciones = new LinkedList<>();
         this.listaEnvios = new LinkedList<>();
         this.listaPersonas = new LinkedList<>();
+        this.listaIncidencias = new LinkedList<>();
     }
-
 
 
     public LinkedList<Repartidor> getListaRepartidores() {
@@ -74,11 +74,11 @@ public final class Empresa {
         this.listaPaquetes = listaPaquetes;
     }
 
-    public LinkedList<Pago> getListaPagos() {
+    public LinkedList<PagoRecord> getListaPagos() {
         return listaPagos;
     }
 
-    public void setListaPagos(LinkedList<Pago> listaPagos) {
+    public void setListaPagos(LinkedList<PagoRecord> listaPagos) {
         this.listaPagos = listaPagos;
     }
 
@@ -88,6 +88,14 @@ public final class Empresa {
 
     public void setListaDirecciones(LinkedList<Direccion> listaDirecciones) {
         this.listaDirecciones = listaDirecciones;
+    }
+
+    public LinkedList<Incidencia> getListaIncidencias() {
+        return listaIncidencias;
+    }
+
+    public void setListaIncidencias(LinkedList<Incidencia> listaIncidencias) {
+        this.listaIncidencias = listaIncidencias;
     }
 
     public static Empresa getInstance() {
@@ -144,10 +152,12 @@ public final class Empresa {
 
     public void eliminarRepartidor(String id) {
         Repartidor repartidorAEliminar = null;
-        for (Repartidor repartidor : listaRepartidores) {
-            if (repartidor.getId().equalsIgnoreCase(id)) {
-                repartidorAEliminar = repartidor;
-                break;
+        if (listaRepartidores != null) {
+            for (Repartidor repartidor : listaRepartidores) {
+                if (repartidor.getId().equalsIgnoreCase(id)) {
+                    repartidorAEliminar = repartidor;
+                    break;
+                }
             }
         }
         if (repartidorAEliminar != null) {
@@ -206,13 +216,21 @@ public final class Empresa {
 
     // RF-019: Consultar un repartidor por su documento
     public Repartidor buscarRepartidor(String documento) {
-        if (listaRepartidores != null) {
-            for (Repartidor r : listaRepartidores) {
-                if (r.getId().equals(documento)) {
-                    return r;
-                }
+        if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            return null;
+        }
+
+        if (documento == null || documento.trim().isEmpty()) {
+            return null;
+        }
+
+        for (Repartidor r : listaRepartidores) {
+            // VERIFICAR QUE EL ID NO SEA NULL ANTES DE COMPARAR
+            if (r.getId() != null && r.getId().equals(documento)) {
+                return r;
             }
         }
+
         return null;
     }
 
@@ -228,6 +246,7 @@ public final class Empresa {
 
 
     //Metodos Administrador
+
 
     public void asignarEnvioARepartidor(String idRepartidor, Envio envio) {
         if (listaRepartidores == null || listaRepartidores.isEmpty()) {
@@ -259,6 +278,270 @@ public final class Empresa {
     }
 
 
+    // ==================== MÉTODOS DE MÉTRICAS RF-013 ====================
+
+    // 1. Tiempos promedio de entrega
+    public Map<String, Object> calcularTiemposEntrega(String fechaInicio, String fechaFin) {
+        Map<String, Object> metricas = new HashMap<>();
+
+        // Filtrar envíos entregados en el rango de fechas
+        List<Envio> enviosEntregados = listaEnvios.stream()
+                .filter(e -> e.getEstadoEnvio() == EstadoEnvio.ENTREGADO)
+                .filter(e -> estaEnRangoFechas(e, fechaInicio, fechaFin))
+                .collect(Collectors.toList());
+
+        if (enviosEntregados.isEmpty()) {
+            metricas.put("promedioGeneral", 0.0);
+            metricas.put("totalEnvios", 0);
+            return metricas;
+        }
+
+        // Calcular promedio (aquí simulo el cálculo - adapta según tus fechas reales)
+        double promedio = enviosEntregados.stream()
+                .mapToInt(e -> 3) // Ejemplo: 3 días promedio
+                .average()
+                .orElse(0.0);
+
+        metricas.put("promedioGeneral", promedio);
+        metricas.put("totalEnvios", enviosEntregados.size());
+
+        return metricas;
+    }
+
+    // 2. Servicios adicionales más usados (tipos de envío)
+    public Map<String, Object> obtenerServiciosPopulares() {
+        Map<String, Object> metricas = new HashMap<>();
+
+        // Contar por tipo de envío
+        Map<TipoEnvio, Long> conteo = listaEnvios.stream()
+                .collect(Collectors.groupingBy(
+                        Envio::getTipoEnvio,
+                        Collectors.counting()
+                ));
+
+        // Ordenar por popularidad
+        List<Map.Entry<TipoEnvio, Long>> topServicios = conteo.entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                .limit(5)
+                .collect(Collectors.toList());
+
+        metricas.put("topServicios", topServicios);
+        metricas.put("totalTipos", conteo.size());
+
+        return metricas;
+    }
+
+    // 3. Ingresos por periodo
+    public Map<String, Object> calcularIngresosPeriodo(String periodo) {
+        Map<String, Object> metricas = new HashMap<>();
+
+        double ingresosTotales = listaPagos.stream()
+                .filter(p -> "APROBADO".equalsIgnoreCase(p.getResultado()))
+                .mapToDouble(PagoRecord::getMonto)
+                .sum();
+
+        // Ingresos por método de pago
+        Map<String, Double> porMetodo = listaPagos.stream()
+                .filter(p -> "APROBADO".equalsIgnoreCase(p.getResultado()))
+                .collect(Collectors.groupingBy(
+                        PagoRecord::getMetodoPago,
+                        Collectors.summingDouble(PagoRecord::getMonto)
+                ));
+
+        metricas.put("ingresosTotales", ingresosTotales);
+        metricas.put("ingresosPorMetodo", porMetodo);
+        metricas.put("totalPagos", listaPagos.size());
+        metricas.put("periodo", periodo);
+
+        return metricas;
+    }
+
+    // 4. Incidencias por zona
+    public Map<String, Object> obtenerIncidenciasPorZona() {
+        Map<String, Object> metricas = new HashMap<>();
+
+        // Agrupar incidencias por destino del envío
+        Map<String, Long> porZona = listaIncidencias.stream()
+                .collect(Collectors.groupingBy(
+                        incidencia -> {
+                            Envio envio = incidencia.getEnvio();
+                            return envio != null ? envio.getDestino() : "Desconocido";
+                        },
+                        Collectors.counting()
+                ));
+
+        // Tipos de incidencia más comunes
+        Map<String, Long> porTipo = listaIncidencias.stream()
+                .collect(Collectors.groupingBy(
+                        Incidencia::getTipo,
+                        Collectors.counting()
+                ));
+
+        metricas.put("incidenciasPorZona", porZona);
+        metricas.put("incidenciasPorTipo", porTipo);
+        metricas.put("totalIncidencias", listaIncidencias.size());
+
+        return metricas;
+    }
+
+    // 5. Métricas generales del sistema
+    public Map<String, Object> obtenerMetricasGenerales() {
+        Map<String, Object> metricas = new HashMap<>();
+
+        metricas.put("totalEnvios", listaEnvios.size());
+        metricas.put("totalUsuarios", listaUsuarios.size());
+        metricas.put("totalRepartidores", listaRepartidores.size());
+        metricas.put("totalIncidencias", listaIncidencias.size());
+        metricas.put("totalPagos", listaPagos.size());
+
+        // Envíos por estado
+        Map<EstadoEnvio, Long> enviosPorEstado = listaEnvios.stream()
+                .collect(Collectors.groupingBy(
+                        Envio::getEstadoEnvio,
+                        Collectors.counting()
+                ));
+
+        metricas.put("enviosPorEstado", enviosPorEstado);
+
+        return metricas;
+    }
+
+    // Método auxiliar para filtrar por fechas
+    private boolean estaEnRangoFechas(Envio envio, String fechaInicio, String fechaFin) {
+        if ((fechaInicio == null || fechaInicio.isEmpty()) &&
+                (fechaFin == null || fechaFin.isEmpty())) {
+            return true;
+        }
+
+        // Implementa la lógica real de comparación de fechas según tu formato
+        return true; // Simplificado por ahora
+    }
+
+
+
+    public boolean reasignarRepartidorAEnvio(String idEnvio, String nuevoIdRepartidor) {
+        Envio envio = buscarEnvioPorId(idEnvio);
+        Repartidor nuevoRepartidor = buscarRepartidor(nuevoIdRepartidor);
+
+        if (envio == null) {
+            System.out.println(" Envío no encontrado: " + idEnvio);
+            return false;
+        }
+
+        if (nuevoRepartidor == null) {
+            System.out.println(" Nuevo repartidor no encontrado: " + nuevoIdRepartidor);
+            return false;
+        }
+
+        if (nuevoRepartidor.getEstadoDisponibilidad() != EstadoRepartidor.ACTIVO) {
+            System.out.println(" Nuevo repartidor no disponible: " + nuevoRepartidor.getNombre());
+            return false;
+        }
+
+        // Remover del repartidor anterior
+        Repartidor repartidorAnterior = envio.getRepartidor();
+        if (repartidorAnterior != null) {
+            repartidorAnterior.getEnviosAsignados().remove(envio);
+            System.out.println("Envío removido del repartidor anterior: " + repartidorAnterior.getNombre());
+        }
+
+        // Asignar al nuevo repartidor
+        envio.setRepartidor(nuevoRepartidor);
+
+        if (nuevoRepartidor.getEnviosAsignados() == null) {
+            nuevoRepartidor.setEnviosAsignados(new LinkedList<>());
+        }
+        nuevoRepartidor.getEnviosAsignados().add(envio);
+
+        System.out.println("Envío " + idEnvio + " REASIGNADO a " + nuevoRepartidor.getNombre());
+        return true;
+    }
+
+
+    // RF-012: REGISTRAR INCIDENCIAS
+    public void registrarIncidencia(String idEnvio, String tipo, String descripcion) {
+        Envio envio = buscarEnvioPorId(idEnvio);
+
+        if (envio == null) {
+            System.out.println(" Envío no encontrado: " + idEnvio);
+            return;
+        }
+
+        String idIncidencia = "INC-" + System.currentTimeMillis();
+        Incidencia incidencia = new Incidencia(idIncidencia, envio, tipo, descripcion);
+
+        if (listaIncidencias == null) {
+            listaIncidencias = new LinkedList<>();
+        }
+
+        listaIncidencias.add(incidencia);
+        envio.setEstadoEnvio(EstadoEnvio.INCIDENCIA);
+
+        System.out.println("⚠️ INCIDENCIA REGISTRADA:");
+        System.out.println("   ID: " + idIncidencia);
+        System.out.println("   Envío: " + envio.getIdEnvio());
+        System.out.println("   Tipo: " + tipo);
+        System.out.println("   Descripción: " + descripcion);
+    }
+
+
+    public List<Incidencia> obtenerIncidenciasPorEnvio(String idEnvio) {
+        List<Incidencia> incidenciasEnvio = new LinkedList<>();
+
+        if (listaIncidencias == null || listaIncidencias.isEmpty()) {
+            return incidenciasEnvio;
+        }
+
+        for (Incidencia incidencia : listaIncidencias) {
+            if (incidencia.getEnvio().getIdEnvio().equals(idEnvio)) {
+                incidenciasEnvio.add(incidencia);
+            }
+        }
+
+        return incidenciasEnvio;
+    }
+
+    public List<Envio> obtenerEnviosPorEstado(EstadoEnvio estado) {
+        List<Envio> enviosFiltrados = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return enviosFiltrados;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getEstadoEnvio() == estado) {
+                enviosFiltrados.add(envio);
+            }
+        }
+
+        return enviosFiltrados;
+    }
+
+
+
+    public List<Envio> obtenerEnviosPorRepartidor(String idRepartidor) {
+        List<Envio> enviosRepartidor = new LinkedList<>();
+
+        if (listaEnvios == null || listaEnvios.isEmpty()) {
+            return enviosRepartidor;
+        }
+
+        for (Envio envio : listaEnvios) {
+            if (envio.getRepartidor() != null &&
+                    envio.getRepartidor().getId().equals(idRepartidor)) {
+                enviosRepartidor.add(envio);
+            }
+        }
+
+        return enviosRepartidor;
+    }
+
+
+
+
+
+
+
     //Metodos usuario
     public void crearUsuario(UsuarioDTO dto) {
         Usuario nuevo = new Usuario.UsuarioBuilder()
@@ -280,10 +563,12 @@ public final class Empresa {
 
     public void eliminarUsuario(String id) {
         Usuario usuarioAEliminar = null;
-        for (Usuario usuario : listaUsuarios) {
-            if (usuario.getId().equalsIgnoreCase(id)) {
-                usuarioAEliminar = usuario;
-                break;
+        if (listaUsuarios != null) {
+            for (Usuario usuario : listaUsuarios) {
+                if (usuario.getId().equalsIgnoreCase(id)) {
+                    usuarioAEliminar = usuario;
+                    break;
+                }
             }
         }
         if (usuarioAEliminar != null) {
@@ -295,11 +580,16 @@ public final class Empresa {
     }
 
     //Metodos usuario
-    public void actualizarUsuario(UsuarioDTO dto) {
-        if (listaUsuarios == null || listaUsuarios.isEmpty()) {
-            System.out.println("No hay usuarios registrados.");
-            return;
+
+    public boolean actualizarUsuario(UsuarioDTO dto) {
+        if (dto == null || dto.getEmail() == null) {
+            return false;
         }
+
+        if (listaUsuarios == null) {
+            return false;
+        }
+
         for (Usuario usuario : listaUsuarios) {
             if (usuario.getEmail().equalsIgnoreCase(dto.getEmail())) {
                 usuario.setTelefono(dto.getTelefono());
@@ -307,164 +597,372 @@ public final class Empresa {
                 usuario.setNombre(dto.getNombre());
                 usuario.setEdad(dto.getEdad());
                 usuario.setEmail(dto.getEmail());
-
-                System.out.println("Usuario actualizado correctamente: " + dto.getEmail());
-                return;
-
+                return true; // Usuario encontrado y actualizado
             }
-            System.out.println("No se encontró ningún usuario con el correo: " + dto.getEmail());
         }
-    }
-
-    public List<Usuario> obtenerUsuarios() {
-        if (listaUsuarios == null) {
-            listaUsuarios = new LinkedList<>();
-        }
-        return new LinkedList<>(listaUsuarios);
+        return false; // Usuario no encontrado
     }
 
 
     //Requerimientos sobre Entidades: Direccion
 
-    public void crearDireccion(Direccion dto) {
-        Direccion nueva = new Direccion.DireccionBuilder()
-                .idDireccion(dto.getIdDireccion())
-                .alias(dto.getAlias())
-                .calle(dto.getCalle())
-                .ciudad(dto.getCiudad())
-                .build();
+    // En la clase Empresa - Métodos corregidos para Dirección
+    public boolean crearDireccion(Direccion direccion) {
+        try {
+            if (direccion == null) {
+                System.out.println("Error: La dirección no puede ser nula");
+                return false;
+            }
 
+            // Validar que el ID no esté vacío
+            if (direccion.getIdDireccion() == null || direccion.getIdDireccion().trim().isEmpty()) {
+                System.out.println("Error: El ID de dirección no puede estar vacío");
+                return false;
+            }
+
+            // Validar que el ID no exista
+            if (existeDireccion(direccion.getIdDireccion())) {
+                System.out.println("Error: Ya existe una dirección con ID: " + direccion.getIdDireccion());
+                return false;
+            }
+
+            if (listaDirecciones == null) {
+                listaDirecciones = new LinkedList<>();
+            }
+
+            listaDirecciones.add(direccion);
+            System.out.println("Dirección creada correctamente: " + direccion.getIdDireccion());
+            System.out.println("   Detalles: " + direccion.toFormattedString());
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error al crear dirección: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean existeDireccion(String idDireccion) {
+        if (listaDirecciones == null || listaDirecciones.isEmpty()) {
+            return false;
+        }
+
+        for (Direccion dir : listaDirecciones) {
+            if (dir.getIdDireccion() != null && dir.getIdDireccion().equalsIgnoreCase(idDireccion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // En la clase Empresa - Método actualizarDireccion mejorado
+    public boolean actualizarDireccion(Direccion direccionActualizada) {
+        try {
+            if (direccionActualizada == null) {
+                System.out.println("Error: La dirección a actualizar no puede ser nula");
+                return false;
+            }
+
+            if (listaDirecciones == null || listaDirecciones.isEmpty()) {
+                System.out.println("No hay direcciones registradas para actualizar.");
+                return false;
+            }
+
+            String idDireccion = direccionActualizada.getIdDireccion();
+
+            for (Direccion direccion : listaDirecciones) {
+                if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
+                    // Actualizar todos los campos
+                    direccion.setAlias(direccionActualizada.getAlias());
+                    direccion.setCalle(direccionActualizada.getCalle());
+                    direccion.setCiudad(direccionActualizada.getCiudad());
+                    direccion.setLatitud(direccionActualizada.getLatitud());
+                    direccion.setLongitud(direccionActualizada.getLongitud());
+
+                    System.out.println(" Dirección actualizada correctamente: " + idDireccion);
+                    System.out.println("   Nuevos datos: " + direccionActualizada.toFormattedString());
+                    return true;
+                }
+            }
+
+            System.out.println(" No se encontró ninguna dirección con el id: " + idDireccion);
+            return false;
+
+        } catch (Exception e) {
+            System.err.println(" Error al actualizar dirección: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Direccion buscarDireccionPorId(String idDireccion) {
+        if (listaDirecciones == null || listaDirecciones.isEmpty()) {
+            return null;
+        }
+
+        for (Direccion direccion : listaDirecciones) {
+            if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
+                return direccion;
+            }
+        }
+        return null;
+    }
+
+    public List<Direccion> obtenerTodasDirecciones() {
         if (listaDirecciones == null) {
             listaDirecciones = new LinkedList<>();
         }
-
-        listaDirecciones.add(nueva);
-
+        return new ArrayList<>(listaDirecciones); // Usar ArrayList para mejor rendimiento
     }
 
+// En la clase Empresa.java - métodos corregidos para manejar null
 
-    public void actualizarDireccion(Direccion dto) {
-        if (listaDirecciones == null || listaDirecciones.isEmpty()) {
-            System.out.println("No hay direcciones registradas.");
-            return;
-        }
-        for (Direccion direccion : listaDirecciones) {
-            if (direccion.getIdDireccion().equalsIgnoreCase(dto.getIdDireccion())) {
-                direccion.setAlias(dto.getAlias());
-                direccion.setCalle(dto.getCalle());
-                direccion.setCiudad(dto.getCiudad());
-
-                System.out.println("Direccion actualizada correctamente: " + dto.getIdDireccion());
-                return;
-
+    /**
+     * Agrega un nuevo usuario a la empresa
+     */
+    public boolean agregarUsuario(Usuario usuario) {
+        try {
+            if (usuario == null) {
+                System.out.println("Error: Usuario nulo");
+                return false;
             }
-            System.out.println("No se encontró ninguna direccion con el id: " + dto.getIdDireccion());
-        }
-    }
 
-    public void eliminarDireccion(String idDireccion) {
-        Direccion direccionAEliminar = null;
+            // Verificar si el usuario ya existe (por email o teléfono)
+            for (Usuario u : listaUsuarios) {
+                // Manejar teléfono nulo
+                String telefonoExistente = u.getTelefono();
+                String telefonoNuevo = usuario.getTelefono();
 
-        for (Direccion direccion : listaDirecciones) {
-            if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
-                direccionAEliminar = direccion;
-                break;
-            }
-        }
-        if (direccionAEliminar != null) {
-            listaDirecciones.remove(direccionAEliminar);
-            System.out.println("Dirección eliminada correctamente: " + idDireccion);
-        } else {
-            System.out.println("Dirección no encontrada: " + idDireccion);
-        }
-    }
+                boolean telefonoCoincide = (telefonoExistente != null && telefonoNuevo != null)
+                        ? telefonoExistente.equals(telefonoNuevo)
+                        : false;
 
-    public Direccion obtenerDireccionMasFrecuentePorUsuario(Usuario usuario) {
-        if (listaEnvios == null || listaEnvios.isEmpty()) {
-            return null;
-        }
+                boolean emailCoincide = (u.getEmail() != null && usuario.getEmail() != null)
+                        ? u.getEmail().equals(usuario.getEmail())
+                        : false;
 
-        List<Direccion> direccionesUsuario = new LinkedList<>();
-
-        //  1. Recorrer los envíos
-        for (Envio envio : listaEnvios) {
-            if (envio.getListaPaquetes() == null) continue;
-
-            // 🔹 2. Recorrer los paquetes dentro del envío
-            for (Paquete paquete : envio.getListaPaquetes()) {
-                if (paquete.getUsuario() != null && paquete.getUsuario().equals(usuario)) {
-                    Direccion direccion = paquete.getDireccion();
-                    if (direccion != null) {
-                        direccionesUsuario.add(direccion);
-                    }
-                }
-            }
-        }
-
-        // Si el usuario no tiene paquetes registrados
-        if (direccionesUsuario.isEmpty()) {
-            return null;
-        }
-
-        // 🔹 3. Buscar la dirección más repetida
-        Direccion direccionMasFrecuente = null;
-        int maxConteo = 0;
-
-        for (int i = 0; i < direccionesUsuario.size(); i++) {
-            Direccion actual = direccionesUsuario.get(i);
-            int conteo = 0;
-
-            for (int j = 0; j < direccionesUsuario.size(); j++) {
-                if (actual.equals(direccionesUsuario.get(j))) {
-                    conteo++;
+                if (telefonoCoincide || emailCoincide) {
+                    System.out.println("Error: Usuario ya existe con ese email o teléfono");
+                    return false;
                 }
             }
 
-            if (conteo > maxConteo) {
-                maxConteo = conteo;
-                direccionMasFrecuente = actual;
-            }
+            // Agregar el usuario a la lista
+            listaUsuarios.add(usuario);
+            listaPersonas.add(usuario);
+            System.out.println("Usuario agregado exitosamente: " + usuario.getEmail());
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error al agregar usuario: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-
-        return direccionMasFrecuente;
-
     }
 
-    public void consultarDetalleDireccion(String idDireccion) {
-        boolean encontrada = false;
-        for (Direccion direccion : listaDirecciones) {
-            if (direccion.getIdDireccion().equalsIgnoreCase(idDireccion)) {
-                System.out.println("Detalles de la dirección:");
-                System.out.println("ID: " + direccion.getIdDireccion());
-                System.out.println("Alias: " + direccion.getAlias());
-                System.out.println("Calle: " + direccion.getCalle());
-                System.out.println("Ciudad: " + direccion.getCiudad());
-                encontrada = true;
-                break;
+    /**
+     * Actualiza un usuario existente en la empresa
+     */
+    public boolean actualizarUsuario(Usuario usuarioActualizado) {
+        try {
+            if (usuarioActualizado == null) {
+                System.out.println("Error: Usuario actualizado es nulo");
+                return false;
             }
-        }
 
+            // Buscar el usuario por email (manejando null)
+            String emailBuscado = usuarioActualizado.getEmail();
+            if (emailBuscado == null) {
+                System.out.println("Error: Email del usuario a actualizar es nulo");
+                return false;
+            }
+
+            for (int i = 0; i < listaUsuarios.size(); i++) {
+                Usuario usuarioExistente = listaUsuarios.get(i);
+                String emailExistente = usuarioExistente.getEmail();
+
+                // Comparar por email (manejando null)
+                if (emailExistente != null && emailExistente.equals(emailBuscado)) {
+                    // Actualizar los datos del usuario
+                    listaUsuarios.set(i, usuarioActualizado);
+                    System.out.println("Usuario actualizado exitosamente: " + emailBuscado);
+                    return true;
+                }
+            }
+
+            System.out.println("Error: Usuario no encontrado para actualizar");
+            return false;
+
+        } catch (Exception e) {
+            System.err.println("Error al actualizar usuario: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    /**
+     * Elimina un usuario de la empresa
+     */
+    public boolean eliminarUsuario(Usuario usuarioEliminar) {
+        try {
+            if (usuarioEliminar == null) {
+                System.out.println("Error: Usuario a eliminar es nulo");
+                return false;
+            }
 
-    // ======================= MÉTODOS DE ENVÍO ====================================
+            // Buscar el usuario por email (manejando null)
+            String emailBuscado = usuarioEliminar.getEmail();
+            if (emailBuscado == null) {
+                System.out.println("Error: Email del usuario a eliminar es nulo");
+                return false;
+            }
+
+            for (int i = 0; i < listaUsuarios.size(); i++) {
+                Usuario usuarioExistente = listaUsuarios.get(i);
+                String emailExistente = usuarioExistente.getEmail();
+
+                // Comparar por email (manejando null)
+                if (emailExistente != null && emailExistente.equals(emailBuscado)) {
+                    // Eliminar el usuario
+                    listaUsuarios.remove(i);
+                    System.out.println("Usuario eliminado exitosamente: " + emailBuscado);
+                    return true;
+                }
+            }
+
+            System.out.println("Error: Usuario no encontrado para eliminar");
+            return false;
+
+        } catch (Exception e) {
+            System.err.println("Error al eliminar usuario: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /**
+     * Versión alternativa de eliminar por email
+     */
+    public boolean eliminarUsuarioPorEmail(String email) {
+        try {
+            if (email == null || email.isEmpty()) {
+                System.out.println("Error: Email vacío o nulo");
+                return false;
+            }
+
+            for (int i = 0; i < listaUsuarios.size(); i++) {
+                Usuario usuario = listaUsuarios.get(i);
+                if (usuario.getEmail().equals(email)) {
+                    listaUsuarios.remove(i);
+                    System.out.println("Usuario eliminado exitosamente: " + email);
+                    return true;
+                }
+            }
+
+            System.out.println("Error: Usuario no encontrado con email: " + email);
+            return false;
+
+        } catch (Exception e) {
+            System.err.println("Error al eliminar usuario por email: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Versión alternativa de eliminar por teléfono
+     */
+    public boolean eliminarUsuarioPorTelefono(String telefono) {
+        try {
+            if (telefono == null || telefono.isEmpty()) {
+                System.out.println("Error: Teléfono vacío o nulo");
+                return false;
+            }
+
+            for (int i = 0; i < listaUsuarios.size(); i++) {
+                Usuario usuario = listaUsuarios.get(i);
+                if (usuario.getTelefono().equals(telefono)) {
+                    listaUsuarios.remove(i);
+                    System.out.println("Usuario eliminado exitosamente: " + telefono);
+                    return true;
+                }
+            }
+
+            System.out.println("Error: Usuario no encontrado con teléfono: " + telefono);
+            return false;
+
+        } catch (Exception e) {
+            System.err.println("Error al eliminar usuario por teléfono: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Buscar usuario por email (útil para verificar existencia)
+     */
+    public Usuario buscarUsuarioPorEmail(String email) {
+        try {
+            if (email == null || email.isEmpty()) {
+                return null;
+            }
+
+            for (Usuario usuario : listaUsuarios) {
+                if (usuario.getEmail().equals(email)) {
+                    return usuario;
+                }
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            System.err.println("Error al buscar usuario por email: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Buscar usuario por teléfono (útil para verificar existencia)
+     */
+    public Usuario buscarUsuarioPorTelefono(String telefono) {
+        try {
+            if (telefono == null || telefono.isEmpty()) {
+                return null;
+            }
+
+            for (Usuario usuario : listaUsuarios) {
+                if (usuario.getTelefono().equals(telefono)) {
+                    return usuario;
+                }
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            System.err.println("Error al buscar usuario por teléfono: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // ======================= MÉTODOS DE ENVÍO ==================================
+    // ==
 
     // RF-022: Crear nuevo envío
-    public Envio crearEnvio(Producto producto, String fechaCreacion, String fechaEstimada,
-                            List<Direccion> direcciones, int peso, TipoEnvio tipoEnvio, Tarifa tarifa) {
-        String idEnvio = "ENV-" + System.currentTimeMillis();
+    public Envio crearEnvio(ArrayList<Producto> listaProductos, String fechaCreacion, String fechaEstimada, String idEnvio, int pesoEnvio, TipoEnvio tipoEnvio, EstadoEnvio estadoEnvio, Tarifa tarifa, Repartidor repartidor, String origen, String destino, int costo, Direccion direccion) {
+
+        idEnvio = "ENV-" + System.currentTimeMillis();
 
         Envio nuevoEnvio = new Envio(
-                producto,
+                listaProductos,
                 fechaCreacion,
                 fechaEstimada,
                 idEnvio,
-                peso,
+                pesoEnvio,
                 tipoEnvio,
                 EstadoEnvio.SOLICITADO,
-                direcciones,
                 tarifa,
-                null // Sin repartidor asignado inicialmente
+                null,
+                origen
+                , destino
+                , costo
+                , direccion
         );
 
         if (listaEnvios == null) {
@@ -472,7 +970,6 @@ public final class Empresa {
         }
 
         listaEnvios.add(nuevoEnvio);
-        System.out.println("Envío creado correctamente: " + idEnvio);
         return nuevoEnvio;
     }
 
@@ -520,54 +1017,6 @@ public final class Empresa {
         return false;
     }
 
-    // RF-025: Filtrar envíos por fecha, estado o zona
-    public List<Envio> filtrarEnvios(String fechaInicio, String fechaFin, EstadoEnvio estado, String ciudad) {
-        List<Envio> enviosFiltrados = new LinkedList<>();
-
-        if (listaEnvios == null || listaEnvios.isEmpty()) {
-            return enviosFiltrados;
-        }
-
-        for (Envio envio : listaEnvios) {
-            boolean cumpleFecha = true;
-            boolean cumpleEstado = true;
-            boolean cumpleCiudad = true;
-
-            // Filtro por fecha (simplificado - comparación de strings)
-            if (fechaInicio != null && !fechaInicio.isEmpty()) {
-                cumpleFecha = envio.getFechaCreacion().compareTo(fechaInicio) >= 0;
-            }
-            if (fechaFin != null && !fechaFin.isEmpty() && cumpleFecha) {
-                cumpleFecha = envio.getFechaCreacion().compareTo(fechaFin) <= 0;
-            }
-
-            // Filtro por estado
-            if (estado != null) {
-                cumpleEstado = envio.getEstadoEnvio() == estado;
-            }
-
-            // Filtro por ciudad (verifica si alguna dirección coincide)
-            if (ciudad != null && !ciudad.isEmpty()) {
-                cumpleCiudad = false;
-                for (Object obj : envio.getListaDirecciones()) {
-                    if (obj instanceof Direccion) {
-                        Direccion dir = (Direccion) obj;
-                        if (dir.getCiudad().equalsIgnoreCase(ciudad)) {
-                            cumpleCiudad = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (cumpleFecha && cumpleEstado && cumpleCiudad) {
-                enviosFiltrados.add(envio);
-            }
-        }
-
-        return enviosFiltrados;
-    }
-
 
     // RF-026: Consultar detalle de un envío
     public Envio buscarEnvioPorId(String idEnvio) {
@@ -605,37 +1054,52 @@ public final class Empresa {
         List<Repartidor> disponibles = new LinkedList<>();
 
         if (listaRepartidores == null || listaRepartidores.isEmpty()) {
+            System.out.println("DEBUG: Lista de repartidores está vacía");
             return disponibles;
         }
 
+        System.out.println("DEBUG: Total repartidores en sistema: " + listaRepartidores.size());
+
         for (Repartidor repartidor : listaRepartidores) {
+            System.out.println("DEBUG: Repartidor " + repartidor.getNombre() +
+                    " - Estado: " + repartidor.getEstadoDisponibilidad());
+
             if (repartidor.getEstadoDisponibilidad() == EstadoRepartidor.ACTIVO) {
                 disponibles.add(repartidor);
+                System.out.println("Repartidor ACTIVO agregado: " + repartidor.getNombre());
             }
         }
 
+        System.out.println("DEBUG: Repartidores disponibles encontrados: " + disponibles.size());
         return disponibles;
     }
 
     // RF-012: Asignar repartidor a envío y cambiar estado
     public boolean asignarRepartidorAEnvio(String idEnvio, String idRepartidor) {
+        // Verificar parámetros primero
+        if (idEnvio == null || idEnvio.trim().isEmpty()) {
+            return false;
+        }
+
+        if (idRepartidor == null || idRepartidor.trim().isEmpty()) {
+            return false;
+        }
+
         Envio envio = buscarEnvioPorId(idEnvio);
         Repartidor repartidor = buscarRepartidor(idRepartidor);
 
         if (envio == null) {
-            System.out.println("Envío no encontrado: " + idEnvio);
             return false;
         }
 
         if (repartidor == null) {
-            System.out.println("Repartidor no encontrado: " + idRepartidor);
             return false;
         }
 
         if (repartidor.getEstadoDisponibilidad() != EstadoRepartidor.ACTIVO) {
-            System.out.println("El repartidor no está disponible.");
             return false;
         }
+
         // Asignar repartidor al envío
         envio.setRepartidor(repartidor);
         envio.setEstadoEnvio(EstadoEnvio.ASIGNADO);
@@ -646,13 +1110,8 @@ public final class Empresa {
         }
         repartidor.getEnviosAsignados().add(envio);
 
-        // Cambiar estado del repartidor
-        repartidor.setDisponibilidad(EstadoRepartidor.EN_RUTA);
-
-        System.out.println("Envío " + idEnvio + " asignado al repartidor " + repartidor.getNombre());
         return true;
     }
-
     // RF-031: Calcular tarifa estimada
     public float calcularTarifaEnvio(float distancia, int peso, int volumen, boolean esPrioritario) {
         float tarifaBase = 5000; // Tarifa base
@@ -816,7 +1275,7 @@ public final class Empresa {
 
     // Listar todos los pagos
     public List<PagoRecord> listarTodosPagos() {
-        if (listaPagos== null) {
+        if (listaPagos == null) {
             listaPagos = new LinkedList<>();
         }
         return new LinkedList<>(listaPagos);
@@ -862,6 +1321,59 @@ public final class Empresa {
     }
 
 
+    public PagoRecord procesarPagoConMetodo(String tipoPago, String datoPago,
+                                            Envio envio, double monto, String detalles) {
+        try {
+            // Usar tu PagoFactory existente para crear el método de pago
+            Pago metodoPago = PagoFactory.crearMetodoPago(tipoPago, datoPago);
+
+            ProcesadorPago procesador = new ProcesadorPago(metodoPago);
+            String resultadoProcesamiento = procesador.ejecutarPago(monto);
+
+            String resultado = "RECHAZADO";
+            if (tipoPago.equalsIgnoreCase("EFECTIVO")) {
+                resultado = "APROBADO";
+            }
+            else {
+                String resultadoLower = resultadoProcesamiento.toLowerCase();
+                if (resultadoLower.contains("aprobado") ||
+                        resultadoLower.contains("exitoso") ||
+                        resultadoLower.contains("recibido") ||
+                        resultadoLower.contains("exitosa")) {
+                    resultado = "APROBADO";
+                }
+            }
+
+
+            String idPago = "PAGO-" + System.currentTimeMillis();
+            String fecha = java.time.LocalDate.now().toString();
+
+            PagoRecord pagoRecord = new PagoRecord(
+                    idPago,
+                    monto,
+                    fecha,
+                    tipoPago.toUpperCase(),
+                    resultado,
+                    envio.getIdEnvio(),
+                    detalles
+            );
+
+            // Agregar a la lista de pagos
+            if (listaPagos == null) {
+                listaPagos = new LinkedList<>();
+            }
+            listaPagos.add(pagoRecord);
+
+            System.out.println("Pago procesado: " + resultado + " - " + idPago);
+            return pagoRecord;
+
+        } catch (Exception e) {
+            System.err.println("Error procesando pago: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     // Calcular ingresos totales
     public double calcularIngresosTotales() {
         double total = 0;
@@ -893,18 +1405,21 @@ public final class Empresa {
         return total;
     }
 
+    public void anadirUsuarioListas(Usuario usuarioNuevo) {
+
+        if (usuarioNuevo == null)
+            throw new IllegalArgumentException("El usuario no puede ser null");
+
+        if (listaUsuarios == null) listaUsuarios = new LinkedList<>();
+        if (listaPersonas == null) listaPersonas = new LinkedList<>();
+
+        if (!listaUsuarios.contains(usuarioNuevo)) {
+            listaUsuarios.add(usuarioNuevo);
+        }
+
+        if (!listaPersonas.contains(usuarioNuevo)) {
+            listaPersonas.add(usuarioNuevo);
+        }
+    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

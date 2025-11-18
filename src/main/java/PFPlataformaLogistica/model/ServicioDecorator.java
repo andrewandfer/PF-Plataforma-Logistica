@@ -16,4 +16,7 @@ public abstract class ServicioDecorator implements ServicioEnvio {
     public String obtenerDescripcion() {
         return servicioBase.obtenerDescripcion();
     }
+
+    public static class AdministradorView {
+    }
 }

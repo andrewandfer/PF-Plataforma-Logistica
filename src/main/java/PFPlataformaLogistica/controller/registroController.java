@@ -1,5 +1,6 @@
 package PFPlataformaLogistica.controller;
 
+import PFPlataformaLogistica.Utils.SceneManager;
 import PFPlataformaLogistica.model.Empresa;
 import PFPlataformaLogistica.model.Usuario;
 import javafx.event.ActionEvent;
@@ -108,6 +109,13 @@ public class registroController {
         }
     }
 
+    public void volver(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        SceneManager.cambiarEscena(stage, "registro.fxml");
+    }
+
+    public static class ConsultarEnvioUsuario {
+    }
 }
 
 

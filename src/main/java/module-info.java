@@ -3,6 +3,7 @@ module cafeteria.PFPlataformaLogistica {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires org.apache.pdfbox;
 
     // Paquete donde están tus FXML, imágenes y otros recursos
     opens PFPlataformaLogistica to javafx.fxml;
@@ -13,4 +14,7 @@ module cafeteria.PFPlataformaLogistica {
     // Exportar para que el módulo principal pueda usar las clases
     exports PFPlataformaLogistica;
     exports PFPlataformaLogistica.controller;
+    opens PFPlataformaLogistica.model to javafx.base;
+
 }
+

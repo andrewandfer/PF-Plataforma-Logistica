@@ -52,6 +52,7 @@ public class loginController {
 
     @FXML
     void onIniciarSesion(ActionEvent event) throws IOException {
+        System.out.println(Empresa.getInstance().getListaPersonas());
         String correo = txtCorreo.getText();
         String contrasena = txtContrasena.getText();
 
@@ -69,11 +70,11 @@ public class loginController {
                 String vistaDestino = null;
 
                 if (persona instanceof Administrador) {
-                    vistaDestino = "/PFPlataformaLogistica/prueba.fxml";
+                    vistaDestino = "/PFPlataformaLogistica/AdministradorView.fxml";
                 } else if (persona instanceof Usuario) {
                     vistaDestino = "/PFPlataformaLogistica/UsuarioView.fxml";
                 } else if (persona instanceof Repartidor) {
-                    vistaDestino = "/PFPlataformaLogistica/prueba.fxml";
+                    vistaDestino = "/PFPlataformaLogistica/GestionRepartidores.fxml";
                 }
 
                 if (vistaDestino != null) {
@@ -87,7 +88,7 @@ public class loginController {
             }
         }
 
-        mostrarAlerta("Error", "Correo o contraseña incorrectos, amor.");
+        mostrarAlerta("Error", "Correo o contraseña incorrectos");
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

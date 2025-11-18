@@ -15,7 +15,7 @@ public class UsuarioDTO implements Serializable {
     private String telefono;
     private String email;
     private Direccion direccion;
-    private LinkedList<String> listaDirecciones;
+    private LinkedList<Direccion> listaDirecciones;
     private LinkedList <Producto> listaProductos  ;
     private LinkedList<Envio> enviosPropios;
 
@@ -26,7 +26,7 @@ public class UsuarioDTO implements Serializable {
     // Constructor con parámetros
     public UsuarioDTO(String nombre, int edad, String contrasena,
                       String telefono,String email, Direccion direccion,
-                      LinkedList<String> listaDirecciones, LinkedList <Producto>listaProductos,
+                      LinkedList<Direccion> listaDirecciones, LinkedList <Producto>listaProductos,
                       LinkedList<Envio> enviosPropios) {
         this.nombre = nombre;
         this.edad = edad;
@@ -80,11 +80,11 @@ public class UsuarioDTO implements Serializable {
         this.direccion = direccion;
     }
 
-    public LinkedList<String> getListaDirecciones() {
+    public LinkedList<Direccion> getListaDirecciones() {
         return listaDirecciones;
     }
 
-    public void setListaDirecciones(LinkedList<String> listaDirecciones) {
+    public void setListaDirecciones(LinkedList<Direccion> listaDirecciones) {
         this.listaDirecciones = listaDirecciones;
     }
 
