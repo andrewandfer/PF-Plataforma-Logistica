@@ -132,21 +132,7 @@ public final class Empresa {
         System.out.println("Repartidor registrado correctamente: " + repartidor.getNombre());
     }
 
-    public void crearRepartidor(RepartidorDTO dto) {
-        Repartidor nuevo = new Repartidor.RepartidorBuilder()
-                .telefono(dto.getTelefono())
-                .disponibilidad(dto.getDisponibilidad())
-                .zonaCobertura(dto.getZonaCobertura())
-                .localidad(dto.getLocalidad())
-                .enviosAsignados(dto.getEnviosAsignados())
-                .build();
 
-        if (listaRepartidores == null) {
-            listaRepartidores = new LinkedList<>();
-        }
-
-        listaRepartidores.add(nuevo);
-    }
 
     // RF-019: Eliminar repartidor
 
@@ -394,6 +380,7 @@ public final class Empresa {
         metricas.put("totalIncidencias", listaIncidencias.size());
         metricas.put("totalPagos", listaPagos.size());
 
+
         // Envíos por estado
         Map<EstadoEnvio, Long> enviosPorEstado = listaEnvios.stream()
                 .collect(Collectors.groupingBy(
@@ -404,6 +391,35 @@ public final class Empresa {
         metricas.put("enviosPorEstado", enviosPorEstado);
 
         return metricas;
+    }
+
+    public double obtenerPagosTipo (String tipo) {
+        double totalpagos=0;
+        for (PagoRecord p : listaPagos) {
+            if (p.getMetodoPago().equals(tipo)){
+                totalpagos += p.getMonto();
+            }
+        }
+        return totalpagos;
+    }
+
+    public int obtenerCantidadServicios(String tipo) {
+        int totalServicios=0;
+        for (Envio envio : listaEnvios) {
+            if (envio.getTipoEnvio().toString().toLowerCase().equals(tipo)){
+                totalServicios ++;
+            }
+        }
+        return totalServicios;
+    }
+    public int obtenerIncidenciasZona (String zona){
+        int contador = 0;
+        for (Repartidor repartidor : listaRepartidores) {
+            if (repartidor.getZonaCobertura().toLowerCase().equalsIgnoreCase(zona)){
+                contador++;
+            }
+        }
+        return contador;
     }
 
     // Método auxiliar para filtrar por fechas

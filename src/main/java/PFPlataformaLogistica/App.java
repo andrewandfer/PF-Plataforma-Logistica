@@ -132,6 +132,22 @@ public class App extends Application {
                 "2024-12-25",
                 "125634",
                 5,
+                TipoEnvio.ESTANDAR,
+                EstadoEnvio.ENRUTA,
+                tarifa1,
+                repartidor,
+                "nuevo berlin",
+                "jamaica",
+                12000,
+                direccion1
+        );
+
+        Envio enviopepe = empresa.crearEnvio(
+                productosEnvio,
+                "2024-12-24",
+                "2024-12-25",
+                "125634",
+                5,
                 TipoEnvio.PRIORITARIA,
                 EstadoEnvio.ENRUTA,
                 tarifa1,
@@ -141,7 +157,9 @@ public class App extends Application {
                 12000,
                 direccion1
         );
+
         usuario3.getEnviosPropios().add(enviojuan);
+        usuario3.getEnviosPropios().add(enviopepe);
         empresa.getListaRepartidores().add(repartidor);
     }
 }
