@@ -130,7 +130,7 @@ public class ActualizarDireccionUsuarioController {
     private void actualizarDireccion() {
         try {
             if (usuarioActual == null) {
-                mostrarError("Usuario no disponible", "No se pudo identificar el usuario actual");
+                mostrarError("Usuario  no disponible", "No se pudo identificar el usuario actual");
                 return;
             }
 
